@@ -1,0 +1,38 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+const pageTitle = title ? `${title} — Metis` : 'Metis';
+const pageDescription = description || 'A knowledge learning and retrieval engine.';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={pageDescription} />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <main>
+      <header class="site-header">
+        <a href="/" class="site-name">Metis</a>
+        <nav class="site-nav">
+          <a href="/">About</a>
+          <a href="/log">Log</a>
+        </nav>
+      </header>
+
+      <slot />
+
+      <footer class="site-footer">
+        Metis is an open exploration. Built with the garage door open.
+      </footer>
+    </main>
+  </body>
+</html>

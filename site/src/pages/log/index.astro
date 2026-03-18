@@ -1,0 +1,34 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('log')).sort(
+  (a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf()
+);
+---
+
+<Base title="Log" description="Design log for Metis — decisions, experiments, and milestones.">
+  <h1>Log</h1>
+  <p class="subtitle">Design decisions, experiments, and milestones.</p>
+
+  <ul class="log-list">
+    {posts.map((post) => {
+      const formattedDate = new Date(post.data.date).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+      return (
+        <li class="log-entry">
+          <span class="log-entry-date">{formattedDate}</span>
+          <div class="log-entry-title">
+            <a href={`/log/${post.id}`}>{post.data.title}</a>
+          </div>
+          {post.data.description && (
+            <p class="log-entry-excerpt">{post.data.description}</p>
+          )}
+        </li>
+      );
+    })}
+  </ul>
+</Base>

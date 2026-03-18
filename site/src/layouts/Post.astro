@@ -1,0 +1,26 @@
+---
+import Base from './Base.astro';
+
+interface Props {
+  title: string;
+  date: string;
+  description?: string;
+}
+
+const { title, date, description } = Astro.props;
+const formattedDate = new Date(date).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<Base title={title} description={description}>
+  <article>
+    <span class="post-date">{formattedDate}</span>
+    <h1 class="post-title">{title}</h1>
+    <div class="post-body">
+      <slot />
+    </div>
+  </article>
+</Base>

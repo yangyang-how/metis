@@ -1,0 +1,86 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="About" description="Metis is a knowledge learning and retrieval engine — transform source material into structured, retrievable expert knowledge.">
+  <section class="section">
+    <h1>Metis</h1>
+    <p class="subtitle">A knowledge learning and retrieval engine.</p>
+
+    <p>
+      Metis transforms books, articles, and videos into structured, retrievable
+      expert knowledge that any language model can use to reason like a domain expert.
+    </p>
+
+    <p>
+      It is not an agent, a chatbot, or a domain-specific expert system. It is the
+      tool that makes building such systems possible.
+    </p>
+  </section>
+
+  <hr />
+
+  <section class="section">
+    <h2>The problem</h2>
+
+    <p>
+      Large language models know a lot, but their knowledge is broad and shallow.
+      Ask one about a niche topic — childhood bilingual language acquisition,
+      specialized regulatory compliance, obscure engineering disciplines — and you
+      get generic, wishy-washy advice.
+    </p>
+
+    <p>
+      Meanwhile, deep domain expertise exists in books, papers, and the minds of
+      practitioners. But it's locked in formats that machines can't reason with.
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>The idea</h2>
+
+    <p>
+      Feed Metis a book. It reads, comprehends, and extracts structured knowledge
+      — not summaries, not chunks of text, but <em>what it learned</em>: claims,
+      frameworks, procedures, heuristics, mental models, and the relationships
+      between them.
+    </p>
+
+    <p>
+      The output is a knowledge graph of <strong>atoms</strong> — small, precise,
+      typed units of knowledge inspired by frame semantics in linguistics. Each
+      atom has named roles, conditions, confidence scores, and source provenance.
+    </p>
+
+    <p>
+      When a question comes in, Metis retrieves the relevant atoms, traverses
+      the graph to pull connected knowledge, detects gaps, and composes a
+      structured context package. Any LLM can then use this package to reason
+      at an expert level.
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>Two sides</h2>
+
+    <p>
+      <strong>Learn.</strong> Content in, structured knowledge out. The learning pipeline
+      ingests raw material, extracts atoms, and integrates them into a growing knowledge graph.
+    </p>
+
+    <p>
+      <strong>Apply.</strong> Question in, expert context out. The retrieval engine
+      identifies relevant atoms, follows connections, flags missing knowledge, and
+      delivers a structured brief for the downstream model.
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>Status</h2>
+
+    <p>
+      Metis is in early design. We are working with the garage door open — follow
+      the <a href="/log">log</a> for design decisions, experiments, and milestones.
+    </p>
+  </section>
+</Base>
