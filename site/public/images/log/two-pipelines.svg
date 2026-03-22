@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 300" font-family="-apple-system, 'Helvetica Neue', Arial, sans-serif">
+  <style>
+    text { fill: #1a1a1a; }
+    .label { font-size: 10px; fill: #6b6b6b; }
+    .stage { font-size: 11px; font-weight: 500; }
+    .title { font-size: 13px; font-weight: 600; }
+    .pipe-label { font-size: 12px; font-weight: 600; }
+  </style>
+
+  <defs>
+    <marker id="arr" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+      <path d="M0,0 L7,2.5 L0,5" fill="none" stroke="#2d2d2d" stroke-width="1"/>
+    </marker>
+    <marker id="arr-g" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+      <path d="M0,0 L7,2.5 L0,5" fill="none" stroke="#5a8a5a" stroke-width="1"/>
+    </marker>
+    <marker id="arr-b" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+      <path d="M0,0 L7,2.5 L0,5" fill="none" stroke="#5a7a9a" stroke-width="1"/>
+    </marker>
+  </defs>
+
+  <!-- LEARN pipeline -->
+  <text x="20" y="28" class="pipe-label" fill="#3a7a3a">LEARN</text>
+  <text x="20" y="44" class="label">Content in → structured knowledge out</text>
+
+  <rect x="20" y="58" width="76" height="34" rx="6" fill="#f0f7f0" stroke="#c8dcc8"/>
+  <text x="58" y="80" text-anchor="middle" class="stage">Content</text>
+
+  <line x1="96" y1="75" x2="118" y2="75" stroke="#5a8a5a" stroke-width="1.2" marker-end="url(#arr-g)"/>
+
+  <rect x="120" y="58" width="76" height="34" rx="6" fill="#f0f7f0" stroke="#c8dcc8"/>
+  <text x="158" y="80" text-anchor="middle" class="stage">Parse</text>
+
+  <line x1="196" y1="75" x2="218" y2="75" stroke="#5a8a5a" stroke-width="1.2" marker-end="url(#arr-g)"/>
+
+  <rect x="220" y="58" width="100" height="34" rx="6" fill="#e6f0e6" stroke="#a8c8a8"/>
+  <text x="270" y="80" text-anchor="middle" class="stage">Comprehend</text>
+
+  <line x1="320" y1="75" x2="342" y2="75" stroke="#5a8a5a" stroke-width="1.2" marker-end="url(#arr-g)"/>
+
+  <rect x="344" y="58" width="76" height="34" rx="6" fill="#f0f7f0" stroke="#c8dcc8"/>
+  <text x="382" y="80" text-anchor="middle" class="stage">Extract</text>
+
+  <line x1="420" y1="75" x2="442" y2="75" stroke="#5a8a5a" stroke-width="1.2" marker-end="url(#arr-g)"/>
+
+  <rect x="444" y="58" width="80" height="34" rx="6" fill="#f0f7f0" stroke="#c8dcc8"/>
+  <text x="484" y="80" text-anchor="middle" class="stage">Integrate</text>
+
+  <line x1="524" y1="75" x2="546" y2="75" stroke="#5a8a5a" stroke-width="1.2" marker-end="url(#arr-g)"/>
+
+  <!-- Knowledge Graph (shared) -->
+  <rect x="548" y="58" width="112" height="90" rx="10" fill="#fafaf8" stroke="#2d2d2d" stroke-width="1.5"/>
+  <text x="604" y="84" text-anchor="middle" class="stage">Knowledge</text>
+  <text x="604" y="100" text-anchor="middle" class="stage">Graph</text>
+
+  <!-- Small graph illustration -->
+  <circle cx="578" cy="126" r="4" fill="#c8dcc8" stroke="#5a8a5a"/>
+  <circle cx="604" cy="118" r="4" fill="#c8dcc8" stroke="#5a8a5a"/>
+  <circle cx="630" cy="128" r="4" fill="#c8dcc8" stroke="#5a8a5a"/>
+  <circle cx="604" cy="136" r="4" fill="#c8dcc8" stroke="#5a8a5a"/>
+  <line x1="578" y1="126" x2="604" y2="118" stroke="#5a8a5a" stroke-width="0.8"/>
+  <line x1="604" y1="118" x2="630" y2="128" stroke="#5a8a5a" stroke-width="0.8"/>
+  <line x1="578" y1="126" x2="604" y2="136" stroke="#5a8a5a" stroke-width="0.8"/>
+  <line x1="604" y1="136" x2="630" y2="128" stroke="#5a8a5a" stroke-width="0.8"/>
+
+  <!-- APPLY pipeline -->
+  <text x="20" y="186" class="pipe-label" fill="#3a6a8a">APPLY</text>
+  <text x="20" y="202" class="label">Question in → expert context out</text>
+
+  <rect x="20" y="216" width="76" height="34" rx="6" fill="#eef4f8" stroke="#c0d4e0"/>
+  <text x="58" y="238" text-anchor="middle" class="stage">Query</text>
+
+  <line x1="96" y1="233" x2="118" y2="233" stroke="#5a7a9a" stroke-width="1.2" marker-end="url(#arr-b)"/>
+
+  <rect x="120" y="216" width="90" height="34" rx="6" fill="#eef4f8" stroke="#c0d4e0"/>
+  <text x="165" y="238" text-anchor="middle" class="stage">Understand</text>
+
+  <line x1="210" y1="233" x2="232" y2="233" stroke="#5a7a9a" stroke-width="1.2" marker-end="url(#arr-b)"/>
+
+  <rect x="234" y="216" width="76" height="34" rx="6" fill="#eef4f8" stroke="#c0d4e0"/>
+  <text x="272" y="238" text-anchor="middle" class="stage">Retrieve</text>
+
+  <!-- Arrow up to graph -->
+  <line x1="272" y1="216" x2="272" y2="160" stroke="#5a7a9a" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="272" y1="160" x2="548" y2="120" stroke="#5a7a9a" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <line x1="310" y1="233" x2="332" y2="233" stroke="#5a7a9a" stroke-width="1.2" marker-end="url(#arr-b)"/>
+
+  <rect x="334" y="216" width="76" height="34" rx="6" fill="#eef4f8" stroke="#c0d4e0"/>
+  <text x="372" y="238" text-anchor="middle" class="stage">Traverse</text>
+
+  <line x1="410" y1="233" x2="432" y2="233" stroke="#5a7a9a" stroke-width="1.2" marker-end="url(#arr-b)"/>
+
+  <rect x="434" y="216" width="76" height="34" rx="6" fill="#e4ecf2" stroke="#a0b8cc"/>
+  <text x="472" y="232" text-anchor="middle" class="stage" style="font-size:10px">Detect</text>
+  <text x="472" y="244" text-anchor="middle" class="stage" style="font-size:10px">Gaps</text>
+
+  <line x1="510" y1="233" x2="532" y2="233" stroke="#5a7a9a" stroke-width="1.2" marker-end="url(#arr-b)"/>
+
+  <rect x="534" y="216" width="76" height="34" rx="6" fill="#eef4f8" stroke="#c0d4e0"/>
+  <text x="572" y="238" text-anchor="middle" class="stage">Compose</text>
+
+  <line x1="610" y1="233" x2="632" y2="233" stroke="#5a7a9a" stroke-width="1.2" marker-end="url(#arr-b)"/>
+
+  <!-- Output -->
+  <rect x="634" y="216" width="34" height="34" rx="6" fill="#eef4f8" stroke="#3a6a8a" stroke-width="1.5"/>
+  <text x="651" y="237" text-anchor="middle" class="label" style="font-size:16px;">📦</text>
+
+  <!-- Bottom note -->
+  <text x="340" y="285" text-anchor="middle" class="label">Both pipelines use LLMs as internal components.</text>
+  <text x="340" y="298" text-anchor="middle" class="label">The LLM is a tool within Metis, not the product.</text>
+</svg>

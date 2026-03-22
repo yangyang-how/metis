@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 340" font-family="-apple-system, 'Helvetica Neue', Arial, sans-serif">
+  <style>
+    text { fill: #1a1a1a; }
+    .label { font-size: 11px; fill: #6b6b6b; }
+    .field { font-size: 12px; font-weight: 500; }
+    .value { font-size: 11px; font-family: 'SF Mono', Menlo, Consolas, monospace; }
+    .title { font-size: 13px; font-weight: 600; }
+    .note { font-size: 10px; fill: #6b6b6b; font-style: italic; }
+  </style>
+
+  <text x="280" y="24" text-anchor="middle" class="title">Atom: the deviation frame</text>
+  <text x="280" y="42" text-anchor="middle" class="label">From the stress test — the book's most valuable pattern</text>
+
+  <!-- Main atom box -->
+  <rect x="40" y="60" width="480" height="240" rx="10" fill="#fafaf8" stroke="#e0ddd8" stroke-width="1.5"/>
+
+  <!-- Frame type -->
+  <text x="70" y="92" class="field">frame</text>
+  <rect x="160" y="76" width="120" height="24" rx="5" fill="#fef3f2" stroke="#e0ddd8"/>
+  <text x="220" y="93" text-anchor="middle" class="value">deviation</text>
+
+  <!-- Roles -->
+  <text x="70" y="128" class="field">roles</text>
+
+  <rect x="160" y="112" width="340" height="76" rx="6" fill="#f0f7f0" stroke="#c8dcc8"/>
+
+  <text x="178" y="133" class="label">theory:</text>
+  <text x="230" y="133" class="value">"Demand grows linearly with population"</text>
+
+  <text x="178" y="155" class="label">reality:</text>
+  <text x="230" y="155" class="value">"Demand plateaus due to saturation effects"</text>
+
+  <text x="178" y="177" class="label">implication:</text>
+  <text x="250" y="177" class="value">"Forecasts overestimate by 30-40%"</text>
+
+  <!-- Conditions -->
+  <text x="70" y="214" class="field">conditions</text>
+  <text x="178" y="214" class="value">"mature markets with &gt;60% penetration"</text>
+
+  <!-- Confidence -->
+  <text x="70" y="240" class="field">confidence</text>
+  <rect x="160" y="226" width="80" height="20" rx="4" fill="#e8f5e8" stroke="#c8dcc8"/>
+  <text x="200" y="241" text-anchor="middle" class="value">0.85</text>
+
+  <!-- Source -->
+  <text x="70" y="268" class="field">source</text>
+  <text x="178" y="268" class="value" style="fill:#6b6b6b;">Industry Analysis, Ch. 4, p. 112</text>
+
+  <!-- Bottom annotation -->
+  <text x="280" y="324" text-anchor="middle" class="note">Three roles capture theory vs. reality — something a 2-role triple can't express in one atom.</text>
+</svg>
