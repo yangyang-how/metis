@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" font-family="-apple-system, 'Helvetica Neue', Arial, sans-serif">
+  <style>
+    text { fill: #1a1a1a; }
+    .label { font-size: 11px; fill: #6b6b6b; }
+    .title { font-size: 13px; font-weight: 600; }
+    .role { font-size: 11px; }
+    .dim { fill: #6b6b6b; }
+    .strike { text-decoration: line-through; fill: #b0b0b0; }
+  </style>
+
+  <!-- Triple (left) -->
+  <text x="160" y="28" text-anchor="middle" class="title">Triple</text>
+  <text x="160" y="46" text-anchor="middle" class="label">2 roles only</text>
+
+  <rect x="40" y="70" width="100" height="36" rx="6" fill="#fef3f2" stroke="#e0ddd8"/>
+  <text x="90" y="93" text-anchor="middle" class="role">Subject</text>
+
+  <rect x="180" y="70" width="100" height="36" rx="6" fill="#fef3f2" stroke="#e0ddd8"/>
+  <text x="230" y="93" text-anchor="middle" class="role">Object</text>
+
+  <line x1="140" y1="88" x2="180" y2="88" stroke="#b0b0b0" stroke-width="1.5" marker-end="url(#arrow-dim)"/>
+  <text x="160" y="80" text-anchor="middle" class="label">relation</text>
+
+  <!-- Triple example -->
+  <rect x="20" y="130" width="280" height="80" rx="8" fill="#fafaf8" stroke="#e0ddd8" stroke-dasharray="4,3"/>
+  <text x="160" y="152" text-anchor="middle" class="label">Example: "buying"</text>
+  <text x="160" y="174" text-anchor="middle" class="role dim">(buyer) → buys → (goods)</text>
+  <text x="160" y="194" text-anchor="middle" class="label" style="fill:#c0392b;">Where do seller, money, terms go?</text>
+
+  <!-- Arrow between -->
+  <line x1="330" y1="140" x2="370" y2="140" stroke="#2d2d2d" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Frame (right) -->
+  <text x="540" y="28" text-anchor="middle" class="title">Micro-Frame</text>
+  <text x="540" y="46" text-anchor="middle" class="label">N named roles</text>
+
+  <rect x="400" y="64" width="280" height="160" rx="10" fill="#f0f7f0" stroke="#c8dcc8"/>
+
+  <text x="420" y="88" class="label">frame:</text>
+  <text x="480" y="88" class="role">Commercial Transaction</text>
+
+  <text x="420" y="112" class="label">roles:</text>
+
+  <rect x="480" y="98" width="80" height="22" rx="4" fill="#e8f5e8" stroke="#c8dcc8"/>
+  <text x="520" y="114" text-anchor="middle" class="role">Buyer</text>
+
+  <rect x="568" y="98" width="80" height="22" rx="4" fill="#e8f5e8" stroke="#c8dcc8"/>
+  <text x="608" y="114" text-anchor="middle" class="role">Seller</text>
+
+  <rect x="480" y="126" width="80" height="22" rx="4" fill="#e8f5e8" stroke="#c8dcc8"/>
+  <text x="520" y="142" text-anchor="middle" class="role">Goods</text>
+
+  <rect x="568" y="126" width="80" height="22" rx="4" fill="#e8f5e8" stroke="#c8dcc8"/>
+  <text x="608" y="142" text-anchor="middle" class="role">Money</text>
+
+  <text x="420" y="170" class="label">conditions:</text>
+  <text x="500" y="170" class="role dim">[...]</text>
+
+  <text x="420" y="192" class="label">confidence:</text>
+  <text x="500" y="192" class="role dim">0.0 – 1.0</text>
+
+  <text x="420" y="214" class="label">source:</text>
+  <text x="500" y="214" class="role dim">{title, location}</text>
+
+  <!-- Bottom note -->
+  <text x="360" y="290" text-anchor="middle" class="label">Simple binary relations are frames with two roles — nothing is lost.</text>
+  <text x="360" y="308" text-anchor="middle" class="label">Complex structures gain the roles they need.</text>
+
+  <!-- Arrow markers -->
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="none" stroke="#2d2d2d" stroke-width="1.2"/>
+    </marker>
+    <marker id="arrow-dim" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="none" stroke="#b0b0b0" stroke-width="1.2"/>
+    </marker>
+  </defs>
+</svg>

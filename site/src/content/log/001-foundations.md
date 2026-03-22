@@ -34,6 +34,8 @@ We stress-tested this against two dense chapters from an industry analysis textb
 
 ## The linguistic insight
 
+![Triple vs micro-frame — why two roles aren't enough](/images/log/triple-vs-frame.svg)
+
 Charles Fillmore's **Frame Semantics** provided the breakthrough. Fillmore argued that meaning is organized in *frames* — structured situations with defined *roles*. The word "buy" evokes a Commercial Transaction frame with roles: Buyer, Seller, Goods, Money.
 
 Our triple was forcing everything into two roles (subject, object). Many knowledge structures naturally have three, four, or more roles.
@@ -56,6 +58,8 @@ Atom {
 ```
 
 Simple binary relations are just frames with two roles — nothing is lost. But a demand evaluation matrix naturally becomes one atom with four roles instead of four awkward triples.
+
+![The atom — a deviation frame from the stress test](/images/log/atom-structure.svg)
 
 ## Stress test results
 

@@ -8,6 +8,8 @@ Second design session. We moved from "what is the atom" to "how does the system 
 
 ## Two pipelines
 
+![Learn and Apply — two pipelines sharing one knowledge graph](/images/log/two-pipelines.svg)
+
 Metis has two sides, and each is a pipeline:
 
 **Learn:** Content → Parse → Comprehend → Extract → Integrate → Knowledge Graph
@@ -15,6 +17,8 @@ Metis has two sides, and each is a pipeline:
 **Apply:** Query → Understand → Retrieve → Traverse → Detect Gaps → Compose → Context Package
 
 Both use LLMs as internal components. But the LLM is a tool *within* Metis, not the product. The product is the structured knowledge and the context packages it produces.
+
+![Cost split — 1 expensive comprehension call guides N cheap extraction calls](/images/log/cost-split.svg)
 
 ## The cost question
 
