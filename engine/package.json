@@ -14,8 +14,9 @@
     "typescript": "^5.7.0"
   },
   "dependencies": {
-    "fflate": "^0.8.0",
+    "@anthropic-ai/sdk": "^0.80.0",
     "fast-xml-parser": "^5.0.0",
+    "fflate": "^0.8.0",
     "node-html-parser": "^7.0.0"
   },
   "trustedDependencies": [
