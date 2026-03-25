@@ -7,7 +7,7 @@ any LLM can use to reason like a domain expert. NOT a chatbot or agent.
 
 ## Tech Stack
 - Site: Astro 6, TypeScript strict, deployed to [TBD]
-- Engine: TypeScript (Bun), Anthropic API for LLM calls
+- Engine: TypeScript (Bun), multi-provider LLM (Anthropic, Kimi, future: OpenAI, Gemini, Ollama)
 - Storage: JSON files on disk (atoms, graph index), ChromaDB for vectors
 - Node >= 22.12.0
 
@@ -15,8 +15,10 @@ any LLM can use to reason like a domain expert. NOT a chatbot or agent.
 - `site/` — Marketing/docs site (Astro). Content in `site/src/content/`.
 - `design/` — Design documents. Source of truth for architecture decisions.
 - `engine/` — Core pipeline code: parse, comprehend, extract, integrate.
-- `engine/src/llm/` — Shared LLM provider interface. Multi-provider (Anthropic adapter in v1).
+- `engine/src/llm/` — Shared LLM provider interface. Adapters: Anthropic, Kimi (OpenAI-compatible).
 - `engine/src/comprehend/` — Comprehend stage: structure inference, chapter comprehension, book synthesis.
+- `engine/src/extract/` — Extract stage: per-section atom extraction, frame type registry, atom validation.
+- `engine/data/` — Static data files. `core-frames.json` has 17 core frame types.
 - `engine/test/` — Tests mirroring engine structure. Fixtures in `engine/test/parse/fixtures/`.
 
 ## Commands
@@ -41,4 +43,8 @@ any LLM can use to reason like a domain expert. NOT a chatbot or agent.
 - Bun is at `~/.bun/bin/bun` — may need PATH setup in shell scripts.
 - Anthropic SDK requires `ANTHROPIC_API_KEY` env var (or explicit config). Tests use mock providers — no real API calls.
 - Structure inference normalizes flat EPUBs before LLM calls — never assume the parse tree has sections.
-- Prompts live in `engine/src/comprehend/prompts.ts` — iterate on prompts without touching pipeline logic.
+- Prompts live in `engine/src/comprehend/prompts.ts` and `engine/src/extract/prompts.ts` — iterate on prompts without touching pipeline logic.
+- Kimi adapter uses `openai` npm package with custom baseURL. Same pattern works for Ollama (`http://localhost:11434/v1`).
+- LLMs often return snake_case despite camelCase instructions — always normalize field names in response parsers.
+- Frame type registry: 17 core types are fixed in `core-frames.json`. Domain types proposed at runtime, first registration wins.
+- Pipeline runner supports per-stage provider config: `--comprehend-provider anthropic --extract-provider kimi`.

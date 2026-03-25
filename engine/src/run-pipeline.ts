@@ -1,43 +1,94 @@
-import { comprehend } from "./comprehend/index";
-import { createProvider, withRetry } from "./llm/provider";
 /**
- * Pipeline runner — parse an EPUB and comprehend it with a real LLM.
+ * Pipeline runner — parse, comprehend, and extract from an EPUB.
  *
  * Usage:
- *   ANTHROPIC_API_KEY=sk-... bun run src/run-pipeline.ts <path-to-epub> [model]
+ *   bun run src/run-pipeline.ts <path-to-epub> [options]
  *
- * Example:
- *   ANTHROPIC_API_KEY=sk-... bun run src/run-pipeline.ts ~/books/ddia.epub claude-sonnet-4-20250514
+ * Options:
+ *   --comprehend-provider anthropic|kimi  (default: anthropic)
+ *   --comprehend-model <model>            (default: claude-sonnet-4-20250514)
+ *   --extract-provider anthropic|kimi     (default: kimi)
+ *   --extract-model <model>               (default: moonshot-v1-128k)
+ *   --skip-extract                         skip extraction stage
  *
- * Outputs the ComprehensionResult as JSON to stdout.
- * Progress updates go to stderr so they don't pollute the JSON output.
+ * Environment variables:
+ *   ANTHROPIC_API_KEY  — for Anthropic provider
+ *   KIMI_API_KEY       — for Kimi provider
+ *
+ * Progress to stderr, full JSON to stdout.
  */
+import { comprehend } from "./comprehend/index";
+import { normalizeChapters } from "./comprehend/structure-inference";
+import { createRegistry, extract } from "./extract/index";
+import { createProvider, withRetry } from "./llm/provider";
+import type { ProviderConfig } from "./llm/types";
 import { parse } from "./parse/index";
 
-async function main() {
-	const args = process.argv.slice(2);
-	const epubPath = args[0];
-	const model = args[1] ?? "claude-sonnet-4-20250514";
+function parseArgs(argv: string[]) {
+	const args = argv.slice(2);
+	let epubPath = "";
+	let comprehendProvider = "anthropic";
+	let comprehendModel = "claude-sonnet-4-20250514";
+	let extractProvider = "kimi";
+	let extractModel = "moonshot-v1-128k";
+	let skipExtract = false;
 
-	if (!epubPath) {
-		console.error("Usage: bun run src/run-pipeline.ts <path-to-epub> [model]");
-		console.error("  model defaults to claude-sonnet-4-20250514");
-		console.error("");
-		console.error("Set ANTHROPIC_API_KEY environment variable before running.");
-		process.exit(1);
+	for (let i = 0; i < args.length; i++) {
+		const arg = args[i];
+		if (arg === "--comprehend-provider") {
+			comprehendProvider = args[++i] ?? comprehendProvider;
+		} else if (arg === "--comprehend-model") {
+			comprehendModel = args[++i] ?? comprehendModel;
+		} else if (arg === "--extract-provider") {
+			extractProvider = args[++i] ?? extractProvider;
+		} else if (arg === "--extract-model") {
+			extractModel = args[++i] ?? extractModel;
+		} else if (arg === "--skip-extract") {
+			skipExtract = true;
+		} else if (!arg?.startsWith("--")) {
+			epubPath = arg ?? "";
+		}
 	}
 
-	if (!process.env.ANTHROPIC_API_KEY) {
-		console.error("Error: ANTHROPIC_API_KEY environment variable is not set.");
-		console.error("Export it before running:");
-		console.error("  export ANTHROPIC_API_KEY=sk-ant-...");
+	return {
+		epubPath,
+		comprehendProvider,
+		comprehendModel,
+		extractProvider,
+		extractModel,
+		skipExtract,
+	};
+}
+
+async function main() {
+	const config = parseArgs(process.argv);
+
+	if (!config.epubPath) {
+		console.error(
+			"Usage: bun run src/run-pipeline.ts <path-to-epub> [options]",
+		);
+		console.error("");
+		console.error("Options:");
+		console.error(
+			"  --comprehend-provider anthropic|kimi  (default: anthropic)",
+		);
+		console.error(
+			"  --comprehend-model <model>            (default: claude-sonnet-4-20250514)",
+		);
+		console.error("  --extract-provider anthropic|kimi     (default: kimi)");
+		console.error(
+			"  --extract-model <model>               (default: moonshot-v1-128k)",
+		);
+		console.error("  --skip-extract                        skip extraction");
+		console.error("");
+		console.error("Environment: ANTHROPIC_API_KEY, KIMI_API_KEY");
 		process.exit(1);
 	}
 
 	// === Phase 1: Parse ===
-	console.error(`[parse] Parsing ${epubPath}...`);
+	console.error(`[parse] Parsing ${config.epubPath}...`);
 	const tree = await parse({
-		filePath: epubPath,
+		filePath: config.epubPath,
 		options: { extractImages: false },
 	});
 	console.error(
@@ -45,55 +96,110 @@ async function main() {
 	);
 
 	// === Phase 2: Comprehend ===
-	const provider = withRetry(
-		createProvider({
-			provider: "anthropic",
-			model,
-		}),
-	);
+	const comprehendProviderConfig: ProviderConfig = {
+		provider: config.comprehendProvider as ProviderConfig["provider"],
+		model: config.comprehendModel,
+	};
+	const comprehendLLM = withRetry(createProvider(comprehendProviderConfig));
 
-	console.error(`[comprehend] Starting comprehension with ${model}...`);
+	console.error(
+		`[comprehend] Starting with ${config.comprehendProvider}/${config.comprehendModel}...`,
+	);
 	console.error(
 		`[comprehend] ${tree.chapters.length} chapters to process (sequential)`,
 	);
 
-	const result = await comprehend({
+	const comprehendResult = await comprehend({
 		documentTree: tree,
-		provider,
+		provider: comprehendLLM,
 	});
+
+	console.error(
+		`[comprehend] Done. ${comprehendResult.chapterMaps.length} maps, ${comprehendResult.usage.failedChapters.length} failed`,
+	);
+
+	if (config.skipExtract) {
+		console.error("[extract] Skipped (--skip-extract)");
+		console.log(JSON.stringify(comprehendResult, null, 2));
+		return;
+	}
+
+	// === Phase 3: Extract ===
+	const extractProviderConfig: ProviderConfig = {
+		provider: config.extractProvider as ProviderConfig["provider"],
+		model: config.extractModel,
+	};
+	const extractLLM = withRetry(createProvider(extractProviderConfig));
+	const registry = createRegistry();
+	const normalizedChapters = normalizeChapters(tree);
+
+	console.error(
+		`[extract] Starting with ${config.extractProvider}/${config.extractModel}...`,
+	);
+
+	let totalAtoms = 0;
+	let totalExtractCalls = 0;
+	let totalExtractInput = 0;
+	let totalExtractOutput = 0;
+	const allAtoms: unknown[] = [];
+	const allProposedTypes: unknown[] = [];
+
+	for (const chapter of normalizedChapters) {
+		const map = comprehendResult.chapterMaps.find(
+			(m) => m.chapterId === chapter.id,
+		);
+		if (!map) continue;
+
+		console.error(`[extract] Chapter: ${chapter.title.slice(0, 50)}...`);
+
+		const extractResult = await extract({
+			chapter,
+			comprehensionMap: map,
+			bookMetadata: tree.metadata,
+			registry,
+			provider: extractLLM,
+		});
+
+		totalAtoms += extractResult.atoms.length;
+		totalExtractCalls += extractResult.usage.callCount;
+		totalExtractInput += extractResult.usage.inputTokens;
+		totalExtractOutput += extractResult.usage.outputTokens;
+		allAtoms.push(...extractResult.atoms);
+		allProposedTypes.push(...extractResult.proposedFrameTypes);
+
+		console.error(
+			`  → ${extractResult.atoms.length} atoms, ${extractResult.skippedSections.length} skipped, ${extractResult.flaggedAtoms.length} flagged`,
+		);
+	}
 
 	// === Report ===
 	console.error("");
 	console.error("=== Results ===");
-	console.error(`Chapters comprehended: ${result.chapterMaps.length}`);
 	console.error(
-		`Failed chapters: ${result.usage.failedChapters.length > 0 ? result.usage.failedChapters.join(", ") : "none"}`,
-	);
-	console.error(`Total LLM calls: ${result.usage.callCount}`);
-	console.error(
-		`Total tokens: ${result.usage.totalInputTokens} in / ${result.usage.totalOutputTokens} out`,
+		`Comprehend: ${comprehendResult.chapterMaps.length} chapters, ${comprehendResult.usage.callCount} calls, ${comprehendResult.usage.totalInputTokens} in / ${comprehendResult.usage.totalOutputTokens} out`,
 	);
 	console.error(
-		`Cross-cutting themes: ${result.bookSynthesis.crossCuttingThemes.length}`,
+		`Extract: ${totalAtoms} atoms, ${totalExtractCalls} calls, ${totalExtractInput} in / ${totalExtractOutput} out`,
 	);
+	console.error(`Domain types proposed: ${allProposedTypes.length}`);
 	console.error(
-		`Entity index entries: ${result.bookSynthesis.entityIndex.length}`,
+		`Registry: ${registry.getAll().length} types (${registry.getCoreTypes().length} core + ${registry.getAll().length - registry.getCoreTypes().length} domain)`,
 	);
-	console.error("");
 
-	// Print chapter summaries to stderr for quick review
-	for (const map of result.chapterMaps) {
-		console.error(
-			`  [${map.chapterType}] ${map.chapterId}: ${map.summary.slice(0, 100)}`,
-		);
-		console.error(
-			`    Structures: ${map.structures.map((s) => s.name).join(", ") || "none"}`,
-		);
-		console.error(`    Sections analyzed: ${map.sectionAnalyses.length}`);
-	}
-
-	// Full JSON to stdout (can be piped to a file)
-	console.log(JSON.stringify(result, null, 2));
+	// Full result to stdout
+	const output = {
+		comprehension: comprehendResult,
+		extraction: {
+			atoms: allAtoms,
+			proposedFrameTypes: allProposedTypes,
+			usage: {
+				inputTokens: totalExtractInput,
+				outputTokens: totalExtractOutput,
+				callCount: totalExtractCalls,
+			},
+		},
+	};
+	console.log(JSON.stringify(output, null, 2));
 }
 
 main().catch((err) => {
