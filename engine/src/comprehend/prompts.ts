@@ -25,9 +25,39 @@ You will receive:
 - The chapter's title, position in the book, and metadata
 - The chapter's sections with their content
 
-Produce a JSON object matching the provided schema. Focus on:
-1. What TYPE of chapter is this? (framework, survey, argumentative, narrative, practical)
-2. What KNOWLEDGE STRUCTURES does it contain? (models, comparisons, taxonomies, progressions, processes, debates)
+Respond with a JSON object using EXACTLY these field names (camelCase):
+
+{
+  "chapterId": "<the chapter ID provided>",
+  "chapterType": "framework" | "survey" | "argumentative" | "narrative" | "practical",
+  "summary": "<2-3 sentence overview>",
+  "structures": [
+    {
+      "name": "<name of knowledge structure>",
+      "type": "model" | "comparison" | "taxonomy" | "progression" | "process" | "debate",
+      "components": ["<component1>", "<component2>"],
+      "sectionIds": ["<sectionId1>"]
+    }
+  ],
+  "sectionAnalyses": [
+    {
+      "sectionId": "<id from the section header>",
+      "title": "<section title>",
+      "purpose": "<what this section does>",
+      "knowledgeTypes": ["definition", "comparison", "causal", "procedure", "heuristic", "framework", "example"],
+      "conceptsIntroduced": ["<new terms defined here>"],
+      "conceptsReferenced": ["<terms from other sections>"],
+      "buildsOn": ["<sectionIds this depends on>"],
+      "significance": "<why this section matters>"
+    }
+  ]
+}
+
+IMPORTANT: Use camelCase field names exactly as shown above. Do NOT use snake_case.
+
+Focus on:
+1. What TYPE of chapter is this?
+2. What KNOWLEDGE STRUCTURES does it contain?
 3. For EACH SECTION: what is its purpose, what kinds of knowledge should be extracted, and what concepts does it introduce or reference?
 
 Think about what an extractor needs to know to pull the right atoms from each section. Do not extract atoms yourself — describe what's there so the extractor knows what to look for.

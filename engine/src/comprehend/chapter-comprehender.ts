@@ -13,6 +13,7 @@ import type { DocumentMetadata } from "../parse/types";
 import { buildChapterPrompt, getComprehensionMapSchema } from "./prompts";
 import type {
 	ComprehensionMap,
+	KnowledgeStructure,
 	NormalizedChapter,
 	SectionAnalysis,
 } from "./types";
@@ -85,24 +86,83 @@ function parseResponse(
 			cleaned = cleaned.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
 		}
 
-		const parsed = JSON.parse(cleaned);
+		const raw = JSON.parse(cleaned);
+
+		// Normalize field names — models sometimes use snake_case despite instructions
+		const parsed = {
+			chapterType: raw.chapterType ?? raw.chapter_type,
+			summary: raw.summary ?? raw.chapter_purpose ?? "",
+			structures: raw.structures ?? raw.knowledge_structures,
+			sectionAnalyses:
+				raw.sectionAnalyses ?? raw.section_analyses ?? raw.sections,
+		};
 
 		// Structural validation: must have required fields
-		if (
-			!parsed.chapterType ||
-			!Array.isArray(parsed.structures) ||
-			!Array.isArray(parsed.sectionAnalyses)
-		) {
+		const chapterType = parsed.chapterType;
+		const structures = Array.isArray(parsed.structures)
+			? parsed.structures
+			: [];
+		const sectionAnalyses = Array.isArray(parsed.sectionAnalyses)
+			? parsed.sectionAnalyses
+			: [];
+
+		if (!chapterType) {
 			return null;
 		}
 
-		// Ensure chapterId matches
+		// Normalize section analyses field names too
+		const normalizedAnalyses: SectionAnalysis[] = sectionAnalyses.map(
+			(sa: Record<string, unknown>) => ({
+				sectionId: String(sa.sectionId ?? sa.section_id ?? sa.id ?? ""),
+				title: String(sa.title ?? ""),
+				purpose: String(sa.purpose ?? ""),
+				knowledgeTypes: (sa.knowledgeTypes ??
+					sa.knowledge_types ??
+					sa.types ??
+					[]) as string[],
+				conceptsIntroduced: (sa.conceptsIntroduced ??
+					sa.concepts_introduced ??
+					sa.new_concepts ??
+					[]) as string[],
+				conceptsReferenced: (sa.conceptsReferenced ??
+					sa.concepts_referenced ??
+					sa.referenced_concepts ??
+					[]) as string[],
+				buildsOn: (sa.buildsOn ??
+					sa.builds_on ??
+					sa.dependencies ??
+					[]) as string[],
+				significance: String(sa.significance ?? ""),
+			}),
+		);
+
+		// Normalize structures field names
+		const normalizedStructures: KnowledgeStructure[] = structures.map(
+			(s: unknown) => {
+				if (typeof s === "string") {
+					return {
+						name: s,
+						type: "model" as const,
+						components: [],
+						sectionIds: [],
+					};
+				}
+				const obj = s as Record<string, unknown>;
+				return {
+					name: String(obj.name ?? ""),
+					type: String(obj.type ?? "model") as KnowledgeStructure["type"],
+					components: (obj.components ?? []) as string[],
+					sectionIds: (obj.sectionIds ?? obj.section_ids ?? []) as string[],
+				};
+			},
+		);
+
 		return {
 			chapterId: chapter.id,
-			chapterType: parsed.chapterType,
-			summary: parsed.summary ?? "",
-			structures: parsed.structures,
-			sectionAnalyses: parsed.sectionAnalyses,
+			chapterType: chapterType as ComprehensionMap["chapterType"],
+			summary: parsed.summary,
+			structures: normalizedStructures,
+			sectionAnalyses: normalizedAnalyses,
 		};
 	} catch {
 		return null;
