@@ -108,6 +108,28 @@ export function buildSynthesisPrompt(
 
 You do NOT have the raw chapter content — only the chapter maps. Work from those.
 
+Respond with a JSON object using EXACTLY these field names (camelCase):
+
+{
+  "crossCuttingThemes": [
+    {
+      "name": "<theme name>",
+      "description": "<what this theme is about>",
+      "chapterIds": ["<chapterId1>", "<chapterId2>"]
+    }
+  ],
+  "entityIndex": [
+    {
+      "name": "<primary concept name>",
+      "aliases": ["<alternative name1>", "<alternative name2>"],
+      "chapterIds": ["<chapterId1>"]
+    }
+  ],
+  "bookType": "<framework | survey | argumentative | narrative | practical>"
+}
+
+IMPORTANT: Use camelCase field names exactly as shown above. Do NOT use snake_case.
+
 Respond with valid JSON only. No markdown code fences. No explanation outside the JSON.`,
 			},
 		],

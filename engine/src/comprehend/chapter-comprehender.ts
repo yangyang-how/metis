@@ -45,7 +45,7 @@ export async function comprehendChapter(
 				messages,
 				responseSchema: getComprehensionMapSchema(),
 				temperature: 0.2,
-				maxTokens: 4096,
+				maxTokens: 8192,
 			});
 
 			totalInput += response.usage.inputTokens;

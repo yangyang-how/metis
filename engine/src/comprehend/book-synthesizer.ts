@@ -64,19 +64,34 @@ function parseResponse(content: string): BookSynthesis | null {
 			cleaned = cleaned.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
 		}
 
-		const parsed = JSON.parse(cleaned);
+		const raw = JSON.parse(cleaned);
 
-		if (
-			!Array.isArray(parsed.crossCuttingThemes) ||
-			!Array.isArray(parsed.entityIndex)
-		) {
+		// Normalize field names — models use snake_case despite instructions
+		const themes = raw.crossCuttingThemes ?? raw.cross_cutting_themes;
+		const entities = raw.entityIndex ?? raw.entity_index;
+
+		if (!Array.isArray(themes) || !Array.isArray(entities)) {
 			return null;
 		}
 
 		return {
-			crossCuttingThemes: parsed.crossCuttingThemes,
-			entityIndex: parsed.entityIndex,
-			bookType: parsed.bookType ?? "unknown",
+			crossCuttingThemes: themes.map((t: Record<string, unknown>) => ({
+				name: String(t.name ?? ""),
+				description: String(t.description ?? ""),
+				chapterIds: (t.chapterIds ??
+					t.chapter_ids ??
+					t.chapters ??
+					[]) as string[],
+			})),
+			entityIndex: entities.map((e: Record<string, unknown>) => ({
+				name: String(e.name ?? ""),
+				aliases: (e.aliases ?? []) as string[],
+				chapterIds: (e.chapterIds ??
+					e.chapter_ids ??
+					e.chapters ??
+					[]) as string[],
+			})),
+			bookType: String(raw.bookType ?? raw.book_type ?? "unknown"),
 		};
 	} catch {
 		return null;
