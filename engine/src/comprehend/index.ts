@@ -22,14 +22,19 @@ import type {
 } from "./types";
 
 export { ComprehendError } from "./errors";
+export { serializeBlocks, serializeSection } from "./serialize";
+export type { SerializeOptions } from "./serialize";
+export { normalizeChapters } from "./structure-inference";
 export type {
 	BookSynthesis,
+	ChapterMetadata,
 	ChapterType,
 	ComprehendInput,
 	ComprehensionMap,
 	ComprehensionResult,
 	KnowledgeStructure,
 	NormalizedChapter,
+	NormalizedSection,
 	SectionAnalysis,
 	Theme,
 } from "./types";
