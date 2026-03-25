@@ -27,8 +27,8 @@ import { parse } from "./parse/index";
 function parseArgs(argv: string[]) {
 	const args = argv.slice(2);
 	let epubPath = "";
-	let comprehendProvider = "anthropic";
-	let comprehendModel = "claude-sonnet-4-20250514";
+	let comprehendProvider = "kimi";
+	let comprehendModel = "kimi-k2-0711-preview";
 	let extractProvider = "kimi";
 	let extractModel = "kimi-k2-0711-preview";
 	let skipExtract = false;
