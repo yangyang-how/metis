@@ -8,7 +8,7 @@
  *   --comprehend-provider anthropic|kimi  (default: anthropic)
  *   --comprehend-model <model>            (default: claude-sonnet-4-20250514)
  *   --extract-provider anthropic|kimi     (default: kimi)
- *   --extract-model <model>               (default: moonshot-v1-128k)
+ *   --extract-model <model>               (default: kimi-k2-0711-preview)
  *   --skip-extract                         skip extraction stage
  *
  * Environment variables:
@@ -30,7 +30,7 @@ function parseArgs(argv: string[]) {
 	let comprehendProvider = "anthropic";
 	let comprehendModel = "claude-sonnet-4-20250514";
 	let extractProvider = "kimi";
-	let extractModel = "moonshot-v1-128k";
+	let extractModel = "kimi-k2-0711-preview";
 	let skipExtract = false;
 
 	for (let i = 0; i < args.length; i++) {
@@ -77,7 +77,7 @@ async function main() {
 		);
 		console.error("  --extract-provider anthropic|kimi     (default: kimi)");
 		console.error(
-			"  --extract-model <model>               (default: moonshot-v1-128k)",
+			"  --extract-model <model>               (default: kimi-k2-0711-preview)",
 		);
 		console.error("  --skip-extract                        skip extraction");
 		console.error("");

@@ -48,7 +48,7 @@ export async function extractSection(
 				messages,
 				responseSchema: getExtractionResponseSchema(),
 				temperature: 0.2,
-				maxTokens: 4096,
+				maxTokens: 16384, // reasoning models need headroom for thinking + output
 			});
 
 			totalInput += response.usage.inputTokens;

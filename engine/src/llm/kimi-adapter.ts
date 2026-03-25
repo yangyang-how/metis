@@ -18,7 +18,13 @@ import type {
 	ProviderConfig,
 } from "./types";
 
-const KIMI_BASE_URL = "https://api.moonshot.cn/v1";
+const KIMI_BASE_URL = "https://api.kimi.com/coding/v1";
+
+const KIMI_HEADERS = {
+	"User-Agent": "RooCode/3.30.3",
+	"HTTP-Referer": "https://github.com/RooVetGit/Roo-Cline",
+	"X-Title": "Roo Code",
+};
 
 /** Injected dependency for testing */
 export interface OpenAICompatibleClient {
@@ -115,6 +121,7 @@ function createRealClient(apiKey: string | undefined): OpenAICompatibleClient {
 	const sdk = new OpenAI({
 		apiKey: apiKey ?? "",
 		baseURL: KIMI_BASE_URL,
+		defaultHeaders: KIMI_HEADERS,
 	});
 
 	return {
@@ -145,5 +152,6 @@ function inferMaxTokens(model: string): number {
 	if (model.includes("128k")) return 128_000;
 	if (model.includes("32k")) return 32_000;
 	if (model.includes("8k")) return 8_000;
+	if (model.includes("k2")) return 128_000;
 	return 128_000; // default for Kimi
 }
