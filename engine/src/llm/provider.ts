@@ -8,6 +8,7 @@
  *   const provider = withRetry(createProvider(config));
  */
 import { createAnthropicProvider } from "./anthropic-adapter";
+import { createKimiProvider } from "./kimi-adapter";
 import type {
 	LLMProvider,
 	LLMRequest,
@@ -19,9 +20,11 @@ export function createProvider(config: ProviderConfig): LLMProvider {
 	switch (config.provider) {
 		case "anthropic":
 			return createAnthropicProvider(config);
+		case "kimi":
+			return createKimiProvider(config);
 		default:
 			throw new Error(
-				`Provider "${config.provider}" is not yet implemented. Available: anthropic`,
+				`Provider "${config.provider}" is not yet implemented. Available: anthropic, kimi`,
 			);
 	}
 }

@@ -17,7 +17,8 @@
     "@anthropic-ai/sdk": "^0.80.0",
     "fast-xml-parser": "^5.0.0",
     "fflate": "^0.8.0",
-    "node-html-parser": "^7.0.0"
+    "node-html-parser": "^7.0.0",
+    "openai": "^6.32.0"
   },
   "trustedDependencies": [
     "@biomejs/biome"
