@@ -38,10 +38,17 @@ const sampleTree: DocumentTree = {
 		},
 		{
 			id: "ch2",
-			title: "Chapter 2",
+			title: "Chapter 2: Analysis",
 			order: 1,
 			sections: [],
-			content: [{ type: "paragraph", text: "Short chapter." }],
+			content: [
+				{ type: "paragraph", text: "Analysis paragraph one." },
+				{ type: "paragraph", text: "Analysis paragraph two." },
+				{ type: "paragraph", text: "Analysis paragraph three." },
+				{ type: "paragraph", text: "Analysis paragraph four." },
+				{ type: "paragraph", text: "Analysis paragraph five." },
+				{ type: "paragraph", text: "Analysis paragraph six." },
+			],
 		},
 	],
 };

@@ -14,6 +14,7 @@ import type { LLMProvider } from "../llm/types";
 import type { DocumentTree } from "../parse/types";
 import { synthesizeBook } from "./book-synthesizer";
 import { comprehendChapter } from "./chapter-comprehender";
+import { filterChapters } from "./content-filter";
 import { normalizeChapters } from "./structure-inference";
 import type {
 	BookSynthesis,
@@ -22,6 +23,7 @@ import type {
 } from "./types";
 
 export { ComprehendError } from "./errors";
+export { filterChapters, isSkippableChapter } from "./content-filter";
 export { serializeBlocks, serializeSection } from "./serialize";
 export type { SerializeOptions } from "./serialize";
 export { normalizeChapters } from "./structure-inference";
@@ -50,7 +52,15 @@ export async function comprehend(
 	const { documentTree, provider } = options;
 
 	// === Phase 1: Structure inference (rule-based, no LLM) ===
-	const normalizedChapters = normalizeChapters(documentTree);
+	const allChapters = normalizeChapters(documentTree);
+
+	// === Phase 1.5: Filter front/back matter (saves LLM calls) ===
+	const { content: contentChapters, skipped } = filterChapters(allChapters);
+	if (skipped.length > 0) {
+		console.error(
+			`[comprehend] Skipping ${skipped.length} front/back matter chapters: ${skipped.map((c) => c.title.slice(0, 20)).join(", ")}`,
+		);
+	}
 
 	// === Phase 2: Chapter comprehension (one LLM call per chapter) ===
 	const chapterMaps: ComprehensionMap[] = [];
@@ -59,7 +69,12 @@ export async function comprehend(
 	let totalOutputTokens = 0;
 	let callCount = 0;
 
-	for (const chapter of normalizedChapters) {
+	for (let i = 0; i < contentChapters.length; i++) {
+		const chapter = contentChapters[i];
+		if (!chapter) continue;
+		console.error(
+			`[comprehend] Chapter ${i + 1}/${contentChapters.length}: ${chapter.title.slice(0, 50)}...`,
+		);
 		const result = await comprehendChapter(
 			chapter,
 			documentTree.metadata,
