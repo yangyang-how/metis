@@ -24,11 +24,14 @@ export function createOpenAIEmbeddingProvider(
 
 	return {
 		dimensions,
-		maxBatchSize: 2048,
+		maxBatchSize: 100,
 		async embed(texts: string[]): Promise<number[][]> {
+			// Filter out empty strings — OpenAI rejects them
+			const cleanTexts = texts.map((t) => t.trim() || "empty");
 			const response = await client.create({
 				model: config.model,
-				input: texts,
+				input: cleanTexts,
+				encoding_format: "float",
 			});
 			// OpenAI returns embeddings sorted by index
 			const sorted = [...response.data].sort((a, b) => a.index - b.index);

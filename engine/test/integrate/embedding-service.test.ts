@@ -34,7 +34,7 @@ describe("OpenAI Embedding Adapter", () => {
 			mockOpenAIClient([[[0.1, 0.2, 0.3]]]),
 		);
 		expect(provider.dimensions).toBe(3072);
-		expect(provider.maxBatchSize).toBe(2048);
+		expect(provider.maxBatchSize).toBe(100);
 	});
 
 	test("creates provider with correct dimensions for text-embedding-3-small", () => {
