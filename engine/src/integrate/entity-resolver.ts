@@ -140,7 +140,11 @@ export async function clusterMentions(
 		}
 
 		// Pass 3: embedding-based merge within domain
+		// Batch-embed all centroid texts once, then compare in memory
 		if (clusters.length > 1) {
+			const centroidTexts = clusters.map((c) => c.centroidText);
+			const centroidEmbeddings = await provider.embed(centroidTexts);
+
 			for (let i = 0; i < clusters.length; i++) {
 				for (let j = i + 1; j < clusters.length; j++) {
 					const a = clusters[i];
@@ -148,10 +152,8 @@ export async function clusterMentions(
 					if (!a || !b) continue;
 					if (a.mentions.length === 0 || b.mentions.length === 0) continue;
 
-					const textsToEmbed = [a.centroidText, b.centroidText];
-					const textEmbeddings = await provider.embed(textsToEmbed);
-					const embA = textEmbeddings[0];
-					const embB = textEmbeddings[1];
+					const embA = centroidEmbeddings[i];
+					const embB = centroidEmbeddings[j];
 					if (!embA || !embB) continue;
 					const sim = cosineSimilarity(embA, embB);
 
@@ -192,6 +194,21 @@ export async function resolveEntities(
 	);
 
 	// Step 3: LLM disambiguation for ambiguous cluster pairs
+	// Reuse centroid embeddings from clustering (batch-embed all cluster centroids)
+	const allCentroidTexts = clusters
+		.filter((c) => c.mentions.length > 0)
+		.map((c) => c.centroidText);
+	const allCentroidEmbeddings =
+		allCentroidTexts.length > 0
+			? await embeddingProvider.embed(allCentroidTexts)
+			: [];
+	const centroidEmbMap = new Map<string, number[]>();
+	for (let i = 0; i < allCentroidTexts.length; i++) {
+		const text = allCentroidTexts[i];
+		const emb = allCentroidEmbeddings[i];
+		if (text && emb) centroidEmbMap.set(text, emb);
+	}
+
 	const disambiguationPairs: Array<{
 		a: MentionCluster;
 		b: MentionCluster;
@@ -204,10 +221,8 @@ export async function resolveEntities(
 			if (a.domain !== b.domain) continue;
 			if (a.mentions.length === 0 || b.mentions.length === 0) continue;
 
-			const textsToEmbed = [a.centroidText, b.centroidText];
-			const textEmbeddings = await embeddingProvider.embed(textsToEmbed);
-			const tA = textEmbeddings[0];
-			const tB = textEmbeddings[1];
+			const tA = centroidEmbMap.get(a.centroidText);
+			const tB = centroidEmbMap.get(b.centroidText);
 			if (!tA || !tB) continue;
 			const sim = cosineSimilarity(tA, tB);
 			if (sim >= CLUSTER_AMBIGUOUS_THRESHOLD && sim < CLUSTER_MERGE_THRESHOLD) {
