@@ -8,6 +8,8 @@ import type { CandidateAtom } from "../extract/types";
 import type { EmbeddingProvider } from "../llm/embedding-types";
 import type { LLMProvider } from "../llm/types";
 import { cosineSimilarity } from "./embedding-service";
+import { buildDomainMap, normalizeDomain } from "./domain-normalizer";
+import type { DomainMap } from "./domain-normalizer";
 import { entityDisambiguationPrompt } from "./prompts";
 import type { Entity, EntityIndex, EntityMention, VectorIndex } from "./types";
 
@@ -52,14 +54,15 @@ export interface ResolveResult {
 	};
 }
 
-export function extractMentions(atoms: CandidateAtom[]): EntityMention[] {
+export function extractMentions(atoms: CandidateAtom[], domainMap?: DomainMap): EntityMention[] {
 	const mentions: EntityMention[] = [];
 
 	for (const atom of atoms) {
 		const entityRoles = ENTITY_ROLES[atom.frame];
 		if (!entityRoles) continue;
 
-		const domain = atom.domain[0] ?? "untagged";
+		const rawDomain = atom.domain[0] ?? "untagged";
+		const domain = domainMap ? normalizeDomain(rawDomain, domainMap) : rawDomain;
 
 		for (const role of entityRoles) {
 			const value = atom.roles[role];
@@ -182,8 +185,23 @@ export async function resolveEntities(
 	let newEntityCount = 0;
 	let mergedCount = 0;
 
-	// Step 1: Extract mentions from new atoms
-	const mentions = extractMentions(newAtoms);
+	// Step 0: Build domain normalization map
+	const domainCounts = new Map<string, number>();
+	for (const atom of newAtoms) {
+		const d = atom.domain[0] ?? "untagged";
+		domainCounts.set(d, (domainCounts.get(d) ?? 0) + 1);
+	}
+	// Include existing entity domains so new atoms can merge into them
+	for (const entity of Object.values(existingEntities)) {
+		domainCounts.set(entity.domain, (domainCounts.get(entity.domain) ?? 0) + 1);
+	}
+
+	console.error(`[integrate] Normalizing ${domainCounts.size} domains...`);
+	const domainMap = await buildDomainMap(domainCounts, embeddingProvider);
+	console.error(`[integrate] Collapsed to ${domainMap.canonicals.size} canonical domains`);
+
+	// Step 1: Extract mentions from new atoms (with normalized domains)
+	const mentions = extractMentions(newAtoms, domainMap);
 
 	// Step 2: Cluster mentions
 	const clusters = await clusterMentions(
@@ -297,11 +315,14 @@ export async function resolveEntities(
 		);
 
 		// Check if this merges into an existing entity
+		// Normalize existing entity domain for comparison
 		const existingEntity = Object.values(entities).find(
-			(e) =>
-				e.domain === domain &&
-				(e.canonicalName.toLowerCase() === canonicalName ||
-					e.aliases.some((a) => a.toLowerCase() === canonicalName)),
+			(e) => {
+				const eDomain = normalizeDomain(e.domain, domainMap);
+				return eDomain === domain &&
+					(e.canonicalName.toLowerCase() === canonicalName ||
+						e.aliases.some((a) => a.toLowerCase() === canonicalName));
+			},
 		);
 
 		if (existingEntity) {
