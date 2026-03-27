@@ -275,9 +275,9 @@ export async function resolveEntities(
 					}
 				}
 			}
-		} catch {
+		} catch (err) {
 			console.warn(
-				"[integrate] Entity disambiguation LLM call failed — treating as separate",
+				`[integrate] Entity disambiguation LLM call failed — treating as separate: ${(err as Error).message?.slice(0, 100)}`,
 			);
 		}
 	}

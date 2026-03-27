@@ -22,20 +22,32 @@ export function createOpenAIEmbeddingProvider(
 	const client = mockClient ?? createRealClient(apiKey);
 	const dimensions = inferDimensions(config.model);
 
+	const batchSize = 100;
+
 	return {
 		dimensions,
-		maxBatchSize: 100,
+		maxBatchSize: batchSize,
 		async embed(texts: string[]): Promise<number[][]> {
+			if (texts.length === 0) return [];
 			// Filter out empty strings — OpenAI rejects them
 			const cleanTexts = texts.map((t) => t.trim() || "empty");
-			const response = await client.create({
-				model: config.model,
-				input: cleanTexts,
-				encoding_format: "float",
-			});
-			// OpenAI returns embeddings sorted by index
-			const sorted = [...response.data].sort((a, b) => a.index - b.index);
-			return sorted.map((d) => d.embedding);
+
+			// Auto-batch: split into chunks of batchSize
+			const allResults: number[][] = new Array(cleanTexts.length);
+			for (let start = 0; start < cleanTexts.length; start += batchSize) {
+				const batchTexts = cleanTexts.slice(start, start + batchSize);
+				const response = await client.create({
+					model: config.model,
+					input: batchTexts,
+					encoding_format: "float",
+				});
+				const sorted = [...response.data].sort((a, b) => a.index - b.index);
+				for (let i = 0; i < sorted.length; i++) {
+					const entry = sorted[i];
+					if (entry) allResults[start + i] = entry.embedding;
+				}
+			}
+			return allResults;
 		},
 	};
 }
