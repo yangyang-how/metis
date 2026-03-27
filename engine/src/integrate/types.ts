@@ -5,9 +5,9 @@
  * and relation detection populate the cross-reference fields.
  */
 import type { CandidateAtom } from "../extract/types";
-import type { DocumentMetadata } from "../parse/types";
 import type { EmbeddingProvider } from "../llm/embedding-types";
 import type { LLMProvider } from "../llm/types";
+import type { DocumentMetadata } from "../parse/types";
 
 // --- Input/Output ---
 

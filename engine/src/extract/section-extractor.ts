@@ -1,3 +1,5 @@
+import { estimateTokens } from "../comprehend/token-estimator";
+import type { NormalizedSection, SectionAnalysis } from "../comprehend/types";
 /**
  * Section extractor — one LLM call per section (or split if too large).
  *
@@ -10,13 +12,8 @@
  */
 import type { LLMProvider } from "../llm/types";
 import type { ContentBlock } from "../parse/types";
-import type { NormalizedSection, SectionAnalysis } from "../comprehend/types";
 import type { DocumentMetadata } from "../parse/types";
-import { estimateTokens } from "../comprehend/token-estimator";
-import {
-	buildExtractionPrompt,
-	getExtractionResponseSchema,
-} from "./prompts";
+import { buildExtractionPrompt, getExtractionResponseSchema } from "./prompts";
 import type {
 	CandidateAtom,
 	FrameTypeRegistry,
@@ -249,9 +246,7 @@ function parseResponse(content: string): ParsedResponse | null {
 	try {
 		let cleaned = content.trim();
 		if (cleaned.startsWith("```")) {
-			cleaned = cleaned
-				.replace(/^```(?:json)?\n?/, "")
-				.replace(/\n?```$/, "");
+			cleaned = cleaned.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
 		}
 
 		const raw = JSON.parse(cleaned);
@@ -266,11 +261,11 @@ function parseResponse(content: string): ParsedResponse | null {
 			atoms: atoms.filter(
 				(a: Record<string, unknown>) => a.frame && a.roles,
 			) as RawAtom[],
-			proposedFrameTypes: (
-				Array.isArray(proposedFrameTypes) ? proposedFrameTypes : []
+			proposedFrameTypes: (Array.isArray(proposedFrameTypes)
+				? proposedFrameTypes
+				: []
 			).filter(
-				(p: Record<string, unknown>) =>
-					p.name && p.roles && p.description,
+				(p: Record<string, unknown>) => p.name && p.roles && p.description,
 			) as ProposedFrameType[],
 		};
 	} catch {

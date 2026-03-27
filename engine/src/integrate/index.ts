@@ -32,13 +32,8 @@ export type {
 export async function integrate(
 	input: IntegrateInput,
 ): Promise<KnowledgeGraph> {
-	const {
-		atoms,
-		metadata,
-		existingGraph,
-		llmProvider,
-		embeddingProvider,
-	} = input;
+	const { atoms, metadata, existingGraph, llmProvider, embeddingProvider } =
+		input;
 
 	const existingAtoms: CandidateAtom[] = existingGraph?.atoms ?? [];
 	const existingEntities = existingGraph?.entities ?? {};

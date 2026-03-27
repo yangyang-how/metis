@@ -1,27 +1,32 @@
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 /**
  * Batch pipeline runner — process multiple EPUBs sequentially.
  *
  * Usage:
- *   KIMI_API_KEY=... bun run src/run-batch.ts
+ *   KIMI_API_KEY=... OPENAI_API_KEY=... bun run src/run-batch.ts
  *
- * Processes each book through parse → comprehend → extract.
- * Results saved as JSON files in engine/output/.
+ * Processes each book through parse → comprehend → extract → integrate.
+ * Per-book results saved as JSON in engine/output/.
+ * Shared knowledge graph saved in engine/graph/.
  */
 import { comprehend } from "./comprehend/index";
 import { normalizeChapters } from "./comprehend/structure-inference";
 import { createRegistry, extract } from "./extract/index";
+import type { CandidateAtom } from "./extract/types";
+import { integrate } from "./integrate/index";
+import type { KnowledgeGraph } from "./integrate/types";
+import { createOpenAIEmbeddingProvider } from "./llm/openai-embedding";
 import { createProvider, withRetry } from "./llm/provider";
 import { parse } from "./parse/index";
 
 const BOOKS = [
-	"/Users/shuang/bohr-vault/50-library/法国思想四百年_彼得沃森.epub",
-	"/Users/shuang/bohr-vault/50-library/Designing Data-Intensive Applications.epub",
+	"/Users/shuang/bohr-vault/50-library/制度基因_中国制度与极权主义制度的起源.epub",
 ];
 
 const OUTPUT_DIR = join(new URL(".", import.meta.url).pathname, "../output");
-const INTER_CALL_DELAY = 2000; // 2s between LLM calls for rate limiting
+const GRAPH_DIR = join(new URL(".", import.meta.url).pathname, "../graph");
+const INTER_CALL_DELAY = 2000;
 
 function sleep(ms: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -35,9 +40,61 @@ function slugify(title: string): string {
 		.slice(0, 50);
 }
 
+function loadExistingGraph(): KnowledgeGraph | null {
+	const atomsPath = join(GRAPH_DIR, "atoms.json");
+	if (!existsSync(atomsPath)) return null;
+
+	try {
+		const readJson = (f: string) =>
+			JSON.parse(readFileSync(join(GRAPH_DIR, f), "utf8"));
+		return {
+			atoms: readJson("atoms.json"),
+			entities: readJson("entities.json"),
+			graph: readJson("graph.json"),
+			embeddings: readJson("embeddings.json"),
+			stats: {
+				totalAtoms: 0,
+				totalEntities: 0,
+				newEntities: 0,
+				mergedEntities: 0,
+				reinforcements: 0,
+				contradictions: 0,
+				extensions: 0,
+				crossDomainLinks: 0,
+				llmCalls: 0,
+				embeddingTokens: 0,
+			},
+		};
+	} catch {
+		console.error("[integrate] Could not load existing graph — starting fresh");
+		return null;
+	}
+}
+
+function saveGraph(graph: KnowledgeGraph): void {
+	if (!existsSync(GRAPH_DIR)) mkdirSync(GRAPH_DIR, { recursive: true });
+	writeFileSync(
+		join(GRAPH_DIR, "atoms.json"),
+		JSON.stringify(graph.atoms, null, 2),
+	);
+	writeFileSync(
+		join(GRAPH_DIR, "entities.json"),
+		JSON.stringify(graph.entities, null, 2),
+	);
+	writeFileSync(
+		join(GRAPH_DIR, "graph.json"),
+		JSON.stringify(graph.graph, null, 2),
+	);
+	writeFileSync(
+		join(GRAPH_DIR, "embeddings.json"),
+		JSON.stringify(graph.embeddings),
+	);
+}
+
 async function processBook(
 	epubPath: string,
 	provider: ReturnType<typeof withRetry>,
+	embeddingProvider: ReturnType<typeof createOpenAIEmbeddingProvider>,
 ) {
 	const filename = epubPath.split("/").pop() ?? "unknown";
 	console.error(`\n${"=".repeat(60)}`);
@@ -71,7 +128,7 @@ async function processBook(
 	const normalizedChapters = normalizeChapters(tree);
 	let totalAtoms = 0;
 	let totalExtractTokens = 0;
-	const allAtoms: unknown[] = [];
+	const allAtoms: CandidateAtom[] = [];
 	const allProposed: unknown[] = [];
 
 	for (const chapter of normalizedChapters) {
@@ -100,7 +157,7 @@ async function processBook(
 		await sleep(INTER_CALL_DELAY);
 	}
 
-	// Save output
+	// Save per-book output
 	const slug = slugify(tree.metadata.title);
 	const outputPath = join(OUTPUT_DIR, `${slug}.json`);
 	const output = {
@@ -115,6 +172,22 @@ async function processBook(
 	};
 	writeFileSync(outputPath, JSON.stringify(output, null, 2));
 	console.error(`[save] Written to ${outputPath}`);
+
+	// Integrate into shared graph
+	console.error("[integrate] Integrating into knowledge graph...");
+	const existingGraph = loadExistingGraph();
+	const knowledgeGraph = await integrate({
+		atoms: allAtoms,
+		metadata: tree.metadata,
+		existingGraph,
+		llmProvider: provider,
+		embeddingProvider,
+	});
+	saveGraph(knowledgeGraph);
+	console.error(
+		`[integrate] Graph saved. ${knowledgeGraph.stats.totalEntities} entities, ${knowledgeGraph.stats.reinforcements} reinforcements`,
+	);
+
 	console.error(
 		`[summary] ${comprehendResult.chapterMaps.length} chapters, ${totalAtoms} atoms, ${comprehendResult.usage.totalInputTokens + comprehendResult.usage.totalOutputTokens + totalExtractTokens} total tokens`,
 	);
@@ -144,6 +217,11 @@ async function main() {
 		createProvider({ provider: "kimi", model: "kimi-k2-0711-preview" }),
 	);
 
+	const embeddingProvider = createOpenAIEmbeddingProvider({
+		provider: "openai",
+		model: "text-embedding-3-large",
+	});
+
 	const results: Array<{
 		title: string;
 		chapters: number;
@@ -153,7 +231,7 @@ async function main() {
 
 	for (const book of BOOKS) {
 		try {
-			const result = await processBook(book, provider);
+			const result = await processBook(book, provider, embeddingProvider);
 			results.push(result);
 		} catch (e) {
 			console.error(`FAILED: ${book}`);

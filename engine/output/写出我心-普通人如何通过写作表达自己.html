@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>写出我心:普通人如何通过写作表达自己 — Metis</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, 'Helvetica Neue', sans-serif; max-width: 1100px; margin: 0 auto; padding: 2rem; background: #fafafa; color: #222; line-height: 1.6; }
+h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+h2 { font-size: 1.4rem; margin: 1.5rem 0 0.75rem; border-bottom: 2px solid #2563eb; padding-bottom: 0.3rem; }
+h3 { font-size: 1.1rem; margin: 1rem 0 0.5rem; }
+.subtitle { color: #666; margin-bottom: 1.5rem; }
+.stats { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.stat { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 0.75rem 1.25rem; }
+.stat-value { font-size: 1.4rem; font-weight: 700; color: #2563eb; }
+.stat-label { font-size: 0.8rem; color: #666; }
+.card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1.25rem; margin-bottom: 1rem; }
+.card:hover { border-color: #2563eb; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.tag { display: inline-block; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 3px; padding: 1px 6px; margin: 2px; font-size: 0.78rem; }
+.tag.frame { background: #ede9fe; border-color: #c4b5fd; color: #5b21b6; }
+.tag.domain { background: #dbeafe; border-color: #93c5fd; color: #1e40af; }
+.tag.concept { background: #dcfce7; border-color: #86efac; color: #166534; }
+.tag.flag { background: #fef3c7; border-color: #fde047; color: #854d0e; }
+.type-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.78rem; font-weight: 600; }
+.type-badge.framework { background: #dbeafe; color: #1e40af; }
+.type-badge.narrative { background: #fef3c7; color: #92400e; }
+.type-badge.practical { background: #d1fae5; color: #065f46; }
+.type-badge.argumentative { background: #fce7f3; color: #9d174d; }
+.type-badge.survey { background: #e0e7ff; color: #3730a3; }
+.type-badge.unknown { background: #f3f4f6; color: #6b7280; }
+.atom { border-left: 3px solid #c4b5fd; padding: 0.75rem; margin: 0.5rem 0; background: #fafafa; border-radius: 0 4px 4px 0; }
+.atom-header { display: flex; justify-content: space-between; align-items: center; }
+.atom-frame { font-weight: 600; color: #5b21b6; }
+.atom-confidence { font-size: 0.8rem; color: #666; }
+.roles { margin: 0.5rem 0; font-size: 0.9rem; }
+.role-name { color: #888; font-weight: 500; }
+.bar { height: 20px; border-radius: 3px; display: inline-block; }
+.chart { margin: 0.5rem 0; }
+details summary { cursor: pointer; color: #2563eb; font-weight: 500; padding: 0.25rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 0.5rem 0; }
+th, td { text-align: left; padding: 0.4rem 0.75rem; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+th { background: #f8fafc; font-weight: 600; }
+</style></head><body>
+<p><a href="index.html">← All Books</a></p>
+<h1>写出我心:普通人如何通过写作表达自己</h1>
+<p class="subtitle">娜塔莉·戈德堡 (Natalie Goldberg)</p>
+<div class="stats">
+<div class="stat"><div class="stat-value">72</div><div class="stat-label">Chapters</div></div>
+<div class="stat"><div class="stat-value">667</div><div class="stat-label">Atoms</div></div>
+<div class="stat"><div class="stat-value">15</div><div class="stat-label">Frame Types</div></div>
+<div class="stat"><div class="stat-value">0</div><div class="stat-label">Failed Chapters</div></div>
+</div>
+
+<h2>Frame Type Distribution</h2>
+<div class="chart"><div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">heuristic</span>
+		<div class="bar" style="width:300px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">136</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">example_of</span>
+		<div class="bar" style="width:231.61764705882354px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">105</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">principle</span>
+		<div class="bar" style="width:198.52941176470588px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">90</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">has_property</span>
+		<div class="bar" style="width:152.20588235294116px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">69</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">definition</span>
+		<div class="bar" style="width:147.79411764705884px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">67</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">causal</span>
+		<div class="bar" style="width:105.88235294117648px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">48</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">causal_chain</span>
+		<div class="bar" style="width:92.64705882352942px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">42</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">deviation</span>
+		<div class="bar" style="width:68.38235294117646px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">31</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">procedure</span>
+		<div class="bar" style="width:55.14705882352941px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">25</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">is_a</span>
+		<div class="bar" style="width:46.32352941176471px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">21</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">method_comparison</span>
+		<div class="bar" style="width:24.264705882352942px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">11</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">taxonomy</span>
+		<div class="bar" style="width:15.441176470588234px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">7</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">threshold</span>
+		<div class="bar" style="width:13.23529411764706px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">6</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">consists_of</span>
+		<div class="bar" style="width:11.029411764705882px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">5</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">sequence</span>
+		<div class="bar" style="width:8.823529411764707px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">4</span>
+	</div></div>
+
+
+
+<h2>Chapters</h2>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-1</strong>
+		<span class="type-badge narrative">narrative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">The opening title page delivers an immediate, uncompromising call to action in poetic form, establishing the book's core philosophy of writing without hesitation or inhibition.</p>
+	<div><span class="tag frame">Immediate Writing Imperative (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-2</strong>
+		<span class="type-badge narrative">narrative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter contains the copyright page and bibliographic metadata for the Chinese translation of Natalie Goldberg's 'Writing Down the Bones', including legal copyright notices, publication details, </p>
+	
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-3</strong>
+		<span class="type-badge narrative">narrative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">A brief dedicatory chapter addressing the author's students across all time periods (past, present, and future). It introduces the poetic metaphor of a 'heaven cafe' where writing continues eternally,</p>
+	<div><span class="tag frame">Temporal dedication framework (progression)</span> <span class="tag frame">Heaven cafe metaphor (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-4</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This preface establishes the philosophical foundation of &quot;Writing Down the Bones,&quot; presenting writing as a democratic, spiritual practice accessible to all regardless of social background. The author </p>
+	<div><span class="tag frame">Writing as Democratic Practice (model)</span> <span class="tag frame">Zen-Writing Parallel (comparison)</span> <span class="tag frame">Kerouac's Writing Supports (framework)</span> <span class="tag frame">Author's Writing Development (progression)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-5</strong>
+		<span class="type-badge narrative">narrative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">作者通过个人从学术写作到觉醒的叙事，阐述写作作为修行方式的理念，介绍本书非线性、重实践的教学哲学，并建立'相信自己的心'这一核心方法论。</p>
+	<div><span class="tag frame">作者写作觉醒历程 (progression)</span> <span class="tag frame">写作即修行模型 (model)</span> <span class="tag frame">非线性学习方法论 (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-6</strong>
+		<span class="type-badge survey">survey</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter presents the complete table of contents for the book, cataloging all sections from the preface through the afterword. It functions as a comprehensive roadmap outlining the progression of </p>
+	<div><span class="tag frame">Writing Practice Taxonomy (taxonomy)</span> <span class="tag frame">Book Progression (progression)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-7</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter introduces the concept of 'beginner's mind' as an essential mindset for writing, emphasizing that each writing session requires a fresh start without reliance on past successes. It provid</p>
+	<div><span class="tag frame">Beginner's Mind Framework (model)</span> <span class="tag frame">Writing Tools Selection Process (process)</span> <span class="tag frame">Instrument Comparison Matrix (comparison)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-8</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter introduces 'first thoughts' (初始的意念) as the foundation of writing practice, presenting a timed writing method with six specific rules designed to bypass the ego and social filters. It expl</p>
+	<div><span class="tag frame">Writing Practice Process (process)</span> <span class="tag frame">First Thoughts vs Filtered Cognition (comparison)</span> <span class="tag frame">Six Rules Framework (model)</span> <span class="tag frame">Meditation-Writing Discipline Parallel (comparison)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-9</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter establishes writing as a disciplined practice akin to physical exercise, emphasizing regularity over inspiration. It introduces the metaphor of the 'original forest' (raw practice) versus</p>
+	<div><span class="tag frame">Writing as Athletic Practice (comparison)</span> <span class="tag frame">Original Forest and Garden (model)</span> <span class="tag frame">Writing Practice Process (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-10</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter introduces the 'composting' metaphor as a framework for understanding the creative writing process, explaining that experiences require time to decompose and be processed by the body and </p>
+	<div><span class="tag frame">Composting Model of Creativity (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-11</strong>
+		<span class="type-badge narrative">narrative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter uses a personal anecdote about the author sharing decades of notebook 'garbage' with a friend to illustrate that artistic stability comes from persistently writing through one's insecurit</p>
+	<div><span class="tag frame">The Composting Process of Writing (process)</span> <span class="tag frame">The Five-Year Garbage-to-Growth Progression (progression)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-12</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter provides concrete methods for overcoming writer's block by maintaining a personal list of writing topics. It explains the 'composting' process of gathering daily material and offers fifte</p>
+	<div><span class="tag frame">Topic List Creation Process (process)</span> <span class="tag frame">Composting Model of Creativity (model)</span> <span class="tag frame">Fifteen Writing Exercises Taxonomy (taxonomy)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-13</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter addresses writer's resistance and procrastination through the metaphor of 'fighting tofu' (打豆腐)—a futile struggle against the soft, yielding nature of the resistant self. It critiques har</p>
+	<div><span class="tag frame">打豆腐 Resistance Metaphor (model)</span> <span class="tag frame">内心冲突处理流程 (process)</span> <span class="tag frame">写作驱策策略分类 (taxonomy)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-14</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter addresses the challenge of the internal editor or censor that interferes with creative writing. It introduces the crucial separation between the creator and the editor during writing prac</p>
+	<div><span class="tag frame">Creator-Editor Separation Framework (comparison)</span> <span class="tag frame">Silencing the Internal Editor Process (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-15</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter uses personal anecdotes from teaching poetry in rural Minnesota and urban Detroit to illustrate a method for generating authentic writing material. The author argues that writers should r</p>
+	<div><span class="tag frame">The Open Presence Writing Method (process)</span> <span class="tag frame">Fear-Based Preparation vs. Open Presence (comparison)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-16</strong>
+		<span class="type-badge argumentative">argumentative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter argues that writing ability is like groundwater—accessible through persistent practice rather than external study. Using the metaphor of tapping a water table and William Carlos Williams'</p>
+	<div><span class="tag frame">Groundwater Model of Talent (model)</span> <span class="tag frame">Learning by Doing versus Academic Study (comparison)</span> <span class="tag frame">Direct Experience as Enlightenment (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-17</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter establishes a philosophical framework of non-attachment for writers, arguing that creative identity must remain fluid and separate from written output. It emphasizes that writing is a mom</p>
+	<div><span class="tag frame">Writer-Work Distinction Model (model)</span> <span class="tag frame">Creative Practice Cycle (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-18</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter uses the absurd story of a yogi eating a car to illustrate how writers should approach their craft: consuming all experiences without logical selection or censorship. It explains that tru</p>
+	<div><span class="tag frame">Man Eats Car Writing Method (model)</span> <span class="tag frame">Metaphor as Boundary Dissolution (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-19</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter uses the metaphor of fast food versus slow cooking to teach writers that authentic writing cannot be rushed or forced like a manufactured product. It emphasizes writing as a vulnerable, l</p>
+	<div><span class="tag frame">Writing as Organic Process vs. Manufactured Product (comparison)</span> <span class="tag frame">The Writing Journey Progression (progression)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-20</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter explores how writers are inevitably drawn to their obsessions—those persistent themes and subjects they cannot forget. Natalie Goldberg advocates embracing these obsessions as powerful fu</p>
+	<div><span class="tag frame">The Obsession Synagogue Model (model)</span> <span class="tag frame">Channeling vs. Suppression (comparison)</span> <span class="tag frame">From Recognition to Material (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-21</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter teaches writers to ground their work in authentic, specific details drawn from real-life observation. It demonstrates how sensory particulars (furniture, food, clothing) can be transplant</p>
+	<div><span class="tag frame">Authentic Detail Transplantation Process (process)</span> <span class="tag frame">Detail Appropriateness Spectrum (comparison)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-22</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter establishes a philosophical framework arguing that recording concrete, specific details from ordinary life is a sacred act of affirmation and resistance against erasure and anonymity. Thr</p>
+	<div><span class="tag frame">Detail as Affirmation Model (model)</span> <span class="tag frame">Memorial Comparison Framework (comparison)</span> <span class="tag frame">The Yes Attitude Process (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-23</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter presents the metaphor of baking a cake as a framework for understanding the writing process, emphasizing that raw life details (ingredients) must be transformed by emotional energy and at</p>
+	<div><span class="tag frame">The Cake Baking Metaphor (model)</span> <span class="tag frame">Heat Generation Techniques (process)</span> <span class="tag frame">Material vs Heat Balance (comparison)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-24</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter presents the concept that writers possess 'two lives'—one ordinary existence and a second, trained capacity for deep observation and reflection. Through the central metaphor of a writer s</p>
+	<div><span class="tag frame">The Two Lives Model (model)</span> <span class="tag frame">Fool versus Wise Person (comparison)</span> <span class="tag frame">Time as Family Land (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-25</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter reframes writing as a fundamentally physical and somatic practice rather than a purely intellectual activity. Through metaphors of boxing and karate, personal anecdotes about teaching, an</p>
+	<div><span class="tag frame">Somatic Writing Model (model)</span> <span class="tag frame">Physical Breakthrough Indicators (taxonomy)</span> <span class="tag frame">Writing and Combat Arts Analogy (comparison)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-26</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter uses the author's personal journey from being labeled 'tone-deaf' to learning to sing through deep listening as a metaphor for writing. It argues that writing is 90% listening—not just to</p>
+	<div><span class="tag frame">Singing-Writing Parallel (comparison)</span> <span class="tag frame">Deep Listening Process (process)</span> <span class="tag frame">Three Pillars of Writing Practice (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-27</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter uses the metaphor of a fly in a restaurant to warn writers against the pitfall of becoming obsessed with tangential details at the expense of the main narrative. It teaches the distinctio</p>
+	<div><span class="tag frame">The Fly Metaphor (model)</span> <span class="tag frame">Precision versus Self-Indulgence (comparison)</span> <span class="tag frame">Managing Narrative Attention (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-28</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter warns against conflating self-worth with writing success, advising writers not to use their work as a tool for seeking love, validation, or proof of their right to exist. It offers practi</p>
+	<div><span class="tag frame">Separation of Self and Writing (model)</span> <span class="tag frame">Receiving Support Process (process)</span> <span class="tag frame">Praise vs. Criticism Reception (comparison)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-29</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter guides writers to move beyond technical skill acquisition to discover their deep creative dreams through writing practice. Using personal anecdotes and a specific writing exercise, it dem</p>
+	<div><span class="tag frame">Deep Dreams Revelation Process (process)</span> <span class="tag frame">Creative Career Progression (progression)</span> <span class="tag frame">Writing Forms and Identity (comparison)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-30</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter presents a concrete writing exercise to break free from standard subject-verb-object syntactic patterns. It explains how conventional sentence structures reinforce anthropocentric, ego-ce</p>
+	<div><span class="tag frame">Syntactic Liberation Exercise (process)</span> <span class="tag frame">Cross-Linguistic Syntax Comparison (comparison)</span> <span class="tag frame">Language-Worldview Model (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-31</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter introduces Russell Edson's absurdist writing method through a narrative of his reading at the University of Minnesota. It showcases his surrealist prose poems and opening lines as example</p>
+	<div><span class="tag frame">Edson Productivity Process (process)</span> <span class="tag frame">Absurdist Writing Model (model)</span> <span class="tag frame">Categories of Surreal Openings (taxonomy)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-32</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter explains the fundamental writing principle of 'show, don't tell'—advising writers to convey emotions and abstract concepts through concrete sensory details rather than direct statements, </p>
+	<div><span class="tag frame">Show Don't Tell Principle (model)</span> <span class="tag frame">Telling versus Showing (comparison)</span> <span class="tag frame">Transformation from Abstract to Concrete (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-33</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter advocates for specificity in writing, urging writers to replace general terms like 'fruit' or 'flower' with precise names such as 'pomegranate' or 'geranium.' It connects the act of namin</p>
+	<div><span class="tag frame">Specificity as Mindfulness Practice (process)</span> <span class="tag frame">General versus Specific Terms (comparison)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-34</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter teaches writers how to practice 'Big Concentration'—maintaining intense focus on specific details while simultaneously keeping peripheral awareness of the broader universe. Using Zen walk</p>
+	<div><span class="tag frame">Big Concentration Balance Model (model)</span> <span class="tag frame">Kinhin Walking Meditation Process (process)</span> <span class="tag frame">Writing Technique Framework (framework)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-35</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter establishes a philosophical framework for writing that dissolves the boundary between ordinary and extraordinary. Through vivid examples including Hopi snake dances, Georgia O'Keeffe's Ab</p>
+	<div><span class="tag frame">The Ordinary-Extraordinary Unity (comparison)</span> <span class="tag frame">Details as Bridge to Cosmos (process)</span> <span class="tag frame">Web of Interconnected Existence (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-36</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter validates conversation and gossip as essential practice grounds for writing. It argues that talking helps writers discover material, test what engages listeners, and learn the craft of sh</p>
+	<div><span class="tag frame">Talk-to-Write Process (process)</span> <span class="tag frame">Gossip as Research Framework (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-37</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter reframes writing as a fundamentally communal rather than solitary act. It argues against the 'Prometheus' myth of the isolated genius, presenting instead a framework where writers learn t</p>
+	<div><span class="tag frame">Solitary Genius vs Communal Writer (debate)</span> <span class="tag frame">The Great Lover Model of Writing Apprenticeship (model)</span> <span class="tag frame">Tribal vs Hermit Writer (comparison)</span> <span class="tag frame">Healthy Literary Influence Process (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-38</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter presents Goldberg's central pedagogy for accessing creative truth: writers must abandon linear logical thinking (1+1=2) in favor of an open, poetic mindset where 1+1 equals infinite possi</p>
+	<div><span class="tag frame">Logical vs Poetic Cognition (comparison)</span> <span class="tag frame">Method of Egoless Immersion (process)</span> <span class="tag frame">Factual vs Metaphorical Autobiography (comparison)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-39</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter presents a framework for writers to maintain constant writerly awareness by adopting an 'animal' state of sensory presence and bodily intelligence. It contrasts this mindful state with fe</p>
+	<div><span class="tag frame">Animal Consciousness Model (model)</span> <span class="tag frame">Fear versus Awareness Comparison (comparison)</span> <span class="tag frame">Integrated Writer Identity Framework (framework)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-40</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter advises writers to avoid hedging language and qualifiers (particularly patterns observed in women's speech from 1970s linguistics research) and instead make definitive, confident statemen</p>
+	<div><span class="tag frame">Definitive Statement Practice (process)</span> <span class="tag frame">Self-Answered Question Framework (framework)</span> <span class="tag frame">Language Patterns Comparison (comparison)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-41</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter presents a concrete writing exercise designed to help writers discover the transformative power of verbs by combining arbitrary nouns with profession-specific verbs. It demonstrates how u</p>
+	<div><span class="tag frame">Noun-Verb Combination Exercise (process)</span> <span class="tag frame">Verb Energy Model (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-42</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter provides practical guidance on using restaurants and cafes as writing spaces, covering social etiquette for establishing oneself as a 'regular,' the psychological benefits of writing in p</p>
+	<div><span class="tag frame">Restaurant Writing Etiquette Process (process)</span> <span class="tag frame">Environmental Selection Comparison (comparison)</span> <span class="tag frame">Sensory Stimulation Focus Model (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-43</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter challenges the notion that writers need a perfectly appointed, permanent studio to write. It argues that over-investment in creating an ideal writing space often serves as procrastination</p>
+	<div><span class="tag frame">Perfectionism vs Functionalism in Writing Spaces (comparison)</span> <span class="tag frame">Writer's Commitment Progression (progression)</span> <span class="tag frame">Spatial-Mental State Model (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-44</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter provides practical writing guidance on how to approach 'big topics' like eroticism without falling into abstraction or fear. It advocates for indirect, gradual revelation through concrete</p>
+	<div><span class="tag frame">渐进式接近法 (Gradual Approach via Swimming Metaphor) (process)</span> <span class="tag frame">并肩同行写作模型 (Side-by-Side Writing Model) (model)</span> <span class="tag frame">情色写作切入角度分类 (Erotic Writing Entry Points) (taxonomy)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-45</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter teaches writers to combat familiarity blindness by adopting a 'tourist mindset' toward their own daily environment. It advocates finding profound writing material in ordinary, overlooked </p>
+	<div><span class="tag frame">Tourist Perspective Model (model)</span> <span class="tag frame">Tourist vs Local Mindset (comparison)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-46</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter argues that writers do not need perfect conditions or locations to write. It encourages maintaining writing practice amidst chaos and lists numerous unconventional places where writing ca</p>
+	<div><span class="tag frame">Environmental Flexibility Model (model)</span> <span class="tag frame">Writing Locations Taxonomy (taxonomy)</span> <span class="tag frame">Writing Through Chaos Process (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-47</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter advises writers to push beyond their perceived stopping points and comfort zones. Through personal anecdotes and teaching experiences, Goldberg argues that the most powerful writing emerg</p>
+	<div><span class="tag frame">The Writing Deepening Process (process)</span> <span class="tag frame">Avoidance versus Authentic Resolution (comparison)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-48</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter uses personal narrative from the author's travels in Greece and Paris to demonstrate how writing from a place of pain, fear, and isolation leads to breakthroughs and compassion. It presen</p>
+	<div><span class="tag frame">Pain-to-Compassion Writing Process (process)</span> <span class="tag frame">Geographic Breakthrough Model (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-49</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter addresses the psychological torture of self-doubt in the writing life. Through a Zen teaching about resilience versus passive acceptance, it argues that writers must develop an attitude o</p>
+	<div><span class="tag frame">Attitudes Toward Setbacks (comparison)</span> <span class="tag frame">The Doubt-Response Cycle (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-50</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter uses the Jewish tradition of giving honey to children learning the Torah to establish that writing should be associated with sweetness and pleasure rather than struggle. Through personal </p>
+	<div><span class="tag frame">Sweetness Association Model (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-51</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter presents a Zen-inspired approach to writing practice, emphasizing that each moment offers a fresh start empty of past successes or failures. Through analogies of blooming tulips and a sto</p>
+	<div><span class="tag frame">The New Moment Framework (model)</span> <span class="tag frame">Releasing the Past Process (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-52</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter explores the existential question of why people write, presenting a framework that validates multiple, contradictory motivations while distinguishing writing from therapy. The author shar</p>
+	<div><span class="tag frame">Motivations Taxonomy (taxonomy)</span> <span class="tag frame">Writing Versus Therapy (comparison)</span> <span class="tag frame">Temporal Authenticity Model (model)</span> <span class="tag frame">Emotional Alchemy Process (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-53</strong>
+		<span class="type-badge narrative">narrative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter uses personal anecdotes to convey that writing is fundamentally about process, relationship, and connection rather than productivity. Through stories about writing with a friend every Mon</p>
+	<div><span class="tag frame">Monday Writing Ritual (process)</span> <span class="tag frame">Process Versus Product (comparison)</span> <span class="tag frame">Interconnectedness Model (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-54</strong>
+		<span class="type-badge argumentative">argumentative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter uses personal anecdotes from writing sessions with Kate and references to Hemingway to argue that writers must bridge the gap between their bold artistic voices and their weak personal be</p>
+	<div><span class="tag frame">Writing self vs Living self dichotomy (comparison)</span> <span class="tag frame">Integration of art into daily life (process)</span> <span class="tag frame">Hemingway exemplar (comparison)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-55</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter introduces the practice of setting up spontaneous writing booths at public events as a method for developing unselfconscious writing and non-attachment. The author shares her experience w</p>
+	<div><span class="tag frame">Spontaneous Writing Method (process)</span> <span class="tag frame">Zen Non-Attachment Comparison (comparison)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-56</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter teaches that while mastering literary forms through study and practice is essential, true art requires injecting life and spirit into the structure. Using haiku as the central example, it</p>
+	<div><span class="tag frame">Learning Writing Forms Process (process)</span> <span class="tag frame">Form versus Essence (comparison)</span> <span class="tag frame">Authentic Haiku Model (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-57</strong>
+		<span class="type-badge narrative">narrative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter uses the story of a student named David who wrote transgressively about masturbation alongside reflections on a 'safe' Tuesday night class to argue that writers must give themselves permi</p>
+	<div><span class="tag frame">David vs. Precise Students Comparison (comparison)</span> <span class="tag frame">Wandering to Precision Process (process)</span> <span class="tag frame">Large Field Metaphor (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-58</strong>
+		<span class="type-badge argumentative">argumentative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter critiques mechanical, duty-bound writing practices (乡愿的个性) and argues for authentic, wholehearted engagement with writing. Through personal anecdotes and analogies, the author demonstrate</p>
+	<div><span class="tag frame">Duty-bound versus Wholehearted Writing (comparison)</span> <span class="tag frame">Writing-Life Authenticity Cycle (model)</span> <span class="tag frame">Creative Rhythm Process (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-59</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter establishes writing as an inevitable vocation that persists despite resistance and life circumstances. It presents a philosophical framework for accepting writing as one's authentic path,</p>
+	<div><span class="tag frame">Path to Writing Vocation (progression)</span> <span class="tag frame">Resilient Writing Practice Model (model)</span> <span class="tag frame">Writing as Essential Function (comparison)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-60</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter presents writing about food as a practical technique to overcome writer's block and abstract writing. It uses Diane DiPrima's work as a model and provides a framework for expanding from c</p>
+	<div><span class="tag frame">Concrete-to-Abstract Expansion Process (process)</span> <span class="tag frame">Food Writing Heuristic (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-61</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter teaches writers how to transform the pain of loneliness into creative energy and authentic expression. Drawing from Zen teachings and personal narrative, it presents aloneness not as an o</p>
+	<div><span class="tag frame">Transformation of Loneliness into Connection (process)</span> <span class="tag frame">Zen Model of Enduring Loneliness (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-62</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter presents a technique for overcoming creative stagnation and writer's block by using physical props, costumes, and altered appearances (such as blue lipstick, cigarettes, or medical coats)</p>
+	<div><span class="tag frame">Prop-Based Perspective Shifting Method (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-63</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter argues that writers must return to their cultural, familial, and geographical roots to achieve authentic, complete work, but warns against becoming trapped in provincialism. Through perso</p>
+	<div><span class="tag frame">The Going Home Methodology (process)</span> <span class="tag frame">Root vs. Hungry Ghost Writing (comparison)</span> <span class="tag frame">Identity Integration Model (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-64</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">Natalie Goldberg describes her experience hosting story circles in Taos, New Mexico, where friends gathered around a candle to share personal stories. She presents four memorable stories from particip</p>
+	<div><span class="tag frame">Story Circle Process (process)</span> <span class="tag frame">Four Exemplary Stories (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-65</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter introduces 'writing marathons'—intensive group writing sessions with structured timing and strict no-comment rules—as a method to bypass internal censorship and access raw creative flow. </p>
+	<div><span class="tag frame">Writing Marathon Process (process)</span> <span class="tag frame">Marathon and Meditation States (comparison)</span> <span class="tag frame">Progressive Immersion Model (progression)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-66</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter addresses the common phenomenon where writers fail to recognize their own excellent work despite external validation. Through teaching anecdotes and Zen Buddhist philosophy, Goldberg argu</p>
+	<div><span class="tag frame">The Recognition Gap Model (model)</span> <span class="tag frame">Self-Perception vs. External Perception (comparison)</span> <span class="tag frame">Process of Claiming Writing (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-67</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter uses personal anecdotes about a disparaged 'window poem' and a classroom exercise with diary excerpts to argue that writers must cultivate trust in their own creative judgment. It offers </p>
+	<div><span class="tag frame">Writer-Audience-Work Relationship Model (model)</span> <span class="tag frame">Work Evaluation Process (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-68</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter introduces the 'Samurai' approach to writing critique—a metaphor for ruthless honesty and precision in editing. Using classroom anecdotes, Goldberg distinguishes between the nurturing cre</p>
+	<div><span class="tag frame">The Samurai Editing Model (model)</span> <span class="tag frame">Creative Pool vs Samurai Critique (comparison)</span> <span class="tag frame">Energy Recognition Process (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-69</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter provides a methodology for revisiting and refining raw writing practice. It emphasizes gaining temporal distance to read objectively, distinguishing between the critical conscious mind an</p>
+	<div><span class="tag frame">Rereading and Rewriting Workflow (process)</span> <span class="tag frame">Conscious and Unconscious Writing Selves (model)</span> <span class="tag frame">Approaches to Editing (comparison)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-70</strong>
+		<span class="type-badge narrative">narrative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter uses the deathbed anecdote of Zen master Suzuki Roshi, who simply said &quot;I don't want to die,&quot; to teach the value of absolute authenticity in writing. It contrasts the vital energy of arti</p>
+	<div><span class="tag frame">Artists versus Spiritual People (comparison)</span> <span class="tag frame">Authentic Expression Model (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-71</strong>
+		<span class="type-badge narrative">narrative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">Natalie Goldberg reflects on the emotional experience of completing the book, describing the anger, dissociation, and volatility that followed finishing the manuscript. She emphasizes that any work re</p>
+	<div><span class="tag frame">Emotional Progression of Completion (progression)</span> <span class="tag frame">The Solitude of Creative Commitment (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>navPoint-72</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This afterword presents an interview with Natalie Goldberg exploring the philosophical and practical foundations of her writing method. She discusses the relationship between place and inspiration, de</p>
+	<div><span class="tag frame">Environment and Presence Model (model)</span> <span class="tag frame">Obstacle-to-Action Process (process)</span> <span class="tag frame">Writing versus Meditation Comparison (comparison)</span> <span class="tag frame">Genre Differentiation (comparison)</span> <span class="tag frame">Confidence Building Progression (progression)</span></div>
+</div>
+
+<h2>Atoms (first 50 of 667)</h2>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> CIP数据<br><span class="role-name">meaning:</span> 图书在版编目数据</div>
+	<div style="font-size:0.8rem;color:#888">When: 在图书版权页中标注</div>
+	<div><span class="tag domain">出版</span> <span class="tag domain">图书编目</span> <span class="tag domain">图书馆学</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 《写出我心》简体中文译本<br><span class="role-name">property:</span> 著作权合同登记号：桂图登字 20-2015-226号</div>
+	<div style="font-size:0.8rem;color:#888">When: 中国大陆出版</div>
+	<div><span class="tag domain">出版</span> <span class="tag domain">版权管理</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 《写出我心》原版<br><span class="role-name">property:</span> 书名：WRITING DOWN THE BONES: Freeing the Writer Within，作者：Natalie Goldberg，版权年份：1986, 2005</div>
+	
+	<div><span class="tag domain">出版</span> <span class="tag domain">版权信息</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 《写出我心》简体中文译本<br><span class="role-name">property:</span> ISBN：978-7-5551-0642-5</div>
+	
+	<div><span class="tag domain">出版</span> <span class="tag domain">图书标识</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 《写出我心》简体中文译本<br><span class="role-name">property:</span> 定价：39.80元</div>
+	<div style="font-size:0.8rem;color:#888">When: 2016年8月第1版</div>
+	<div><span class="tag domain">出版</span> <span class="tag domain">图书定价</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 《写出我心》简体中文译本<br><span class="role-name">property:</span> 字数：166千字</div>
+	
+	<div><span class="tag domain">出版</span> <span class="tag domain">图书规格</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 《写出我心》简体中文译本<br><span class="role-name">property:</span> 开本：787mm×1092mm 1/32</div>
+	
+	<div><span class="tag domain">出版</span> <span class="tag domain">图书规格</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 《写出我心》简体中文译本<br><span class="role-name">property:</span> 版次：2016年8月第1版，印次：2016年8月第1次印刷</div>
+	
+	<div><span class="tag domain">出版</span> <span class="tag domain">版本控制</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 《写出我心》简体中文译本<br><span class="role-name">property:</span> 出版人：韦鸿学，出版社：广西科学技术出版社</div>
+	
+	<div><span class="tag domain">出版</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 《写出我心》简体中文译本<br><span class="role-name">property:</span> 译者：韩良忆、袁小茶</div>
+	
+	<div><span class="tag domain">出版</span> <span class="tag domain">翻译</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">consists_of</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">whole:</span> 《写出我心》CIP数据记录<br><span class="role-name">dimension:</span> 书名、作者、译者、出版地、出版社、出版时间、ISBN、中图法分类号<br><span class="role-name">description:</span> 按照中国版本图书馆CIP数据核字标准格式编排的书目数据</div>
+	<div style="font-size:0.8rem;color:#888">When: 中国大陆正式出版物</div>
+	<div><span class="tag domain">出版</span> <span class="tag domain">图书编目</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">consists_of</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">whole:</span> 《写出我心》版权页<br><span class="role-name">dimension:</span> 著作权合同登记号、原版图书版权信息、简体中文版版权信息、CIP数据、出版制作团队信息、印刷信息、定价、版权声明<br><span class="role-name">description:</span> 图书出版法定信息页，用于版权保护和图书馆编目</div>
+	<div style="font-size:0.8rem;color:#888">When: 中国大陆出版的中译本图书</div>
+	<div><span class="tag domain">出版</span> <span class="tag domain">版权管理</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> 天堂的咖啡馆 (heaven cafe)<br><span class="role-name">meaning:</span> A metaphorical spiritual space where writers meet after death to continue writing together for eternity, transcending temporal and physical existence</div>
+	<div style="font-size:0.8rem;color:#888">When: In the context of writing as a spiritual practice</div>
+	<div><span class="tag domain">creative writing</span> <span class="tag domain">spirituality</span> <span class="tag domain">writing philosophy</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">principle</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">statement:</span> Writing creates an eternal community that persists beyond death and spans across past, present, and future generations<br><span class="role-name">implication:</span> The teacher-student relationship in writing forms an immortal lineage that transcends individual lifetimes<br><span class="role-name">scope:</span> spiritual and communal dimensions of writing practice</div>
+	<div style="font-size:0.8rem;color:#888">When: When approaching writing as a spiritual rather than purely technical practice</div>
+	<div><span class="tag domain">creative writing</span> <span class="tag domain">teaching</span> <span class="tag domain">community building</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">example_of</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> Dedicating the book to students across past, present, and future time periods<br><span class="role-name">concept:</span> Writing as a practice that transcends temporal boundaries and creates eternal bonds between writers<br><span class="role-name">detail:</span> Demonstrates that writing instruction establishes a continuous lineage connecting generations of writers beyond physical death</div>
+	<div style="font-size:0.8rem;color:#888">When: In book dedications and prefatory materials</div>
+	<div><span class="tag domain">creative writing</span> <span class="tag domain">book structure</span> <span class="tag domain">writing philosophy</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> 写作<br><span class="role-name">meaning:</span> 固定在人类DNA中的特质，是人类特有的行为活动，与卵生虫蚁、胎生猫马、草木石头不同，只有人类具备写作能力</div>
+	
+	<div><span class="tag domain">writing</span> <span class="tag domain">anthropology</span> <span class="tag domain">human nature</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 写作<br><span class="role-name">property:</span> 众生平等，无论身处何方、社会阶层、性别、肤色，人人皆可用笔表达自己</div>
+	
+	<div><span class="tag domain">writing</span> <span class="tag domain">democracy</span> <span class="tag domain">equality</span> <span class="tag domain">human rights</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 写作<br><span class="role-name">property:</span> 不需要太多物质条件，只需最普通的纸、笔（或电脑）加上想法即可进行</div>
+	
+	<div><span class="tag domain">writing</span> <span class="tag domain">accessibility</span> <span class="tag domain">minimalism</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">is_a</span>
+		<span class="atom-confidence">85%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> 写作<br><span class="role-name">category:</span> 基本人权，与生命权、自由权、追求幸福权同等不可剥夺</div>
+	
+	<div><span class="tag domain">writing</span> <span class="tag domain">human rights</span> <span class="tag domain">philosophy</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">is_a</span>
+		<span class="atom-confidence">85%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> 写作<br><span class="role-name">category:</span> 一条小径，让人得以在其中和自己相逢、相知、相守</div>
+	
+	<div><span class="tag domain">writing</span> <span class="tag domain">self-discovery</span> <span class="tag domain">introspection</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">is_a</span>
+		<span class="atom-confidence">85%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> 写作<br><span class="role-name">category:</span> 生命态度</div>
+	
+	<div><span class="tag domain">writing</span> <span class="tag domain">life philosophy</span> <span class="tag domain">spirituality</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">is_a</span>
+		<span class="atom-confidence">85%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> 写作<br><span class="role-name">category:</span> 对碌碌一生中所思、所感、所见、所闻的记录与觉悟</div>
+	
+	<div><span class="tag domain">writing</span> <span class="tag domain">mindfulness</span> <span class="tag domain">memory</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">causal_chain</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">trigger:</span> 《写出我心》于1986年出版，恰逢美国人开始有了强烈表达自己的需求的大趋势<br><span class="role-name">mechanism:</span> 全民写作大革命开始流行，书店设立写作教程专类，学生将写作视为新的宗教信仰<br><span class="role-name">outcome:</span> 书籍成功，被列入高中读本成为经典，而非如50年代出版那样石沉大海</div>
+	<div style="font-size:0.8rem;color:#888">When: 1986年美国社会背景</div>
+	<div><span class="tag domain">publishing history</span> <span class="tag domain">cultural trends</span> <span class="tag domain">1980s America</span> <span class="tag domain">social movements</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">causal</span>
+		<span class="atom-confidence">85%</span>
+	</div>
+	<div class="roles"><span class="role-name">cause:</span> 觉知自己的心念（通过禅修冥想）<br><span class="role-name">effect:</span> 在写作中寻得心安</div>
+	
+	<div><span class="tag domain">zen</span> <span class="tag domain">meditation</span> <span class="tag domain">writing practice</span> <span class="tag domain">mindfulness</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">85%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 写作训练与禅修冥想<br><span class="role-name">property:</span> 具有通性，都关注心念来源何处，越是觉知心念越能在写作中寻得心安</div>
+	
+	<div><span class="tag domain">zen</span> <span class="tag domain">meditation</span> <span class="tag domain">writing</span> <span class="tag domain">spirituality</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">principle</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">statement:</span> Accept loss forever. Be submissive to everything, open, listening. No fear or shame in the dignity of your experience, language, and knowledge. Be in love with your life.<br><span class="role-name">implication:</span> 为心灵写作之路提供支持，帮助写作者无惧字句，在写作的浩瀚世界中找到属于自己的位置<br><span class="role-name">scope:</span> 写作实践与生命态度</div>
+	
+	<div><span class="tag domain">writing</span> <span class="tag domain">beat generation</span> <span class="tag domain">life philosophy</span> <span class="tag domain">Jack Kerouac</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">heuristic</span>
+		<span class="atom-confidence">85%</span>
+	</div>
+	<div class="roles"><span class="role-name">situation:</span> 想要在写作的浩瀚世界中找到属于自己的位置，或不知如何开始写作<br><span class="role-name">action:</span> 现在就开始写，写到自己的骨头里<br><span class="role-name">rationale:</span> 写作世界不排斥古怪、个性和奇特想法，只有接纳；当用笔和自己的心触碰，才会发现大写的自己和真正的自由</div>
+	
+	<div><span class="tag domain">writing practice</span> <span class="tag domain">creativity</span> <span class="tag domain">self-expression</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">causal</span>
+		<span class="atom-confidence">85%</span>
+	</div>
+	<div class="roles"><span class="role-name">cause:</span> 用笔和自己的心触碰<br><span class="role-name">effect:</span> 发现一个大写的自己，一种真正的自由</div>
+	
+	<div><span class="tag domain">writing</span> <span class="tag domain">self-discovery</span> <span class="tag domain">freedom</span> <span class="tag domain">authenticity</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">85%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 写作<br><span class="role-name">property:</span> 造就胸中之自信，让精神觉醒</div>
+	
+	<div><span class="tag domain">writing</span> <span class="tag domain">psychology</span> <span class="tag domain">confidence</span> <span class="tag domain">spiritual awakening</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">example_of</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> 作者回忆小学五年级写暑假作文只能写'这个暑假过得非常愉快'等概括性语句得B分，而成年后能具体描写妈妈染红发、涂银色指甲油、玩飞行棋、追洒水车、捉甲壳虫、爸爸喝啤酒、与金发男孩相撞、看种族歧视新闻、嫉妒妹妹、和奶奶做沙拉等细节<br><span class="role-name">concept:</span> 成人写作比儿童写作更能捕捉和记录生命中美好细节的深度与丰富性，以及如何用细节记录生命<br><span class="role-name">detail:</span> 展示成人后如何用眼睛和心感受万物联系，将细节跃然纸上，而非视生命为理所当然</div>
+	<div style="font-size:0.8rem;color:#888">When: 成年人回顾童年记忆时</div>
+	<div><span class="tag domain">writing development</span> <span class="tag domain">memory</span> <span class="tag domain">detail observation</span> <span class="tag domain">nostalgia</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">taxonomy</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">concept:</span> 《写出我心》的读者群体<br><span class="role-name">categories:</span> 保险公司副总、工厂工人、采石工人、监狱囚徒、律师、医生、同性恋人权斗士、家庭主妇、图书馆管理员、教师、牧师、政治家<br><span class="role-name">basis:</span> 职业与社会阶层多样性，证明写作跨越阶级界限</div>
+	<div style="font-size:0.8rem;color:#888">When: 1986年出版后的美国</div>
+	<div><span class="tag domain">readership</span> <span class="tag domain">social diversity</span> <span class="tag domain">democratization of writing</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">is_a</span>
+		<span class="atom-confidence">85%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> 写作<br><span class="role-name">category:</span> 不仅是小孩子的事，也是成年大孩子的事情</div>
+	
+	<div><span class="tag domain">writing</span> <span class="tag domain">lifelong learning</span> <span class="tag domain">adult education</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> 写作即修行<br><span class="role-name">meaning:</span> 用写作来修行，帮助自己洞察生活，使自己心神清澄，是一种通过书写来达到内心清明与生活洞察的修习方式</div>
+	<div style="font-size:0.8rem;color:#888">When: 进行写作练习时, 寻求内心平静与生活洞察时</div>
+	<div><span class="tag domain">写作</span> <span class="tag domain">禅修</span> <span class="tag domain">创意写作</span> <span class="tag domain">自我表达</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">heuristic</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">situation:</span> 当你热爱某件事物并想要追求时<br><span class="role-name">action:</span> 相信你所爱的事物，坚持做下去，不要过度担忧安全与否<br><span class="role-name">rationale:</span> 它便会带你到你需要去的地方，内心深处终将获得很大的安全感</div>
+	<div style="font-size:0.8rem;color:#888">When: 面临职业或创作选择时, 感到不安全或犹豫时</div>
+	<div><span class="tag domain">写作</span> <span class="tag domain">职业规划</span> <span class="tag domain">创造性工作</span> <span class="tag domain">心理建设</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">heuristic</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">situation:</span> 写作时不知道写什么或缺乏自信<br><span class="role-name">action:</span> 写下骨干，写出心中基本且清明的想法；写你知道的事，相信自己的想法和感受，不去顾盼身外的事物<br><span class="role-name">rationale:</span> 你最了解自己的生活经验，不需要迎合他人的期待，也没有人能指责你说得不对</div>
+	<div style="font-size:0.8rem;color:#888">When: 写作初学者感到迷茫时, 写作时感到自我怀疑时</div>
+	<div><span class="tag domain">写作教学</span> <span class="tag domain">创意写作</span> <span class="tag domain">自我表达</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">example_of</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> 艾瑞卡·琼《水果和蔬菜》中关于煮茄子的诗<br><span class="role-name">concept:</span> 平凡日常事物可以作为写作题材<br><span class="role-name">detail:</span> 让作者意识到司空见惯的日常事务（如煮茄子）也可以拿来作文章，不需要写遥远或伟大的事物</div>
+	<div style="font-size:0.8rem;color:#888">When: 寻找写作题材时, 认为生活平淡无物可写时</div>
+	<div><span class="tag domain">写作</span> <span class="tag domain">创意写作</span> <span class="tag domain">题材选择</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">causal_chain</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">trigger:</span> 在餐厅煮普罗旺斯煨什蔬（处理大量洋葱、茄子、节瓜等蔬菜）后，在史戴特街书店看到艾瑞卡·琼关于煮茄子的诗<br><span class="role-name">mechanism:</span> 意识到日常琐事和当下经验可以作为写作题材，不需要追求伟大或遥远的主题<br><span class="role-name">outcome:</span> 决心开始写自己知道的事，开始相信自己的想法和感受，提笔写家人</div>
+	<div style="font-size:0.8rem;color:#888">When: 创作觉醒的关键时刻, 从模仿转向原创写作的转折点</div>
+	<div><span class="tag domain">写作</span> <span class="tag domain">创作心理</span> <span class="tag domain">顿悟</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">example_of</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> 经营'裸体午餐'餐厅时烤松饼和创造餐厅的经验<br><span class="role-name">concept:</span> 学会信任自己的心灵<br><span class="role-name">detail:</span> 通过实际创造事物（烤松饼、经营餐厅），不再需要回答伟大的答案以在学校拿A，从而开始信任自己的内在判断</div>
+	<div style="font-size:0.8rem;color:#888">When: 建立创作自信时, 从外部验证转向内部验证的过程</div>
+	<div><span class="tag domain">写作</span> <span class="tag domain">创业</span> <span class="tag domain">心理成长</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">deviation</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">theory:</span> 传统写作教育要求学习逗点、冒号和分号，写出清楚分明、合乎规范的句子，迎合老师的期待以取得好成绩<br><span class="role-name">reality:</span> 这种写作既乏味又枯燥，文中不带一丝个人原创的想法和真实的感受；真正的写作应该信任自己的心灵，表达真实经验<br><span class="role-name">implication:</span> 需要摆脱追求外部认可的写作模式，停止顾盼身外的事物，转向内在真实的声音</div>
+	<div style="font-size:0.8rem;color:#888">When: 传统学校教育环境, 初学写作时受到规范束缚</div>
+	<div><span class="tag domain">写作教育</span> <span class="tag domain">教育批评</span> <span class="tag domain">创意写作</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">method_comparison</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">method_a:</span> 线性学习过程（从A至B至C的逻辑方式）<br><span class="role-name">method_b:</span> 非线性学习（没有固定逻辑顺序，全面探讨生命）<br><span class="role-name">difference:</span> 写作没有一个简单明了的真理足以解答所有疑惑，而是有许多真理存在；不同技巧适用于不同时刻和不同问题<br><span class="role-name">when_to_use:</span> 非线性方式适用于写作学习，因为每个片刻都不一样，需以不一样的方式对应才会奏效</div>
+	<div style="font-size:0.8rem;color:#888">When: 设计写作课程时, 学习写作过程中感到困惑时</div>
+	<div><span class="tag domain">写作教学</span> <span class="tag domain">学习方法论</span> <span class="tag domain">教育理论</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">principle</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">statement:</span> 关于写作，并没有一个简单明了的真理便足以解答所有的疑惑，世上有许多关于写作的真理存在<br><span class="role-name">implication:</span> 有些技巧适用于某些时候，有些则适用于其他时候；每个片刻都不一样，需以不一样的方式对应才会奏效；凡事皆无一定的对错<br><span class="role-name">scope:</span> 写作教学、写作学习、创造性工作</div>
+	<div style="font-size:0.8rem;color:#888">When: 面对看似矛盾的写作建议时, 评判写作方法优劣时</div>
+	<div><span class="tag domain">写作理论</span> <span class="tag domain">教学哲学</span> <span class="tag domain">创造性思维</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">principle</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">statement:</span> 写作的原则可转而应用在跑步、绘画，或任何你所喜爱并决心在生活中从事的事物上<br><span class="role-name">scope:</span> 任何创造性活动、修行实践或专业技能发展<br><span class="role-name">implication:</span> 专注当下、信任过程、洞察本质的修行原则具有跨领域的普适性</div>
+	<div style="font-size:0.8rem;color:#888">When: 从事任何需要专注和持续练习的活动时, 将写作心得迁移到其他领域时</div>
+	<div><span class="tag domain">写作</span> <span class="tag domain">禅修</span> <span class="tag domain">跨领域应用</span> <span class="tag domain">通用技能</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">procedure</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">goal:</span> 通过本书学习写作并表达真实自我<br><span class="role-name">steps:</span> 可以一口气把书看完，或随意翻开一章就读那一章（每一章都自成完整的段落）,放松心情，用整个的身体和心灵慢慢地吸收,不要光是看书，动手写,相信自己，明白自己的需求，并且运用这本书<br><span class="role-name">context:</span> 阅读本书时，没有固定的阅读顺序要求，可根据个人需求灵活使用</div>
+	<div style="font-size:0.8rem;color:#888">When: 阅读本书时, 使用本书作为写作指南时</div>
+	<div><span class="tag domain">阅读方法</span> <span class="tag domain">写作练习</span> <span class="tag domain">自学指导</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">is_a</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> 写作（深入钻研的写作练习）<br><span class="role-name">category:</span> 禅修/修行方式<br><span class="role-name">description:</span> 写作可以替代传统的打坐冥想，作为达到心神清澄和洞察生活的修行途径</div>
+	<div style="font-size:0.8rem;color:#888">When: 寻找修行方式时, 打坐冥想难以持续时</div>
+	<div><span class="tag domain">写作</span> <span class="tag domain">禅修</span> <span class="tag domain">佛教修行</span> <span class="tag domain">正念</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 以写作为修行<br><span class="role-name">property:</span> 能够帮助洞察生活，并使人心神清澄（内心清明平静）</div>
+	<div style="font-size:0.8rem;color:#888">When: 持续进行写作练习时, 将写作视为内心修炼而非外在产出时</div>
+	<div><span class="tag domain">写作</span> <span class="tag domain">禅修</span> <span class="tag domain">心理健康</span> <span class="tag domain">正念</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">sequence</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">name:</span> 作者写作觉醒的历程<br><span class="role-name">layers:</span> 中小学时期：曲意承欢，写规范但乏味的作文迎合老师,大学时期：热爱文学但感觉写作遥不可及，只读欧洲男性作家作品,餐厅时期：经营'裸体午餐'，学会信任自己的心灵和判断,顿悟时刻：看到艾瑞卡·琼关于煮茄子的诗，意识到日常可写,写作开始：提笔写家人，相信自己的想法和感受<br><span class="role-name">rule:</span> 从外部认可转向内部真实，从模仿经典转向书写当下经验</div>
+	<div style="font-size:0.8rem;color:#888">When: 理解作者权威性建立过程时, 参考他人写作觉醒路径时</div>
+	<div><span class="tag domain">写作</span> <span class="tag domain">创作心理</span> <span class="tag domain">个人成长</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">taxonomy</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">concept:</span> The book's writing instruction methodology<br><span class="role-name">categories:</span> Foundational philosophy and mindset,Daily writing practices and exercises,Technical craft and syntax,Psychological approaches and obstacles,Social and communal engagement,Revision and artistic refinem<br><span class="role-name">basis:</span> Thematic organization of writing topics from table of contents</div>
+	<div style="font-size:0.8rem;color:#888">When: Analyzing the structure of writing instruction books, Understanding Natalie Goldberg's methodology</div>
+	<div><span class="tag domain">creative writing</span> <span class="tag domain">writing pedagogy</span> <span class="tag domain">writing practice</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">sequence</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">name:</span> Pedagogical progression of writing instruction in the book<br><span class="role-name">layers:</span> Beginner's mind and preparation,Establishing writing practice,Observation and attention to detail,Content generation and obsession,Technical craft and syntax,Psychological integration and trust,Commun<br><span class="role-name">rule:</span> Progression from foundational openness and practice habits toward technical mastery, psychological resilience, and artistic integration</div>
+	<div style="font-size:0.8rem;color:#888">When: Following the book's chapter order, Teaching writing as a holistic practice</div>
+	<div><span class="tag domain">creative writing</span> <span class="tag domain">curriculum design</span> <span class="tag domain">skill acquisition</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">consists_of</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">whole:</span> Holistic writing methodology presented in the book<br><span class="role-name">dimension:</span> Concrete writing practices<br><span class="role-name">description:</span> Actionable techniques including writing marathons, using original detail, scheduled practice sessions, and specific writing exercises like 'Fighting Tofu'</div>
+	<div style="font-size:0.8rem;color:#888">When: Implementing the book's teaching methodology</div>
+	<div><span class="tag domain">writing methodology</span> <span class="tag domain">creative writing</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">consists_of</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">whole:</span> Holistic writing methodology presented in the book<br><span class="role-name">dimension:</span> Philosophical stances<br><span class="role-name">description:</span> Mental frameworks and attitudes including beginner's mind, trust in oneself, writing as communal act, and rejecting commercial approaches to writing</div>
+	<div style="font-size:0.8rem;color:#888">When: Adopting the book's writing philosophy</div>
+	<div><span class="tag domain">writing methodology</span> <span class="tag domain">creative philosophy</span></div>
+	
+</div>
+<p style="color:#888;font-style:italic">...and 617 more atoms in the JSON file.</p>
+</body></html>

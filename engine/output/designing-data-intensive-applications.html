@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Designing Data-Intensive Applications — Metis</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, 'Helvetica Neue', sans-serif; max-width: 1100px; margin: 0 auto; padding: 2rem; background: #fafafa; color: #222; line-height: 1.6; }
+h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+h2 { font-size: 1.4rem; margin: 1.5rem 0 0.75rem; border-bottom: 2px solid #2563eb; padding-bottom: 0.3rem; }
+h3 { font-size: 1.1rem; margin: 1rem 0 0.5rem; }
+.subtitle { color: #666; margin-bottom: 1.5rem; }
+.stats { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.stat { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 0.75rem 1.25rem; }
+.stat-value { font-size: 1.4rem; font-weight: 700; color: #2563eb; }
+.stat-label { font-size: 0.8rem; color: #666; }
+.card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1.25rem; margin-bottom: 1rem; }
+.card:hover { border-color: #2563eb; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.tag { display: inline-block; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 3px; padding: 1px 6px; margin: 2px; font-size: 0.78rem; }
+.tag.frame { background: #ede9fe; border-color: #c4b5fd; color: #5b21b6; }
+.tag.domain { background: #dbeafe; border-color: #93c5fd; color: #1e40af; }
+.tag.concept { background: #dcfce7; border-color: #86efac; color: #166534; }
+.tag.flag { background: #fef3c7; border-color: #fde047; color: #854d0e; }
+.type-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.78rem; font-weight: 600; }
+.type-badge.framework { background: #dbeafe; color: #1e40af; }
+.type-badge.narrative { background: #fef3c7; color: #92400e; }
+.type-badge.practical { background: #d1fae5; color: #065f46; }
+.type-badge.argumentative { background: #fce7f3; color: #9d174d; }
+.type-badge.survey { background: #e0e7ff; color: #3730a3; }
+.type-badge.unknown { background: #f3f4f6; color: #6b7280; }
+.atom { border-left: 3px solid #c4b5fd; padding: 0.75rem; margin: 0.5rem 0; background: #fafafa; border-radius: 0 4px 4px 0; }
+.atom-header { display: flex; justify-content: space-between; align-items: center; }
+.atom-frame { font-weight: 600; color: #5b21b6; }
+.atom-confidence { font-size: 0.8rem; color: #666; }
+.roles { margin: 0.5rem 0; font-size: 0.9rem; }
+.role-name { color: #888; font-weight: 500; }
+.bar { height: 20px; border-radius: 3px; display: inline-block; }
+.chart { margin: 0.5rem 0; }
+details summary { cursor: pointer; color: #2563eb; font-weight: 500; padding: 0.25rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 0.5rem 0; }
+th, td { text-align: left; padding: 0.4rem 0.75rem; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+th { background: #f8fafc; font-weight: 600; }
+</style></head><body>
+<p><a href="index.html">← All Books</a></p>
+<h1>Designing Data-Intensive Applications</h1>
+<p class="subtitle">Kleppmann, Martin</p>
+<div class="stats">
+<div class="stat"><div class="stat-value">18</div><div class="stat-label">Chapters</div></div>
+<div class="stat"><div class="stat-value">1118</div><div class="stat-label">Atoms</div></div>
+<div class="stat"><div class="stat-value">16</div><div class="stat-label">Frame Types</div></div>
+<div class="stat"><div class="stat-value">12</div><div class="stat-label">Failed Chapters</div></div>
+</div>
+
+<h2>Frame Type Distribution</h2>
+<div class="chart"><div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">has_property</span>
+		<div class="bar" style="width:300px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">282</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">definition</span>
+		<div class="bar" style="width:154.25531914893617px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">145</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">causal</span>
+		<div class="bar" style="width:137.2340425531915px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">129</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">example_of</span>
+		<div class="bar" style="width:110.63829787234042px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">104</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">heuristic</span>
+		<div class="bar" style="width:92.55319148936171px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">87</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">principle</span>
+		<div class="bar" style="width:69.14893617021276px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">65</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">is_a</span>
+		<div class="bar" style="width:57.4468085106383px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">54</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">taxonomy</span>
+		<div class="bar" style="width:51.06382978723404px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">48</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">causal_chain</span>
+		<div class="bar" style="width:46.808510638297875px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">44</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">deviation</span>
+		<div class="bar" style="width:44.680851063829785px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">42</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">method_comparison</span>
+		<div class="bar" style="width:42.55319148936171px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">40</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">procedure</span>
+		<div class="bar" style="width:41.48936170212766px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">39</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">consists_of</span>
+		<div class="bar" style="width:30.851063829787233px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">29</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">threshold</span>
+		<div class="bar" style="width:6.382978723404255px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">6</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">sequence</span>
+		<div class="bar" style="width:3.1914893617021276px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">3</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">formula</span>
+		<div class="bar" style="width:1.0638297872340425px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">1</span>
+	</div></div>
+
+
+
+<h2>Chapters</h2>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>preface</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This preface establishes the motivation for studying data-intensive applications, defining them as systems where data quantity, complexity, or velocity is the primary challenge rather than raw computa</p>
+	<div><span class="tag frame">Book Organization Progression (progression)</span> <span class="tag frame">System Architecture Taxonomy (taxonomy)</span> <span class="tag frame">Application Type Classification (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>part_foundations</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This section serves as the introduction to Part I, outlining the foundational concepts covered in Chapters 1 through 4. It establishes the book's approach to reliability, scalability, and maintainabil</p>
+	<div><span class="tag frame">Part I Foundational Topics (progression)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>part_distributed_data</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter introduces Part II of the book, transitioning from single-machine data systems to distributed architectures. It establishes the three primary motivations for distribution (scalability, fa</p>
+	<div><span class="tag frame">Motivations for Distributed Data (taxonomy)</span> <span class="tag frame">Scaling Architectures Comparison (comparison)</span> <span class="tag frame">Data Distribution Mechanisms (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>part_systems</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This introductory chapter for Part III establishes the conceptual framework for integrating multiple data systems. It introduces the fundamental distinction between systems of record (authoritative so</p>
+	<div><span class="tag frame">Systems of Record vs Derived Data Taxonomy (taxonomy)</span> <span class="tag frame">Part III Chapter Progression (progression)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>ch_future</strong>
+		<span class="type-badge argumentative">argumentative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This final chapter argues for a future data architecture based on 'unbundling' databases into composable, specialized tools connected by event logs. It proposes dataflow-oriented designs that maintain</p>
+	<div><span class="tag frame">Unbundled Database Architecture (model)</span> <span class="tag frame">Dataflow Processing Model (process)</span> <span class="tag frame">Batch and Stream Processing Unification (comparison)</span> <span class="tag frame">End-to-End Correctness Framework (framework)</span> <span class="tag frame">Constraint Enforcement Without Distributed Transactions (process)</span> <span class="tag frame">Data Ethics and Societal Impact (framework)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>ch_glossary</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter provides a comprehensive glossary defining key terminology used throughout the book, serving as a reference for core concepts in data-intensive systems including distributed computing, da</p>
+	<div><span class="tag frame">Taxonomy of Data Systems Terminology (taxonomy)</span></div>
+</div>
+
+<h2>Atoms (first 50 of 1118)</h2>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> O'Reilly Safari<br><span class="role-name">meaning:</span> a membership-based training and reference platform (formerly Safari Books Online) for enterprise, government, educators, and individuals</div>
+	
+	<div><span class="tag domain">online learning</span> <span class="tag domain">technical publishing</span> <span class="tag domain">O'Reilly Media</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">is_a</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> O'Reilly Safari<br><span class="role-name">category:</span> membership-based training and reference platform</div>
+	
+	<div><span class="tag domain">online learning</span> <span class="tag domain">digital platforms</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> O'Reilly Safari<br><span class="role-name">property:</span> provides members access to thousands of books, training videos, Learning Paths, interactive tutorials, and curated playlists</div>
+	
+	<div><span class="tag domain">content platforms</span> <span class="tag domain">digital libraries</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> O'Reilly Safari<br><span class="role-name">property:</span> aggregates content from over 250 publishers including O'Reilly Media, Harvard Business Review, Prentice Hall Professional, Addison-Wesley Professional, Microsoft Press, and others</div>
+	
+	<div><span class="tag domain">publishing</span> <span class="tag domain">content aggregation</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">procedure</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">goal:</span> Submit postal correspondence to publisher regarding the book<br><span class="role-name">steps:</span> Send mail to O'Reilly Media, Inc., 1005 Gravenstein Highway North, Sebastopol, CA 95472<br><span class="role-name">context:</span> For comments and questions concerning this book</div>
+	
+	<div><span class="tag domain">Publishing</span> <span class="tag domain">Technical Support</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">procedure</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">goal:</span> Contact publisher by telephone from United States or Canada<br><span class="role-name">steps:</span> Call 800-998-9938<br><span class="role-name">context:</span> For comments and questions concerning this book</div>
+	
+	<div><span class="tag domain">Publishing</span> <span class="tag domain">Technical Support</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">procedure</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">goal:</span> Contact publisher by telephone from international locations<br><span class="role-name">steps:</span> Call 707-829-0515<br><span class="role-name">context:</span> For comments and questions concerning this book</div>
+	
+	<div><span class="tag domain">Publishing</span> <span class="tag domain">Technical Support</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">procedure</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">goal:</span> Contact publisher by fax<br><span class="role-name">steps:</span> Send fax to 707-829-0104<br><span class="role-name">context:</span> For comments and questions concerning this book</div>
+	
+	<div><span class="tag domain">Publishing</span> <span class="tag domain">Technical Support</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">procedure</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">goal:</span> Access book web page for errata and supplementary materials<br><span class="role-name">steps:</span> Visit http://bit.ly/designing-data-intensive-apps<br><span class="role-name">context:</span> To view errata, examples, and additional information</div>
+	
+	<div><span class="tag domain">Publishing</span> <span class="tag domain">Errata</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">procedure</span>
+		<span class="atom-confidence">90%</span>
+	</div>
+	<div class="roles"><span class="role-name">goal:</span> Submit comments or technical questions about the book<br><span class="role-name">steps:</span> Send email to bookquestions@oreilly.com</div>
+	
+	<div><span class="tag domain">Publishing</span> <span class="tag domain">Technical Support</span></div>
+	<span class="tag flag">missing_role:context</span> <span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">procedure</span>
+		<span class="atom-confidence">90%</span>
+	</div>
+	<div class="roles"><span class="role-name">goal:</span> Find information about publisher's books, courses, conferences, and news<br><span class="role-name">steps:</span> Visit http://www.oreilly.com</div>
+	
+	<div><span class="tag domain">Publishing</span> <span class="tag domain">Information Resources</span></div>
+	<span class="tag flag">missing_role:context</span> <span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">procedure</span>
+		<span class="atom-confidence">90%</span>
+	</div>
+	<div class="roles"><span class="role-name">goal:</span> Find publisher on Facebook<br><span class="role-name">steps:</span> Visit http://facebook.com/oreilly</div>
+	
+	<div><span class="tag domain">Publishing</span> <span class="tag domain">Social Media</span></div>
+	<span class="tag flag">missing_role:context</span> <span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">procedure</span>
+		<span class="atom-confidence">90%</span>
+	</div>
+	<div class="roles"><span class="role-name">goal:</span> Follow publisher on Twitter<br><span class="role-name">steps:</span> Visit http://twitter.com/oreillymedia</div>
+	
+	<div><span class="tag domain">Publishing</span> <span class="tag domain">Social Media</span></div>
+	<span class="tag flag">missing_role:context</span> <span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">procedure</span>
+		<span class="atom-confidence">90%</span>
+	</div>
+	<div class="roles"><span class="role-name">goal:</span> Watch publisher content on YouTube<br><span class="role-name">steps:</span> Visit http://www.youtube.com/oreillymedia</div>
+	
+	<div><span class="tag domain">Publishing</span> <span class="tag domain">Social Media</span></div>
+	<span class="tag flag">missing_role:context</span> <span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> Designing Data-Intensive Applications (book)<br><span class="role-name">property:</span> amalgamation and systematization of other people's ideas and knowledge from both academic research and industrial practice</div>
+	
+	<div><span class="tag domain">technical writing</span> <span class="tag domain">software engineering</span> <span class="tag domain">knowledge synthesis</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> Designing Data-Intensive Applications (book)<br><span class="role-name">property:</span> contains over 800 references to learning resources including articles, blog posts, talks, and documentation</div>
+	
+	<div><span class="tag domain">technical writing</span> <span class="tag domain">research</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">principle</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">statement:</span> Computing practitioners have a huge amount to learn from things that have been done before, despite the field's tendency to focus on new and shiny technologies<br><span class="role-name">scope:</span> software engineering and system design<br><span class="role-name">implication:</span> historical knowledge and prior art are valuable learning resources not to be neglected in favor of novelty</div>
+	
+	<div><span class="tag domain">software engineering</span> <span class="tag domain">computer science</span> <span class="tag domain">historical analysis</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> Martin Kleppmann (author)<br><span class="role-name">property:</span> learned from personal conversations with numerous data systems practitioners and researchers during the book's creation</div>
+	
+	<div><span class="tag domain">technical writing</span> <span class="tag domain">knowledge acquisition</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">causal</span>
+		<span class="atom-confidence">85%</span>
+	</div>
+	<div class="roles"><span class="role-name">cause:</span> draft reviews and feedback provided by multiple technical contributors<br><span class="role-name">effect:</span> improved quality and accuracy of the book's content</div>
+	
+	<div><span class="tag domain">technical writing</span> <span class="tag domain">peer review</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> Martin Kleppmann (author)<br><span class="role-name">property:</span> assumes full responsibility for any remaining errors or unpalatable opinions in the book</div>
+	
+	<div><span class="tag domain">technical writing</span> <span class="tag domain">authorship</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> Designing Data-Intensive Applications (book)<br><span class="role-name">property:</span> includes maps accompanying each chapter, illustrated by Shabbir Diwan and Edie Freedman</div>
+	
+	<div><span class="tag domain">technical writing</span> <span class="tag domain">book design</span> <span class="tag domain">visualization</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> writing process of Designing Data-Intensive Applications<br><span class="role-name">property:</span> took almost four years to complete</div>
+	
+	<div><span class="tag domain">technical writing</span> <span class="tag domain">book production</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> Part I: Foundations of Data Systems<br><span class="role-name">meaning:</span> Fundamental ideas that apply to all data systems, whether running on a single machine or distributed across a cluster of machines</div>
+	<div style="font-size:0.8rem;color:#888">When: Reading the book in sequence, Beginning the study of data systems</div>
+	<div><span class="tag domain">data systems</span> <span class="tag domain">database design</span> <span class="tag domain">book structure</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">sequence</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">name:</span> Part I chapter progression<br><span class="role-name">layers:</span> Chapter 1: Terminology, reliability, scalability, and maintainability,Chapter 2: Data models and query languages,Chapter 3: Storage engines and disk layout,Chapter 4: Data encoding, serialization, and<br><span class="role-name">rule:</span> Progression from conceptual goals and definitions to implementation mechanisms and formats</div>
+	<div style="font-size:0.8rem;color:#888">When: Studying Part I of the book</div>
+	<div><span class="tag domain">data systems</span> <span class="tag domain">curriculum design</span> <span class="tag domain">book structure</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">consists_of</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">whole:</span> Part I: Foundations of Data Systems<br><span class="role-name">dimension:</span> Chapter 1 content<br><span class="role-name">description:</span> Terminology and approach examining reliability, scalability, and maintainability, including how to achieve these goals</div>
+	<div style="font-size:0.8rem;color:#888">When: Covering foundational concepts</div>
+	<div><span class="tag domain">data systems</span> <span class="tag domain">reliability</span> <span class="tag domain">scalability</span> <span class="tag domain">maintainability</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">consists_of</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">whole:</span> Part I: Foundations of Data Systems<br><span class="role-name">dimension:</span> Chapter 2 content<br><span class="role-name">description:</span> Comparison of several different data models and query languages, examining how different models are appropriate to different situations</div>
+	<div style="font-size:0.8rem;color:#888">When: Covering foundational concepts</div>
+	<div><span class="tag domain">data models</span> <span class="tag domain">query languages</span> <span class="tag domain">database design</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">consists_of</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">whole:</span> Part I: Foundations of Data Systems<br><span class="role-name">dimension:</span> Chapter 3 content<br><span class="role-name">description:</span> Internals of storage engines and how databases lay out data on disk, with different engines optimized for different workloads</div>
+	<div style="font-size:0.8rem;color:#888">When: Covering foundational concepts</div>
+	<div><span class="tag domain">storage engines</span> <span class="tag domain">database internals</span> <span class="tag domain">disk layout</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">consists_of</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">whole:</span> Part I: Foundations of Data Systems<br><span class="role-name">dimension:</span> Chapter 4 content<br><span class="role-name">description:</span> Comparison of various formats for data encoding and serialization, with emphasis on schema evolution as application requirements change</div>
+	<div style="font-size:0.8rem;color:#888">When: Covering foundational concepts</div>
+	<div><span class="tag domain">serialization</span> <span class="tag domain">schema evolution</span> <span class="tag domain">data encoding</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> Data models and query languages<br><span class="role-name">property:</span> The most visible distinguishing factor between databases from a developer's point of view</div>
+	<div style="font-size:0.8rem;color:#888">When: Evaluating databases for application development</div>
+	<div><span class="tag domain">data models</span> <span class="tag domain">query languages</span> <span class="tag domain">developer experience</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">heuristic</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">situation:</span> Selecting database technology for an application<br><span class="role-name">action:</span> Evaluate and select data models appropriate to the specific situation<br><span class="role-name">rationale:</span> Different models are appropriate to different situations</div>
+	<div style="font-size:0.8rem;color:#888">When: Making database selection decisions</div>
+	<div><span class="tag domain">database selection</span> <span class="tag domain">data modeling</span> <span class="tag domain">system design</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">causal</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">cause:</span> Choosing the right storage engine optimized for the specific workload<br><span class="role-name">effect:</span> Huge effect on database performance</div>
+	<div style="font-size:0.8rem;color:#888">When: Tuning database performance, Selecting storage engines</div>
+	<div><span class="tag domain">storage engines</span> <span class="tag domain">database performance</span> <span class="tag domain">optimization</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">method_comparison</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">method_a:</span> Part I (Chapters 1-4)<br><span class="role-name">method_b:</span> Part II (Distributed Data)<br><span class="role-name">difference:</span> Part I covers universal foundations applicable to both single-machine and distributed systems; Part II covers specific issues unique to distributed data systems<br><span class="role-name">when_to_use:</span> Part I should be understood first as prerequisite knowledge before addressing distributed-specific issues in Part II</div>
+	<div style="font-size:0.8rem;color:#888">When: Navigating the book structure, Planning learning path</div>
+	<div><span class="tag domain">book structure</span> <span class="tag domain">distributed systems</span> <span class="tag domain">learning path</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">principle</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">statement:</span> Application requirements change over time, requiring data schemas to adapt and evolve<br><span class="role-name">implication:</span> Data encoding formats must be evaluated based on their ability to handle schema evolution<br><span class="role-name">scope:</span> Data serialization and encoding format selection</div>
+	<div style="font-size:0.8rem;color:#888">When: Designing long-lived data systems, Selecting serialization formats</div>
+	<div><span class="tag domain">schema evolution</span> <span class="tag domain">serialization</span> <span class="tag domain">backward compatibility</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> data-intensive application<br><span class="role-name">meaning:</span> applications where raw CPU power is rarely the limiting factor; bigger problems are usually the amount of data, the complexity of data, and the speed at which it is changing</div>
+	<div style="font-size:0.8rem;color:#888">When: when distinguishing from compute-intensive applications</div>
+	<div><span class="tag domain">data systems</span> <span class="tag domain">software architecture</span> <span class="tag domain">system design</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">consists_of</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">whole:</span> data-intensive application<br><span class="role-name">dimension:</span> standard building blocks<br><span class="role-name">description:</span> databases (store for later retrieval), caches (remember expensive operations), search indexes (keyword/filter search), stream processing (asynchronous message handling), batch processing (periodic cru</div>
+	<div style="font-size:0.8rem;color:#888">When: typical construction of data-intensive applications</div>
+	<div><span class="tag domain">data systems</span> <span class="tag domain">software architecture</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">causal_chain</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">trigger:</span> applications have demanding or wide-ranging requirements that a single tool cannot meet<br><span class="role-name">mechanism:</span> work is broken down into tasks performable efficiently on single tools, stitched together using application code<br><span class="role-name">outcome:</span> composite data systems combining several components</div>
+	<div style="font-size:0.8rem;color:#888">When: modern application architecture, when requirements exceed single tool capabilities</div>
+	<div><span class="tag domain">data systems</span> <span class="tag domain">software architecture</span> <span class="tag domain">system design</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">deviation</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">theory:</span> databases, queues, caches are very different categories of tools with distinct access patterns and implementations<br><span class="role-name">reality:</span> boundaries between categories are becoming blurred, with tools crossing traditional boundaries<br><span class="role-name">implication:</span> we should lump them together under umbrella term 'data systems'</div>
+	<div style="font-size:0.8rem;color:#888">When: modern data tool landscape</div>
+	<div><span class="tag domain">data systems</span> <span class="tag domain">software architecture</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">example_of</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> Redis<br><span class="role-name">concept:</span> blurring boundaries between data system categories<br><span class="role-name">detail:</span> datastore also used as message queue, crossing traditional category boundaries</div>
+	<div style="font-size:0.8rem;color:#888">When: when categorizing data tools</div>
+	<div><span class="tag domain">data systems</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">example_of</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> Apache Kafka<br><span class="role-name">concept:</span> blurring boundaries between data system categories<br><span class="role-name">detail:</span> message queue with database-like durability guarantees, crossing traditional category boundaries</div>
+	<div style="font-size:0.8rem;color:#888">When: when categorizing data tools</div>
+	<div><span class="tag domain">data systems</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">heuristic</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">situation:</span> combining several tools to provide a service<br><span class="role-name">action:</span> use a service interface or API to hide implementation details from clients<br><span class="role-name">rationale:</span> creates a new special-purpose data system from smaller general-purpose components while maintaining abstraction</div>
+	<div style="font-size:0.8rem;color:#888">When: designing composite data systems</div>
+	<div><span class="tag domain">software architecture</span> <span class="tag domain">API design</span> <span class="tag domain">data systems</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">causal</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">cause:</span> combining tools with application code to create composite data systems with specific guarantees<br><span class="role-name">effect:</span> application developer becomes a data system designer</div>
+	<div style="font-size:0.8rem;color:#888">When: when building data-intensive applications with multiple components</div>
+	<div><span class="tag domain">software engineering</span> <span class="tag domain">system design</span> <span class="tag domain">data systems</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">taxonomy</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">concept:</span> data system design concerns<br><span class="role-name">categories:</span> Reliability, Scalability, Maintainability<br><span class="role-name">basis:</span> fundamental requirements for most software systems regardless of specific situational factors</div>
+	<div style="font-size:0.8rem;color:#888">When: designing data systems, evaluating software systems</div>
+	<div><span class="tag domain">system design</span> <span class="tag domain">software engineering</span> <span class="tag domain">data systems</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> Reliability<br><span class="role-name">meaning:</span> the system should continue to work correctly (performing the correct function at the desired level of performance) even in the face of adversity (hardware or software faults, and even human error)</div>
+	<div style="font-size:0.8rem;color:#888">When: data system design, fault tolerance</div>
+	<div><span class="tag domain">system design</span> <span class="tag domain">reliability engineering</span> <span class="tag domain">data systems</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> Scalability<br><span class="role-name">meaning:</span> as the system grows (in data volume, traffic volume, or complexity), there should be reasonable ways of dealing with that growth</div>
+	<div style="font-size:0.8rem;color:#888">When: data system design, growth management</div>
+	<div><span class="tag domain">system design</span> <span class="tag domain">scalability</span> <span class="tag domain">data systems</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> Maintainability<br><span class="role-name">meaning:</span> over time, many different people will work on the system (engineering and operations, both maintaining current behavior and adapting the system to new use cases), and they should all be able to work o</div>
+	<div style="font-size:0.8rem;color:#888">When: long-term system operation, team productivity</div>
+	<div><span class="tag domain">software engineering</span> <span class="tag domain">system maintenance</span> <span class="tag domain">data systems</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">principle</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">statement:</span> data systems are successful abstractions that we use without thinking too much<br><span class="role-name">implication:</span> engineers wouldn't dream of writing a new data storage engine from scratch because existing databases are perfectly good tools for the job<br><span class="role-name">scope:</span> application development with standard building blocks</div>
+	<div style="font-size:0.8rem;color:#888">When: typical application development, when standard tools suffice</div>
+	<div><span class="tag domain">software engineering</span> <span class="tag domain">abstraction</span> <span class="tag domain">data systems</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> reliability (software)<br><span class="role-name">meaning:</span> continuing to work correctly, even when things go wrong</div>
+	<div style="font-size:0.8rem;color:#888">When: software systems context</div>
+	<div><span class="tag domain">software engineering</span> <span class="tag domain">reliability</span> <span class="tag domain">system design</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">85%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> reliable software<br><span class="role-name">property:</span> performs the function that the user expected, tolerates the user making mistakes or using the software in unexpected ways, performs well enough for the required use case under expected load and data v</div>
+	
+	<div><span class="tag domain">software engineering</span> <span class="tag domain">reliability</span> <span class="tag domain">user experience</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> fault<br><span class="role-name">meaning:</span> one component of the system deviating from its spec</div>
+	<div style="font-size:0.8rem;color:#888">When: systems engineering context</div>
+	<div><span class="tag domain">software engineering</span> <span class="tag domain">reliability</span> <span class="tag domain">fault tolerance</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> failure<br><span class="role-name">meaning:</span> when the system as a whole stops providing the required service to the user</div>
+	<div style="font-size:0.8rem;color:#888">When: systems engineering context</div>
+	<div><span class="tag domain">software engineering</span> <span class="tag domain">reliability</span> <span class="tag domain">fault tolerance</span></div>
+	
+</div>
+<p style="color:#888;font-style:italic">...and 1068 more atoms in the JSON file.</p>
+</body></html>

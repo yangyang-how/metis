@@ -1,25 +1,38 @@
 /**
- * Pipeline runner — parse, comprehend, and extract from an EPUB.
+ * Pipeline runner — parse, comprehend, extract, and integrate from an EPUB.
  *
  * Usage:
  *   bun run src/run-pipeline.ts <path-to-epub> [options]
  *
  * Options:
- *   --comprehend-provider anthropic|kimi  (default: anthropic)
- *   --comprehend-model <model>            (default: claude-sonnet-4-20250514)
+ *   --comprehend-provider anthropic|kimi  (default: kimi)
+ *   --comprehend-model <model>            (default: kimi-k2-0711-preview)
  *   --extract-provider anthropic|kimi     (default: kimi)
  *   --extract-model <model>               (default: kimi-k2-0711-preview)
- *   --skip-extract                         skip extraction stage
+ *   --integrate-provider anthropic|kimi   (default: kimi)
+ *   --integrate-model <model>             (default: kimi-k2-0711-preview)
+ *   --embedding-model <model>             (default: text-embedding-3-large)
+ *   --graph-dir <path>                    (default: engine/graph)
+ *   --skip-extract                        skip extraction stage
+ *   --skip-integrate                      skip integration stage
+ *   --rebuild-graph                       wipe graph and rebuild
  *
  * Environment variables:
  *   ANTHROPIC_API_KEY  — for Anthropic provider
  *   KIMI_API_KEY       — for Kimi provider
+ *   OPENAI_API_KEY     — for OpenAI embeddings
  *
  * Progress to stderr, full JSON to stdout.
  */
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { comprehend } from "./comprehend/index";
 import { normalizeChapters } from "./comprehend/structure-inference";
 import { createRegistry, extract } from "./extract/index";
+import type { CandidateAtom } from "./extract/types";
+import { integrate } from "./integrate/index";
+import type { KnowledgeGraph } from "./integrate/types";
+import { createOpenAIEmbeddingProvider } from "./llm/openai-embedding";
 import { createProvider, withRetry } from "./llm/provider";
 import type { ProviderConfig } from "./llm/types";
 import { parse } from "./parse/index";
@@ -31,7 +44,13 @@ function parseArgs(argv: string[]) {
 	let comprehendModel = "kimi-k2-0711-preview";
 	let extractProvider = "kimi";
 	let extractModel = "kimi-k2-0711-preview";
+	let integrateProvider = "kimi";
+	let integrateModel = "kimi-k2-0711-preview";
+	let embeddingModel = "text-embedding-3-large";
+	let graphDir = join(new URL(".", import.meta.url).pathname, "../graph");
 	let skipExtract = false;
+	let skipIntegrate = false;
+	let rebuildGraph = false;
 
 	for (let i = 0; i < args.length; i++) {
 		const arg = args[i];
@@ -43,8 +62,20 @@ function parseArgs(argv: string[]) {
 			extractProvider = args[++i] ?? extractProvider;
 		} else if (arg === "--extract-model") {
 			extractModel = args[++i] ?? extractModel;
+		} else if (arg === "--integrate-provider") {
+			integrateProvider = args[++i] ?? integrateProvider;
+		} else if (arg === "--integrate-model") {
+			integrateModel = args[++i] ?? integrateModel;
+		} else if (arg === "--embedding-model") {
+			embeddingModel = args[++i] ?? embeddingModel;
+		} else if (arg === "--graph-dir") {
+			graphDir = args[++i] ?? graphDir;
 		} else if (arg === "--skip-extract") {
 			skipExtract = true;
+		} else if (arg === "--skip-integrate") {
+			skipIntegrate = true;
+		} else if (arg === "--rebuild-graph") {
+			rebuildGraph = true;
 		} else if (!arg?.startsWith("--")) {
 			epubPath = arg ?? "";
 		}
@@ -56,7 +87,13 @@ function parseArgs(argv: string[]) {
 		comprehendModel,
 		extractProvider,
 		extractModel,
+		integrateProvider,
+		integrateModel,
+		embeddingModel,
+		graphDir,
 		skipExtract,
+		skipIntegrate,
+		rebuildGraph,
 	};
 }
 
@@ -69,19 +106,24 @@ async function main() {
 		);
 		console.error("");
 		console.error("Options:");
-		console.error(
-			"  --comprehend-provider anthropic|kimi  (default: anthropic)",
-		);
-		console.error(
-			"  --comprehend-model <model>            (default: claude-sonnet-4-20250514)",
-		);
+		console.error("  --comprehend-provider anthropic|kimi  (default: kimi)");
 		console.error("  --extract-provider anthropic|kimi     (default: kimi)");
+		console.error("  --integrate-provider anthropic|kimi   (default: kimi)");
 		console.error(
-			"  --extract-model <model>               (default: kimi-k2-0711-preview)",
+			"  --embedding-model <model>             (default: text-embedding-3-large)",
+		);
+		console.error(
+			"  --graph-dir <path>                    (default: engine/graph)",
 		);
 		console.error("  --skip-extract                        skip extraction");
+		console.error("  --skip-integrate                      skip integration");
+		console.error(
+			"  --rebuild-graph                       wipe and rebuild graph",
+		);
 		console.error("");
-		console.error("Environment: ANTHROPIC_API_KEY, KIMI_API_KEY");
+		console.error(
+			"Environment: ANTHROPIC_API_KEY, KIMI_API_KEY, OPENAI_API_KEY",
+		);
 		process.exit(1);
 	}
 
@@ -141,7 +183,7 @@ async function main() {
 	let totalExtractCalls = 0;
 	let totalExtractInput = 0;
 	let totalExtractOutput = 0;
-	const allAtoms: unknown[] = [];
+	const allAtoms: CandidateAtom[] = [];
 	const allProposedTypes: unknown[] = [];
 
 	for (const chapter of normalizedChapters) {
@@ -185,6 +227,83 @@ async function main() {
 	console.error(
 		`Registry: ${registry.getAll().length} types (${registry.getCoreTypes().length} core + ${registry.getAll().length - registry.getCoreTypes().length} domain)`,
 	);
+
+	// === Phase 4: Integrate ===
+	if (!config.skipIntegrate) {
+		const embeddingProvider = createOpenAIEmbeddingProvider({
+			provider: "openai",
+			model: config.embeddingModel,
+		});
+
+		const integrateProviderConfig: ProviderConfig = {
+			provider: config.integrateProvider as ProviderConfig["provider"],
+			model: config.integrateModel,
+		};
+		const integrateLLM = withRetry(createProvider(integrateProviderConfig));
+
+		let existingGraph: KnowledgeGraph | null = null;
+		const { graphDir } = config;
+		const atomsPath = join(graphDir, "atoms.json");
+
+		if (!config.rebuildGraph && existsSync(atomsPath)) {
+			try {
+				const readJson = (f: string) =>
+					JSON.parse(readFileSync(join(graphDir, f), "utf8"));
+				existingGraph = {
+					atoms: readJson("atoms.json"),
+					entities: readJson("entities.json"),
+					graph: readJson("graph.json"),
+					embeddings: readJson("embeddings.json"),
+					stats: {
+						totalAtoms: 0,
+						totalEntities: 0,
+						newEntities: 0,
+						mergedEntities: 0,
+						reinforcements: 0,
+						contradictions: 0,
+						extensions: 0,
+						crossDomainLinks: 0,
+						llmCalls: 0,
+						embeddingTokens: 0,
+					},
+				};
+				console.error(`[integrate] Loaded existing graph from ${graphDir}`);
+			} catch {
+				console.error(
+					"[integrate] Could not load existing graph — starting fresh",
+				);
+			}
+		}
+
+		const knowledgeGraph = await integrate({
+			atoms: allAtoms,
+			metadata: tree.metadata,
+			existingGraph,
+			llmProvider: integrateLLM,
+			embeddingProvider,
+		});
+
+		if (!existsSync(graphDir)) mkdirSync(graphDir, { recursive: true });
+		writeFileSync(
+			join(graphDir, "atoms.json"),
+			JSON.stringify(knowledgeGraph.atoms, null, 2),
+		);
+		writeFileSync(
+			join(graphDir, "entities.json"),
+			JSON.stringify(knowledgeGraph.entities, null, 2),
+		);
+		writeFileSync(
+			join(graphDir, "graph.json"),
+			JSON.stringify(knowledgeGraph.graph, null, 2),
+		);
+		writeFileSync(
+			join(graphDir, "embeddings.json"),
+			JSON.stringify(knowledgeGraph.embeddings),
+		);
+		console.error(`[integrate] Graph saved to ${graphDir}`);
+	} else {
+		console.error("[integrate] Skipped (--skip-integrate)");
+	}
 
 	// Full result to stdout
 	const output = {

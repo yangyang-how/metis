@@ -131,9 +131,7 @@ export async function clusterMentions(
 			for (const existing of existingInDomain) {
 				if (
 					existing.canonicalName.toLowerCase() === cluster.centroidText ||
-					existing.aliases.some(
-						(a) => a.toLowerCase() === cluster.centroidText,
-					)
+					existing.aliases.some((a) => a.toLowerCase() === cluster.centroidText)
 				) {
 					cluster.centroidText = existing.canonicalName.toLowerCase();
 					break;
@@ -145,16 +143,17 @@ export async function clusterMentions(
 		if (clusters.length > 1) {
 			for (let i = 0; i < clusters.length; i++) {
 				for (let j = i + 1; j < clusters.length; j++) {
-					const a = clusters[i]!;
-					const b = clusters[j]!;
+					const a = clusters[i];
+					const b = clusters[j];
+					if (!a || !b) continue;
 					if (a.mentions.length === 0 || b.mentions.length === 0) continue;
 
 					const textsToEmbed = [a.centroidText, b.centroidText];
 					const textEmbeddings = await provider.embed(textsToEmbed);
-					const sim = cosineSimilarity(
-						textEmbeddings[0]!,
-						textEmbeddings[1]!,
-					);
+					const embA = textEmbeddings[0];
+					const embB = textEmbeddings[1];
+					if (!embA || !embB) continue;
+					const sim = cosineSimilarity(embA, embB);
 
 					if (sim >= CLUSTER_MERGE_THRESHOLD) {
 						a.mentions.push(...b.mentions);
@@ -199,18 +198,19 @@ export async function resolveEntities(
 	}> = [];
 	for (let i = 0; i < clusters.length; i++) {
 		for (let j = i + 1; j < clusters.length; j++) {
-			const a = clusters[i]!;
-			const b = clusters[j]!;
+			const a = clusters[i];
+			const b = clusters[j];
+			if (!a || !b) continue;
 			if (a.domain !== b.domain) continue;
 			if (a.mentions.length === 0 || b.mentions.length === 0) continue;
 
 			const textsToEmbed = [a.centroidText, b.centroidText];
 			const textEmbeddings = await embeddingProvider.embed(textsToEmbed);
-			const sim = cosineSimilarity(textEmbeddings[0]!, textEmbeddings[1]!);
-			if (
-				sim >= CLUSTER_AMBIGUOUS_THRESHOLD &&
-				sim < CLUSTER_MERGE_THRESHOLD
-			) {
+			const tA = textEmbeddings[0];
+			const tB = textEmbeddings[1];
+			if (!tA || !tB) continue;
+			const sim = cosineSimilarity(tA, tB);
+			if (sim >= CLUSTER_AMBIGUOUS_THRESHOLD && sim < CLUSTER_MERGE_THRESHOLD) {
 				disambiguationPairs.push({ a, b });
 			}
 		}
@@ -221,10 +221,7 @@ export async function resolveEntities(
 		i < disambiguationPairs.length;
 		i += DISAMBIGUATION_BATCH_SIZE
 	) {
-		const batch = disambiguationPairs.slice(
-			i,
-			i + DISAMBIGUATION_BATCH_SIZE,
-		);
+		const batch = disambiguationPairs.slice(i, i + DISAMBIGUATION_BATCH_SIZE);
 		const promptPairs = batch.map((p) => ({
 			a: p.a.centroidText,
 			b: p.b.centroidText,
@@ -280,9 +277,9 @@ export async function resolveEntities(
 		const canonicalName = cluster.centroidText;
 		const domain = cluster.domain;
 		const atomIds = [...new Set(cluster.mentions.map((m) => m.atomId))];
-		const aliases = [
-			...new Set(cluster.mentions.map((m) => m.text)),
-		].filter((a) => a.toLowerCase() !== canonicalName);
+		const aliases = [...new Set(cluster.mentions.map((m) => m.text))].filter(
+			(a) => a.toLowerCase() !== canonicalName,
+		);
 
 		// Check if this merges into an existing entity
 		const existingEntity = Object.values(entities).find(
@@ -331,14 +328,15 @@ export async function resolveEntities(
 
 		for (let i = 0; i < entityList.length; i++) {
 			for (let j = i + 1; j < entityList.length; j++) {
-				const eA = entityList[i]!;
-				const eB = entityList[j]!;
+				const eA = entityList[i];
+				const eB = entityList[j];
+				if (!eA || !eB) continue;
 				if (eA.domain === eB.domain) continue;
 
-				const sim = cosineSimilarity(
-					nameEmbeddings[i]!,
-					nameEmbeddings[j]!,
-				);
+				const nA = nameEmbeddings[i];
+				const nB = nameEmbeddings[j];
+				if (!nA || !nB) continue;
+				const sim = cosineSimilarity(nA, nB);
 				if (sim >= CROSS_DOMAIN_THRESHOLD) {
 					if (!eA.crossDomainLinks.includes(eB.id)) {
 						eA.crossDomainLinks.push(eB.id);

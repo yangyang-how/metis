@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import { integrate } from "../../src/integrate/index";
+import type { LLMProvider } from "../../src/llm/types";
 import { createMockEmbeddingProvider } from "./fixtures/mock-embeddings";
 import { bookAAtoms, bookBAtoms } from "./fixtures/sample-atoms";
-import type { LLMProvider } from "../../src/llm/types";
 
 function createMockLLM(): LLMProvider {
 	return {
@@ -59,9 +59,7 @@ describe("integrate — end to end", () => {
 			embeddingProvider: provider,
 		});
 
-		expect(graphAB.atoms.length).toBe(
-			bookAAtoms.length + bookBAtoms.length,
-		);
+		expect(graphAB.atoms.length).toBe(bookAAtoms.length + bookBAtoms.length);
 		expect(graphAB.embeddings.length).toBe(
 			bookAAtoms.length + bookBAtoms.length,
 		);

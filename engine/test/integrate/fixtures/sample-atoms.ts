@@ -126,8 +126,7 @@ export const bookBAtoms: CandidateAtom[] = [
 		frame: "definition",
 		roles: {
 			term: "replication delay",
-			meaning:
-				"time for a write to propagate from primary to replica",
+			meaning: "time for a write to propagate from primary to replica",
 		},
 		domain: ["distributed systems", "databases"],
 		source: {
@@ -156,8 +155,7 @@ export const bookBAtoms: CandidateAtom[] = [
 		id: "sys-design-ch2-s1-0",
 		frame: "principle",
 		roles: {
-			statement:
-				"strong consistency does not require synchronous replication",
+			statement: "strong consistency does not require synchronous replication",
 			scope: "modern distributed databases",
 			implication:
 				"consensus protocols can achieve consistency without sync replication",

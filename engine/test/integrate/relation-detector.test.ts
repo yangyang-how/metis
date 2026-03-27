@@ -1,13 +1,13 @@
 import { describe, expect, test } from "bun:test";
-import {
-	findCandidatePairs,
-	detectRelations,
-} from "../../src/integrate/relation-detector";
-import { resolveEntities } from "../../src/integrate/entity-resolver";
 import { embedAtoms } from "../../src/integrate/embedding-service";
+import { resolveEntities } from "../../src/integrate/entity-resolver";
+import {
+	detectRelations,
+	findCandidatePairs,
+} from "../../src/integrate/relation-detector";
+import type { LLMProvider } from "../../src/llm/types";
 import { createMockEmbeddingProvider } from "./fixtures/mock-embeddings";
 import { bookAAtoms, bookBAtoms, bookCAtoms } from "./fixtures/sample-atoms";
-import type { LLMProvider } from "../../src/llm/types";
 
 function createMockLLM(responses: string[]): LLMProvider {
 	let callIdx = 0;
@@ -18,8 +18,7 @@ function createMockLLM(responses: string[]): LLMProvider {
 			maxContextTokens: 128000,
 		},
 		async sendMessage() {
-			const content =
-				responses[callIdx++] ?? '{"classifications":[]}';
+			const content = responses[callIdx++] ?? '{"classifications":[]}';
 			return { content, usage: { inputTokens: 100, outputTokens: 50 } };
 		},
 	};

@@ -1,11 +1,11 @@
 import { describe, expect, test } from "bun:test";
-import { createOpenAIEmbeddingProvider } from "../../src/llm/openai-embedding";
-import type { OpenAIEmbeddingClient } from "../../src/llm/openai-embedding";
 import {
 	atomToText,
 	cosineSimilarity,
 	embedAtoms,
 } from "../../src/integrate/embedding-service";
+import { createOpenAIEmbeddingProvider } from "../../src/llm/openai-embedding";
+import type { OpenAIEmbeddingClient } from "../../src/llm/openai-embedding";
 import { createMockEmbeddingProvider } from "./fixtures/mock-embeddings";
 import { bookAAtoms, makeAtom } from "./fixtures/sample-atoms";
 
@@ -158,9 +158,9 @@ describe("embedAtoms", () => {
 		];
 		const result = await embedAtoms(atoms, provider, existingCache);
 		expect(result).toHaveLength(2);
-		expect(
-			result.find((e) => e.atomId === atoms[0]!.id)?.text,
-		).toBe("cached text");
+		expect(result.find((e) => e.atomId === atoms[0]!.id)?.text).toBe(
+			"cached text",
+		);
 	});
 
 	test("batches according to maxBatchSize", async () => {

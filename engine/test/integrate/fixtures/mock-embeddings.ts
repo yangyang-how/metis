@@ -17,8 +17,9 @@ export const MOCK_VECTORS: Record<string, number[]> = {
 	// Replication cluster (high mutual similarity)
 	"replication lag": [0.9, 0.3, 0.1, 0.0, 0.0, 0.1, 0.0, 0.0],
 	"replication delay": [0.88, 0.32, 0.12, 0.02, 0.0, 0.08, 0.0, 0.0],
-	"the delay between a write on the leader and its reflection on a follower":
-		[0.85, 0.35, 0.15, 0.0, 0.05, 0.1, 0.0, 0.0],
+	"the delay between a write on the leader and its reflection on a follower": [
+		0.85, 0.35, 0.15, 0.0, 0.05, 0.1, 0.0, 0.0,
+	],
 	"time for a write to propagate from primary to replica": [
 		0.84, 0.34, 0.14, 0.01, 0.04, 0.09, 0.0, 0.0,
 	],
@@ -38,9 +39,7 @@ export const MOCK_VECTORS: Record<string, number[]> = {
 	],
 
 	// Feedback loop — distributed systems
-	"feedback loop in retry logic": [
-		0.1, 0.0, 0.0, 0.0, 0.8, 0.3, 0.2, 0.0,
-	],
+	"feedback loop in retry logic": [0.1, 0.0, 0.0, 0.0, 0.8, 0.3, 0.2, 0.0],
 	"cascading failures across services": [
 		0.0, 0.0, 0.1, 0.0, 0.6, 0.5, 0.1, 0.0,
 	],
@@ -77,8 +76,7 @@ export function createMockEmbeddingProvider(): EmbeddingProvider {
 				if (MOCK_VECTORS[normalized]) return MOCK_VECTORS[normalized];
 				// Check for substring match
 				for (const [key, vec] of Object.entries(MOCK_VECTORS)) {
-					if (normalized.includes(key) || key.includes(normalized))
-						return vec;
+					if (normalized.includes(key) || key.includes(normalized)) return vec;
 				}
 				// Fallback to hash
 				return hashToVector(text);

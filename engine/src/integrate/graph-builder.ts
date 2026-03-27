@@ -95,8 +95,9 @@ export function buildAdjacencyList(
 		const entityAtomIds = entity.atomIds.filter((id) => atomIds.has(id));
 		for (let i = 0; i < entityAtomIds.length; i++) {
 			for (let j = i + 1; j < entityAtomIds.length; j++) {
-				const a = entityAtomIds[i]!;
-				const b = entityAtomIds[j]!;
+				const a = entityAtomIds[i];
+				const b = entityAtomIds[j];
+				if (!a || !b) continue;
 				addEdge(a, { target: b, type: "entity_link", confidence: 1.0 });
 				addEdge(b, { target: a, type: "entity_link", confidence: 1.0 });
 			}
@@ -123,9 +124,7 @@ export function buildAdjacencyList(
 			const linkedEntity = entities[linkedEntityId];
 			if (!linkedEntity) continue;
 
-			for (const atomA of entity.atomIds.filter((id) =>
-				atomIds.has(id),
-			)) {
+			for (const atomA of entity.atomIds.filter((id) => atomIds.has(id))) {
 				for (const atomB of linkedEntity.atomIds.filter((id) =>
 					atomIds.has(id),
 				)) {

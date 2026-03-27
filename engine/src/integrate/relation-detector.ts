@@ -61,8 +61,7 @@ export function findCandidatePairs(
 			// Skip same-book pairs
 			if (newAtom.source.title === existingAtom.source.title) continue;
 
-			const existingEntityIds =
-				atomToEntities.get(existingAtom.id) ?? [];
+			const existingEntityIds = atomToEntities.get(existingAtom.id) ?? [];
 			const shared = newEntityIds.filter((id) =>
 				existingEntityIds.includes(id),
 			);
@@ -87,9 +86,7 @@ export function scoreAndClassify(
 	pairs: AtomPair[],
 	embeddings: VectorIndex,
 ): { algorithmic: Relation[]; ambiguous: AtomPair[] } {
-	const embeddingMap = new Map(
-		embeddings.map((e) => [e.atomId, e.embedding]),
-	);
+	const embeddingMap = new Map(embeddings.map((e) => [e.atomId, e.embedding]));
 	const algorithmic: Relation[] = [];
 	const ambiguous: AtomPair[] = [];
 

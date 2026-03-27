@@ -1,0 +1,168 @@
+<h2>Extract Stage: Full Pipeline</h2>
+<p class="subtitle">One cheap-model call per section. ComprehensionMap guides what to look for.</p>
+
+<div class="section">
+  <h3>Data Flow</h3>
+  <div class="mockup">
+    <div class="mockup-header">Parse → Comprehend → Extract</div>
+    <div class="mockup-body" style="padding: 1.5rem;">
+      <div style="display: flex; gap: 0.75rem; align-items: stretch; font-size: 0.85rem;">
+        <!-- Input 1 -->
+        <div style="flex: 1; background: #ede9fe; border-radius: 8px; padding: 0.75rem; border: 2px solid #c4b5fd;">
+          <div style="font-weight: 700; color: #5b21b6; font-size: 0.8rem;">FROM COMPREHEND</div>
+          <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #444;">
+            ComprehensionMap<br>
+            <span style="color: #888;">• chapterType: "framework"</span><br>
+            <span style="color: #888;">• structures: [...]</span><br>
+            <span style="color: #888;">• sectionAnalyses: [...]</span>
+          </div>
+        </div>
+        <!-- Input 2 -->
+        <div style="flex: 1; background: #dbeafe; border-radius: 8px; padding: 0.75rem; border: 2px solid #93c5fd;">
+          <div style="font-weight: 700; color: #1e40af; font-size: 0.8rem;">FROM PARSE</div>
+          <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #444;">
+            NormalizedChapter<br>
+            <span style="color: #888;">• sections[].content</span><br>
+            <span style="color: #888;">• raw text, tables, images</span>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;font-size:1.2rem;color:#999;">→</div>
+        <!-- Process -->
+        <div style="flex: 1.5; background: #fef3c7; border-radius: 8px; padding: 0.75rem; border: 2px solid #fbbf24;">
+          <div style="font-weight: 700; color: #92400e; font-size: 0.8rem;">EXTRACT (per section)</div>
+          <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #444;">
+            1. Skip trivial sections (&lt;3 blocks)<br>
+            2. Build prompt with:<br>
+            <span style="padding-left: 0.5rem; color: #888;">• Section content</span><br>
+            <span style="padding-left: 0.5rem; color: #888;">• SectionAnalysis context</span><br>
+            <span style="padding-left: 0.5rem; color: #888;">• All 17 frame type schemas</span><br>
+            3. Call cheap model (Haiku)<br>
+            4. Parse + validate atoms<br>
+            5. Adjust confidence scores
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;font-size:1.2rem;color:#999;">→</div>
+        <!-- Output -->
+        <div style="flex: 1; background: #dcfce7; border-radius: 8px; padding: 0.75rem; border: 2px solid #86efac;">
+          <div style="font-weight: 700; color: #166534; font-size: 0.8rem;">OUTPUT</div>
+          <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #444;">
+            ExtractionResult<br>
+            <span style="color: #888;">• CandidateAtom[]</span><br>
+            <span style="color: #888;">• ProposedFrameType[]</span><br>
+            <span style="color: #888;">• usage stats</span><br>
+            <span style="color: #888;">• flagged atoms</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>What a CandidateAtom Looks Like</h3>
+  <p class="subtitle">Real example: from 福格行为模型 Chapter 1, Section "从小改变着手的5个原因"</p>
+  <div style="display: flex; gap: 1rem;">
+    <!-- Source -->
+    <div style="flex: 1;">
+      <div style="background: #fef3c7; border: 2px solid #fbbf24; border-radius: 8px; padding: 1rem;">
+        <div style="font-weight: 700; color: #92400e; margin-bottom: 0.5rem;">📖 Source Text</div>
+        <div style="font-size: 0.85rem; color: #555; font-style: italic; line-height: 1.5;">
+          "原因1，可以利用碎片时间... 原因2，可以立刻开始改变... 原因3，不需要担心会失败... 原因4，一样能吃掉'大鲸鱼'... 原因5，不需要依赖动机或意志力也能做到"
+        </div>
+      </div>
+    </div>
+    <!-- Arrow -->
+    <div style="display:flex;align-items:center;font-size:1.5rem;color:#999;">→</div>
+    <!-- Atom -->
+    <div style="flex: 1.2;">
+      <div style="background: #f0fdf4; border: 2px solid #4ade80; border-radius: 8px; padding: 1rem; font-size: 0.85rem;">
+        <div style="font-weight: 700; color: #166534; margin-bottom: 0.5rem;">⚛️ CandidateAtom</div>
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr><td style="color: #888; padding: 2px 8px 2px 0; vertical-align: top; white-space: nowrap;">frame</td><td style="font-weight: 600; color: #5b21b6;">taxonomy</td></tr>
+          <tr><td style="color: #888; padding: 2px 8px 2px 0; vertical-align: top;">roles.concept</td><td>"从小改变着手的优势"</td></tr>
+          <tr><td style="color: #888; padding: 2px 8px 2px 0; vertical-align: top;">roles.categories</td><td>"利用碎片时间, 立刻开始, 不怕失败, 能吃大鲸鱼, 不依赖意志力"</td></tr>
+          <tr><td style="color: #888; padding: 2px 8px 2px 0; vertical-align: top;">roles.basis</td><td>"微习惯策略的实用性维度"</td></tr>
+          <tr><td style="color: #888; padding: 2px 8px 2px 0; vertical-align: top;">confidence</td><td><span style="background: #dcfce7; padding: 1px 6px; border-radius: 3px;">0.9</span></td></tr>
+          <tr><td style="color: #888; padding: 2px 8px 2px 0; vertical-align: top;">domain</td><td><span style="background: #ede9fe; padding: 1px 6px; border-radius: 3px;">behavior-design</span></td></tr>
+          <tr><td style="color: #888; padding: 2px 8px 2px 0; vertical-align: top;">source</td><td style="font-size: 0.8rem; color: #666;">福格行为模型 → ch1 → s3</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+    <!-- Source 2 -->
+    <div style="flex: 1;">
+      <div style="background: #fef3c7; border: 2px solid #fbbf24; border-radius: 8px; padding: 1rem;">
+        <div style="font-weight: 700; color: #92400e; margin-bottom: 0.5rem;">📖 Another Extract</div>
+        <div style="font-size: 0.85rem; color: #555; font-style: italic; line-height: 1.5;">
+          "行为设计，本质就是情绪设计。当你在做一个行为后创造出积极情绪，大脑会释放多巴胺...这会促使你反复做这个行为"
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;font-size:1.5rem;color:#999;">→</div>
+    <!-- Atom 2 -->
+    <div style="flex: 1.2;">
+      <div style="background: #f0fdf4; border: 2px solid #4ade80; border-radius: 8px; padding: 1rem; font-size: 0.85rem;">
+        <div style="font-weight: 700; color: #166534; margin-bottom: 0.5rem;">⚛️ CandidateAtom</div>
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr><td style="color: #888; padding: 2px 8px 2px 0; vertical-align: top; white-space: nowrap;">frame</td><td style="font-weight: 600; color: #5b21b6;">causal_chain</td></tr>
+          <tr><td style="color: #888; padding: 2px 8px 2px 0; vertical-align: top;">roles.trigger</td><td>"行为后创造积极情绪"</td></tr>
+          <tr><td style="color: #888; padding: 2px 8px 2px 0; vertical-align: top;">roles.mechanism</td><td>"大脑释放多巴胺，对该行为进行神经编码"</td></tr>
+          <tr><td style="color: #888; padding: 2px 8px 2px 0; vertical-align: top;">roles.outcome</td><td>"反复做这个行为，形成习惯"</td></tr>
+          <tr><td style="color: #888; padding: 2px 8px 2px 0; vertical-align: top;">confidence</td><td><span style="background: #dcfce7; padding: 1px 6px; border-radius: 3px;">0.85</span></td></tr>
+          <tr><td style="color: #888; padding: 2px 8px 2px 0; vertical-align: top;">domain</td><td><span style="background: #ede9fe; padding: 1px 6px; border-radius: 3px;">behavior-design</span> <span style="background: #ede9fe; padding: 1px 6px; border-radius: 3px;">neuroscience</span></td></tr>
+          <tr><td style="color: #888; padding: 2px 8px 2px 0; vertical-align: top;">source</td><td style="font-size: 0.8rem; color: #666;">福格行为模型 → ch5 → s1</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Validation & Confidence Adjustment</h3>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem;">
+      <div style="font-weight: 700; color: #1e40af; margin-bottom: 0.5rem;">Validation (lenient)</div>
+      <div style="font-size: 0.85rem;">
+        <div style="color: #16a34a;">✓ Has frame type (core or proposed)</div>
+        <div style="color: #16a34a;">✓ Has at least 1 role filled</div>
+        <div style="color: #eab308;">⚠ Missing optional roles → flag, keep</div>
+        <div style="color: #eab308;">⚠ Empty conditions → flag, keep</div>
+        <div style="color: #ef4444;">✗ No frame type → reject</div>
+        <div style="color: #ef4444;">✗ Zero roles → reject</div>
+      </div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem;">
+      <div style="font-weight: 700; color: #1e40af; margin-bottom: 0.5rem;">Confidence Adjustments</div>
+      <div style="font-size: 0.85rem;">
+        <div style="color: #16a34a;">↑ +0.05 All roles filled</div>
+        <div style="color: #16a34a;">↑ +0.05 Has conditions</div>
+        <div style="color: #16a34a;">↑ +0.05 Frame type matches SectionAnalysis prediction</div>
+        <div style="color: #ef4444;">↓ −0.1 Missing required roles</div>
+        <div style="color: #ef4444;">↓ −0.1 Has validation flags</div>
+        <div style="color: #888;">Clamped to [0.0, 1.0]</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Does this extraction design make sense?</h3>
+  <div class="options">
+    <div class="option" data-choice="yes" onclick="toggleSelect(this)">
+      <div class="letter">A</div>
+      <div class="content">
+        <h3>Yes, looks good</h3>
+        <p>The flow, atom format, validation, and confidence adjustment all make sense</p>
+      </div>
+    </div>
+    <div class="option" data-choice="concerns" onclick="toggleSelect(this)">
+      <div class="letter">B</div>
+      <div class="content">
+        <h3>I have feedback</h3>
+        <p>I'll share my thoughts in the terminal</p>
+      </div>
+    </div>
+  </div>
+</div>

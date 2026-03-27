@@ -37,9 +37,7 @@ export function createOpenAIEmbeddingProvider(
 	};
 }
 
-function createRealClient(
-	apiKey: string | undefined,
-): OpenAIEmbeddingClient {
+function createRealClient(apiKey: string | undefined): OpenAIEmbeddingClient {
 	const sdk = new OpenAI({ apiKey: apiKey ?? "" });
 	return {
 		async create(args) {

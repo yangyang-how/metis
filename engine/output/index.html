@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Metis — Extraction Results</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, 'Helvetica Neue', sans-serif; max-width: 1100px; margin: 0 auto; padding: 2rem; background: #fafafa; color: #222; line-height: 1.6; }
+h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+h2 { font-size: 1.4rem; margin: 1.5rem 0 0.75rem; border-bottom: 2px solid #2563eb; padding-bottom: 0.3rem; }
+h3 { font-size: 1.1rem; margin: 1rem 0 0.5rem; }
+.subtitle { color: #666; margin-bottom: 1.5rem; }
+.stats { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.stat { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 0.75rem 1.25rem; }
+.stat-value { font-size: 1.4rem; font-weight: 700; color: #2563eb; }
+.stat-label { font-size: 0.8rem; color: #666; }
+.card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1.25rem; margin-bottom: 1rem; }
+.card:hover { border-color: #2563eb; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.tag { display: inline-block; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 3px; padding: 1px 6px; margin: 2px; font-size: 0.78rem; }
+.tag.frame { background: #ede9fe; border-color: #c4b5fd; color: #5b21b6; }
+.tag.domain { background: #dbeafe; border-color: #93c5fd; color: #1e40af; }
+.tag.concept { background: #dcfce7; border-color: #86efac; color: #166534; }
+.tag.flag { background: #fef3c7; border-color: #fde047; color: #854d0e; }
+.type-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.78rem; font-weight: 600; }
+.type-badge.framework { background: #dbeafe; color: #1e40af; }
+.type-badge.narrative { background: #fef3c7; color: #92400e; }
+.type-badge.practical { background: #d1fae5; color: #065f46; }
+.type-badge.argumentative { background: #fce7f3; color: #9d174d; }
+.type-badge.survey { background: #e0e7ff; color: #3730a3; }
+.type-badge.unknown { background: #f3f4f6; color: #6b7280; }
+.atom { border-left: 3px solid #c4b5fd; padding: 0.75rem; margin: 0.5rem 0; background: #fafafa; border-radius: 0 4px 4px 0; }
+.atom-header { display: flex; justify-content: space-between; align-items: center; }
+.atom-frame { font-weight: 600; color: #5b21b6; }
+.atom-confidence { font-size: 0.8rem; color: #666; }
+.roles { margin: 0.5rem 0; font-size: 0.9rem; }
+.role-name { color: #888; font-weight: 500; }
+.bar { height: 20px; border-radius: 3px; display: inline-block; }
+.chart { margin: 0.5rem 0; }
+details summary { cursor: pointer; color: #2563eb; font-weight: 500; padding: 0.25rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 0.5rem 0; }
+th, td { text-align: left; padding: 0.4rem 0.75rem; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+th { background: #f8fafc; font-weight: 600; }
+</style></head><body>
+<h1>Metis Extraction Results</h1>
+<p class="subtitle">8 books processed through Parse → Comprehend → Extract</p>
+<div class="stats">
+<div class="stat"><div class="stat-value">8</div><div class="stat-label">Books</div></div>
+<div class="stat"><div class="stat-value">249</div><div class="stat-label">Chapters</div></div>
+<div class="stat"><div class="stat-value">4,101</div><div class="stat-label">Atoms</div></div>
+</div>
+<table>
+<thead><tr><th>Book</th><th>Chapters</th><th>Failed</th><th>Atoms</th><th>Frame Types</th></tr></thead>
+<tbody><tr>
+	<td><a href="如何快速了解一个行业.html"><strong>如何快速了解一个行业</strong></a><br><span style="color:#888;font-size:0.8rem">肖璟</span></td>
+	<td>11</td>
+	<td>2</td>
+	<td><strong>634</strong></td>
+	<td>17</td>
+</tr>
+<tr>
+	<td><a href="写出我心-普通人如何通过写作表达自己.html"><strong>写出我心:普通人如何通过写作表达自己</strong></a><br><span style="color:#888;font-size:0.8rem">娜塔莉·戈德堡 (Natalie Goldberg)</span></td>
+	<td>72</td>
+	<td>0</td>
+	<td><strong>667</strong></td>
+	<td>17</td>
+</tr>
+<tr>
+	<td><a href="福格行为模型-不较劲-不焦虑-不依赖意志力的行为公式-已被120000人成功验证-让-心想事成-像自.html"><strong>福格行为模型（不较劲、不焦虑、不依赖意志力的行为公式，已被120000人成功验证，让“心想事成”像自来水一样简单，行为设计学创始人福格博士倾囊相授）</strong></a><br><span style="color:#888;font-size:0.8rem">B.J.福格</span></td>
+	<td>17</td>
+	<td>0</td>
+	<td><strong>200</strong></td>
+	<td>17</td>
+</tr>
+<tr>
+	<td><a href="designing-data-intensive-applications.html"><strong>Designing Data-Intensive Applications</strong></a><br><span style="color:#888;font-size:0.8rem">Kleppmann, Martin</span></td>
+	<td>18</td>
+	<td>12</td>
+	<td><strong>1118</strong></td>
+	<td>17</td>
+</tr>
+<tr>
+	<td><a href="out-of-control.html"><strong>Out of Control</strong></a><br><span style="color:#888;font-size:0.8rem">Kevin Kelly</span></td>
+	<td>31</td>
+	<td>0</td>
+	<td><strong>306</strong></td>
+	<td>17</td>
+</tr>
+<tr>
+	<td><a href="法国思想四百年-浪漫-革命与复兴.html"><strong>法国思想四百年：浪漫、革命与复兴</strong></a><br><span style="color:#888;font-size:0.8rem">彼得·沃森</span></td>
+	<td>70</td>
+	<td>2</td>
+	<td><strong>392</strong></td>
+	<td>17</td>
+</tr>
+<tr>
+	<td><a href="我的最后一本减肥书-畅销增修版.html"><strong>我的最后一本减肥书（畅销增修版）</strong></a><br><span style="color:#888;font-size:0.8rem">仰望尾迹云</span></td>
+	<td>8</td>
+	<td>0</td>
+	<td><strong>515</strong></td>
+	<td>17</td>
+</tr>
+<tr>
+	<td><a href="制度基因-中国制度与极权主义制度的起源.html"><strong>制度基因：中国制度与极权主义制度的起源</strong></a><br><span style="color:#888;font-size:0.8rem">许成钢</span></td>
+	<td>22</td>
+	<td>4</td>
+	<td><strong>269</strong></td>
+	<td>18</td>
+</tr></tbody>
+</table>
+</body></html>

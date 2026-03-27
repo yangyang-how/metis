@@ -1,10 +1,11 @@
 import { describe, expect, test } from "bun:test";
+import { embedAtoms } from "../../src/integrate/embedding-service";
 import {
-	extractMentions,
 	clusterMentions,
+	extractMentions,
 	resolveEntities,
 } from "../../src/integrate/entity-resolver";
-import { embedAtoms } from "../../src/integrate/embedding-service";
+import type { LLMProvider } from "../../src/llm/types";
 import { createMockEmbeddingProvider } from "./fixtures/mock-embeddings";
 import {
 	bookAAtoms,
@@ -12,7 +13,6 @@ import {
 	bookCAtoms,
 	makeAtom,
 } from "./fixtures/sample-atoms";
-import type { LLMProvider } from "../../src/llm/types";
 
 function createMockLLM(responses: string[]): LLMProvider {
 	let callIdx = 0;
@@ -82,21 +82,15 @@ describe("clusterMentions", () => {
 		const provider = createMockEmbeddingProvider();
 		const mentions = extractMentions(bookAAtoms);
 		const embeddings = await embedAtoms(bookAAtoms, provider, []);
-		const clusters = await clusterMentions(
-			mentions,
-			embeddings,
-			provider,
-			{},
-		);
+		const clusters = await clusterMentions(mentions, embeddings, provider, {});
 		// "replication lag" appears in multiple atoms in Book A
 		const repLagCluster = clusters.find((c) =>
 			c.mentions.some((m) => m.normalized === "replication lag"),
 		);
 		expect(repLagCluster).toBeDefined();
 		expect(
-			repLagCluster!.mentions.filter(
-				(m) => m.normalized === "replication lag",
-			).length,
+			repLagCluster!.mentions.filter((m) => m.normalized === "replication lag")
+				.length,
 		).toBeGreaterThan(1);
 	});
 
@@ -116,12 +110,7 @@ describe("clusterMentions", () => {
 		const provider = createMockEmbeddingProvider();
 		const mentions = extractMentions([atom1, atom2]);
 		const embeddings = await embedAtoms([atom1, atom2], provider, []);
-		const clusters = await clusterMentions(
-			mentions,
-			embeddings,
-			provider,
-			{},
-		);
+		const clusters = await clusterMentions(mentions, embeddings, provider, {});
 		const modelClusters = clusters.filter((c) =>
 			c.mentions.some((m) => m.normalized === "model"),
 		);

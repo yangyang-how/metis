@@ -17,8 +17,7 @@ const FRAME_TEMPLATES: Record<
 	definition: (r) => `${r.term} means ${r.meaning}`,
 	has_property: (r) => `${r.entity} has the property: ${r.property}`,
 	is_a: (r) => `${r.instance} is a type of ${r.category}`,
-	consists_of: (r) =>
-		`${r.whole} consists of ${r.dimension}: ${r.description}`,
+	consists_of: (r) => `${r.whole} consists of ${r.dimension}: ${r.description}`,
 	example_of: (r) =>
 		`${r.instance} is an example of ${r.concept}${r.detail ? `: ${r.detail}` : ""}`,
 	taxonomy: (r) =>
@@ -26,8 +25,7 @@ const FRAME_TEMPLATES: Record<
 	causal: (r) => `${r.cause} causes ${r.effect}`,
 	causal_chain: (r) =>
 		`${r.trigger} leads to ${r.mechanism}, resulting in ${r.outcome}`,
-	heuristic: (r) =>
-		`when ${r.situation}, ${r.action} because ${r.rationale}`,
+	heuristic: (r) => `when ${r.situation}, ${r.action} because ${r.rationale}`,
 	principle: (r) =>
 		`${r.statement}${r.scope ? ` (in ${r.scope})` : ""}${r.implication ? `: ${r.implication}` : ""}`,
 	procedure: (r) =>
@@ -40,8 +38,7 @@ const FRAME_TEMPLATES: Record<
 		`${r.metric} at ${r.threshold_value} triggers ${r.transition}${r.direction ? ` (${r.direction})` : ""}`,
 	method_comparison: (r) =>
 		`${r.method_a} vs ${r.method_b}: ${r.difference}${r.when_to_use ? `. Use when: ${r.when_to_use}` : ""}`,
-	sequence: (r) =>
-		`${r.name}: ${r.layers}${r.rule ? `. Rule: ${r.rule}` : ""}`,
+	sequence: (r) => `${r.name}: ${r.layers}${r.rule ? `. Rule: ${r.rule}` : ""}`,
 	evaluation_matrix: (r) =>
 		`${r.name} evaluates across ${r.dimensions}${r.quadrants ? `: ${r.quadrants}` : ""}${r.rule ? `. ${r.rule}` : ""}`,
 };
@@ -86,11 +83,13 @@ export async function embedAtoms(
 		const embeddings = await provider.embed(texts);
 
 		for (let j = 0; j < batch.length; j++) {
-			const item = batch[j]!;
+			const item = batch[j];
+			const embedding = embeddings[j];
+			if (!item || !embedding) continue;
 			newEntries.push({
 				atomId: item.atom.id,
 				text: item.text,
-				embedding: embeddings[j]!,
+				embedding,
 			});
 		}
 	}
@@ -126,9 +125,11 @@ export function cosineSimilarity(a: number[], b: number[]): number {
 	let magA = 0;
 	let magB = 0;
 	for (let i = 0; i < a.length; i++) {
-		dot += a[i]! * b[i]!;
-		magA += a[i]! * a[i]!;
-		magB += b[i]! * b[i]!;
+		const ai = a[i] ?? 0;
+		const bi = b[i] ?? 0;
+		dot += ai * bi;
+		magA += ai * ai;
+		magB += bi * bi;
 	}
 	const denom = Math.sqrt(magA) * Math.sqrt(magB);
 	return denom === 0 ? 0 : dot / denom;

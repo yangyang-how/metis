@@ -1,10 +1,10 @@
 import { describe, expect, test } from "bun:test";
 import {
-	finalizeAtoms,
 	buildAdjacencyList,
+	finalizeAtoms,
 } from "../../src/integrate/graph-builder";
-import { makeAtom } from "./fixtures/sample-atoms";
 import type { EntityIndex, Relation } from "../../src/integrate/types";
+import { makeAtom } from "./fixtures/sample-atoms";
 
 describe("finalizeAtoms", () => {
 	test("promotes CandidateAtom to Atom with empty cross-references", () => {
@@ -95,12 +95,8 @@ describe("finalizeAtoms", () => {
 			},
 		];
 		const finalized = finalizeAtoms([atomA, atomB], {}, relations);
-		expect(
-			finalized.find((a) => a.id === "a")!.contradictedBy,
-		).toContain("b");
-		expect(
-			finalized.find((a) => a.id === "b")!.contradictedBy,
-		).toContain("a");
+		expect(finalized.find((a) => a.id === "a")!.contradictedBy).toContain("b");
+		expect(finalized.find((a) => a.id === "b")!.contradictedBy).toContain("a");
 	});
 
 	test("populates extendedBy from relations", () => {
@@ -116,12 +112,8 @@ describe("finalizeAtoms", () => {
 			},
 		];
 		const finalized = finalizeAtoms([atomA, atomB], {}, relations);
-		expect(
-			finalized.find((a) => a.id === "a")!.extendedBy,
-		).toContain("b");
-		expect(
-			finalized.find((a) => a.id === "b")!.extendedBy,
-		).toContain("a");
+		expect(finalized.find((a) => a.id === "a")!.extendedBy).toContain("b");
+		expect(finalized.find((a) => a.id === "b")!.extendedBy).toContain("a");
 	});
 });
 
@@ -143,14 +135,10 @@ describe("buildAdjacencyList", () => {
 			[],
 		);
 		expect(
-			graph.a?.some(
-				(e) => e.target === "b" && e.type === "entity_link",
-			),
+			graph.a?.some((e) => e.target === "b" && e.type === "entity_link"),
 		).toBe(true);
 		expect(
-			graph.b?.some(
-				(e) => e.target === "a" && e.type === "entity_link",
-			),
+			graph.b?.some((e) => e.target === "a" && e.type === "entity_link"),
 		).toBe(true);
 	});
 
@@ -170,14 +158,10 @@ describe("buildAdjacencyList", () => {
 			relations,
 		);
 		expect(
-			graph.a?.some(
-				(e) => e.target === "b" && e.type === "reinforces",
-			),
+			graph.a?.some((e) => e.target === "b" && e.type === "reinforces"),
 		).toBe(true);
 		expect(
-			graph.b?.some(
-				(e) => e.target === "a" && e.type === "reinforces",
-			),
+			graph.b?.some((e) => e.target === "a" && e.type === "reinforces"),
 		).toBe(true);
 	});
 
@@ -206,9 +190,7 @@ describe("buildAdjacencyList", () => {
 			[],
 		);
 		expect(
-			graph.a?.some(
-				(e) => e.target === "b" && e.type === "cross_domain",
-			),
+			graph.a?.some((e) => e.target === "b" && e.type === "cross_domain"),
 		).toBe(true);
 	});
 });

@@ -1,0 +1,161 @@
+<h2>Integrate Stage Design — Section 5: Pipeline Integration & CLI</h2>
+<p class="subtitle">How Integrate plugs into the existing run-pipeline.ts and run-batch.ts.</p>
+
+<div class="section">
+  <h3>Pipeline Runner Changes</h3>
+  <div style="display: flex; gap: 1rem; margin: 1rem 0;">
+    <div style="flex: 1; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
+      <p class="label">Current (3 stages)</p>
+      <pre style="font-size: 0.78rem; color: #8b949e; margin: 0.5rem 0;"><code>bun run src/run-pipeline.ts book.epub
+  --comprehend-provider kimi
+  --extract-provider kimi</code></pre>
+      <p style="font-size: 0.8rem; color: #6e7681; margin: 0.5rem 0 0;">Output: single JSON to engine/output/{slug}.json</p>
+    </div>
+    <div style="display:flex;align-items:center;color:#58a6ff;font-size:1.5rem;">→</div>
+    <div style="flex: 1; padding: 1rem; background: rgba(88,166,255,0.05); border-radius: 8px; border: 1px solid rgba(88,166,255,0.15);">
+      <p class="label" style="color: #58a6ff;">New (4 stages)</p>
+      <pre style="font-size: 0.78rem; color: #8b949e; margin: 0.5rem 0;"><code>bun run src/run-pipeline.ts book.epub
+  --comprehend-provider kimi
+  --extract-provider kimi
+  <span style="color:#58a6ff">--integrate-provider kimi
+  --embedding-provider openai
+  --graph-dir engine/graph</span></code></pre>
+      <p style="font-size: 0.8rem; color: #58a6ff; margin: 0.5rem 0 0;">Output: per-book JSON + shared graph in engine/graph/</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>New CLI Options</h3>
+  <table style="width: 100%; font-size: 0.82rem; color: #8b949e; border-collapse: collapse;">
+    <thead>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+        <th style="text-align: left; padding: 0.5rem 0.75rem; color: #c9d1d9;">Flag</th>
+        <th style="text-align: left; padding: 0.5rem 0.75rem; color: #c9d1d9;">Default</th>
+        <th style="text-align: left; padding: 0.5rem 0.75rem; color: #c9d1d9;">Purpose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+        <td style="padding: 0.5rem 0.75rem;"><code>--integrate-provider</code></td>
+        <td style="padding: 0.5rem 0.75rem;">kimi</td>
+        <td style="padding: 0.5rem 0.75rem;">LLM for entity disambiguation + relation classification</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+        <td style="padding: 0.5rem 0.75rem;"><code>--embedding-provider</code></td>
+        <td style="padding: 0.5rem 0.75rem;">openai</td>
+        <td style="padding: 0.5rem 0.75rem;">Embedding model provider</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+        <td style="padding: 0.5rem 0.75rem;"><code>--embedding-model</code></td>
+        <td style="padding: 0.5rem 0.75rem;">text-embedding-3-large</td>
+        <td style="padding: 0.5rem 0.75rem;">Which embedding model to use</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+        <td style="padding: 0.5rem 0.75rem;"><code>--graph-dir</code></td>
+        <td style="padding: 0.5rem 0.75rem;">engine/graph</td>
+        <td style="padding: 0.5rem 0.75rem;">Where the knowledge graph files live</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+        <td style="padding: 0.5rem 0.75rem;"><code>--skip-integrate</code></td>
+        <td style="padding: 0.5rem 0.75rem;">false</td>
+        <td style="padding: 0.5rem 0.75rem;">Run only Parse → Comprehend → Extract (current behavior)</td>
+      </tr>
+      <tr>
+        <td style="padding: 0.5rem 0.75rem;"><code>--rebuild-graph</code></td>
+        <td style="padding: 0.5rem 0.75rem;">false</td>
+        <td style="padding: 0.5rem 0.75rem;">Wipe graph and rebuild from all output/*.json files</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <h3>File Layout</h3>
+  <pre style="font-size: 0.8rem; color: #c9d1d9; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px; overflow-x: auto;"><code>engine/
+  ├── output/                        <span style="color:#8b949e;"># Per-book extraction results (unchanged)</span>
+  │   ├── designing-data-intensive-applications.json
+  │   ├── 福格行为模型-....json
+  │   └── ...
+  │
+  ├── graph/                         <span style="color:#58a6ff;"># NEW — shared knowledge graph</span>
+  │   ├── atoms.json                 <span style="color:#8b949e;"># All finalized atoms across all books</span>
+  │   ├── entities.json              <span style="color:#8b949e;"># Resolved entity index</span>
+  │   ├── graph.json                 <span style="color:#8b949e;"># Adjacency list</span>
+  │   └── embeddings.json            <span style="color:#8b949e;"># Vector index (atom embeddings)</span>
+  │
+  └── src/
+      ├── integrate/                 <span style="color:#58a6ff;"># NEW</span>
+      ├── run-pipeline.ts            <span style="color:#f0883e;"># MODIFIED — add Stage 4</span>
+      └── run-batch.ts               <span style="color:#f0883e;"># MODIFIED — integrate after each book</span></code></pre>
+</div>
+
+<div class="section">
+  <h3>Batch Runner Behavior</h3>
+  <div style="padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
+    <pre style="font-size: 0.78rem; color: #8b949e; margin: 0;"><code><span style="color:#c9d1d9;">// run-batch.ts — new flow</span>
+for (const epub of BOOKS) {
+  // Stages 1-3: same as before
+  const tree = await parse(epub)
+  const comprehension = await comprehend(tree, llmProvider)
+  const extraction = await extract(comprehension, llmProvider)
+
+  // Save per-book output (unchanged)
+  saveOutput(`output/${slug}.json`, { metadata, comprehension, extraction })
+
+  <span style="color:#58a6ff;">// Stage 4: Integrate into shared graph (NEW)
+  const existingGraph = loadGraph('graph/')    // null if first book
+  const updatedGraph = await integrate({
+    atoms: extraction.atoms,
+    metadata: tree.metadata,
+    existingGraph,
+    llmProvider: integrateProvider,
+    embeddingProvider
+  })
+  saveGraph('graph/', updatedGraph)</span>
+
+  await delay(2000)  // rate limiting
+}</code></pre>
+  </div>
+  <p style="color: #8b949e; font-size: 0.85rem; margin: 0.75rem 0 0;">
+    Each book integrates incrementally. After all 8 books, <code>engine/graph/</code> contains the complete knowledge graph.
+    Running <code>--rebuild-graph</code> wipes graph/ and re-integrates from all output/*.json files sequentially.
+  </p>
+</div>
+
+<div class="section">
+  <h3>Environment Variables</h3>
+  <table style="width: 100%; font-size: 0.82rem; color: #8b949e; border-collapse: collapse;">
+    <thead>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+        <th style="text-align: left; padding: 0.5rem 0.75rem; color: #c9d1d9;">Variable</th>
+        <th style="text-align: left; padding: 0.5rem 0.75rem; color: #c9d1d9;">Required for</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+        <td style="padding: 0.5rem 0.75rem;"><code>KIMI_API_KEY</code></td>
+        <td style="padding: 0.5rem 0.75rem;">LLM calls (existing — comprehend, extract, integrate)</td>
+      </tr>
+      <tr>
+        <td style="padding: 0.5rem 0.75rem;"><code style="color:#58a6ff;">OPENAI_API_KEY</code></td>
+        <td style="padding: 0.5rem 0.75rem;"><span style="color:#58a6ff;">NEW</span> — embedding calls via OpenAI</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="options" style="margin-top: 1.5rem;">
+  <div class="option" data-choice="approve" onclick="toggleSelect(this)">
+    <div class="letter">✓</div>
+    <div class="content">
+      <h3>Pipeline integration looks right — proceed</h3>
+    </div>
+  </div>
+  <div class="option" data-choice="modify" onclick="toggleSelect(this)">
+    <div class="letter">~</div>
+    <div class="content">
+      <h3>Needs changes — I'll describe in terminal</h3>
+    </div>
+  </div>
+</div>

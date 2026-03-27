@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>福格行为模型（不较劲、不焦虑、不依赖意志力的行为公式，已被120000人成功验证，让“心想事成”像自来水一样简单，行为设计学创始人福格博士倾囊相授） — Metis</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, 'Helvetica Neue', sans-serif; max-width: 1100px; margin: 0 auto; padding: 2rem; background: #fafafa; color: #222; line-height: 1.6; }
+h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+h2 { font-size: 1.4rem; margin: 1.5rem 0 0.75rem; border-bottom: 2px solid #2563eb; padding-bottom: 0.3rem; }
+h3 { font-size: 1.1rem; margin: 1rem 0 0.5rem; }
+.subtitle { color: #666; margin-bottom: 1.5rem; }
+.stats { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.stat { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 0.75rem 1.25rem; }
+.stat-value { font-size: 1.4rem; font-weight: 700; color: #2563eb; }
+.stat-label { font-size: 0.8rem; color: #666; }
+.card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1.25rem; margin-bottom: 1rem; }
+.card:hover { border-color: #2563eb; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.tag { display: inline-block; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 3px; padding: 1px 6px; margin: 2px; font-size: 0.78rem; }
+.tag.frame { background: #ede9fe; border-color: #c4b5fd; color: #5b21b6; }
+.tag.domain { background: #dbeafe; border-color: #93c5fd; color: #1e40af; }
+.tag.concept { background: #dcfce7; border-color: #86efac; color: #166534; }
+.tag.flag { background: #fef3c7; border-color: #fde047; color: #854d0e; }
+.type-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.78rem; font-weight: 600; }
+.type-badge.framework { background: #dbeafe; color: #1e40af; }
+.type-badge.narrative { background: #fef3c7; color: #92400e; }
+.type-badge.practical { background: #d1fae5; color: #065f46; }
+.type-badge.argumentative { background: #fce7f3; color: #9d174d; }
+.type-badge.survey { background: #e0e7ff; color: #3730a3; }
+.type-badge.unknown { background: #f3f4f6; color: #6b7280; }
+.atom { border-left: 3px solid #c4b5fd; padding: 0.75rem; margin: 0.5rem 0; background: #fafafa; border-radius: 0 4px 4px 0; }
+.atom-header { display: flex; justify-content: space-between; align-items: center; }
+.atom-frame { font-weight: 600; color: #5b21b6; }
+.atom-confidence { font-size: 0.8rem; color: #666; }
+.roles { margin: 0.5rem 0; font-size: 0.9rem; }
+.role-name { color: #888; font-weight: 500; }
+.bar { height: 20px; border-radius: 3px; display: inline-block; }
+.chart { margin: 0.5rem 0; }
+details summary { cursor: pointer; color: #2563eb; font-weight: 500; padding: 0.25rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 0.5rem 0; }
+th, td { text-align: left; padding: 0.4rem 0.75rem; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+th { background: #f8fafc; font-weight: 600; }
+</style></head><body>
+<p><a href="index.html">← All Books</a></p>
+<h1>福格行为模型（不较劲、不焦虑、不依赖意志力的行为公式，已被120000人成功验证，让“心想事成”像自来水一样简单，行为设计学创始人福格博士倾囊相授）</h1>
+<p class="subtitle">B.J.福格</p>
+<div class="stats">
+<div class="stat"><div class="stat-value">17</div><div class="stat-label">Chapters</div></div>
+<div class="stat"><div class="stat-value">200</div><div class="stat-label">Atoms</div></div>
+<div class="stat"><div class="stat-value">15</div><div class="stat-label">Frame Types</div></div>
+<div class="stat"><div class="stat-value">0</div><div class="stat-label">Failed Chapters</div></div>
+</div>
+
+<h2>Frame Type Distribution</h2>
+<div class="chart"><div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">heuristic</span>
+		<div class="bar" style="width:300px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">41</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">definition</span>
+		<div class="bar" style="width:219.5121951219512px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">30</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">example_of</span>
+		<div class="bar" style="width:212.1951219512195px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">29</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">principle</span>
+		<div class="bar" style="width:153.65853658536585px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">21</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">procedure</span>
+		<div class="bar" style="width:131.70731707317074px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">18</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">causal_chain</span>
+		<div class="bar" style="width:117.07317073170732px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">16</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">deviation</span>
+		<div class="bar" style="width:65.85365853658537px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">9</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">taxonomy</span>
+		<div class="bar" style="width:58.53658536585366px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">8</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">is_a</span>
+		<div class="bar" style="width:51.21951219512196px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">7</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">has_property</span>
+		<div class="bar" style="width:51.21951219512196px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">7</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">causal</span>
+		<div class="bar" style="width:43.90243902439024px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">6</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">method_comparison</span>
+		<div class="bar" style="width:21.95121951219512px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">3</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">formula</span>
+		<div class="bar" style="width:14.634146341463415px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">2</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">consists_of</span>
+		<div class="bar" style="width:14.634146341463415px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">2</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">sequence</span>
+		<div class="bar" style="width:7.317073170731708px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">1</span>
+	</div></div>
+
+
+
+<h2>Chapters</h2>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>id1</strong>
+		<span class="type-badge narrative">narrative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">Copyright and publication information page containing bibliographic metadata, legal notices, and publishing details for the Chinese edition of 'Tiny Habits'.</p>
+	
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>id2</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This preface by product strategist Liang Ning introduces the Fogg Behavior Model (B=MAP) as a practical solution to transform complaints and self-blame into actionable behavioral change. Through perso</p>
+	<div><span class="tag frame">Fogg Behavior Model (B=MAP) (model)</span> <span class="tag frame">Focus Map (焦点地图) (comparison)</span> <span class="tag frame">7-Step Behavior Design Process (progression)</span> <span class="tag frame">Pearl Habit Formation (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>id3</strong>
+		<span class="type-badge argumentative">argumentative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This foreword by Sun Yunxiao connects Lao Tzu's ancient wisdom ('Difficult things must be done while they are easy') with B.J. Fogg's modern Behavior Model, arguing that Fogg's 'Tiny Habits' strategy </p>
+	<div><span class="tag frame">Five Pillars of Fogg's Method (progression)</span> <span class="tag frame">Eastern Philosophy vs Western Behavioral Science (comparison)</span> <span class="tag frame">Fogg Behavior Model Elements (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>id4</strong>
+		<span class="type-badge narrative">narrative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">本章节是孔令欣为《福格行为模型》撰写的推荐序，通过个人在斯坦福求学及职业生涯中的具体案例，阐述了行为设计学在商业和生活中的应用价值与意义。作者结合亚马逊网站改造、贝壳金服等实际项目经验，验证了福格行为模型的实用性，并强调通过微习惯和小事化繁为简的方法论。章节末尾通过测试题形式明确了B=MAP公式（动机、能力、提示三要素）及习惯叠加技巧，为读者提供了可操作的行为设计框架基础。</p>
+	<div><span class="tag frame">职业发展应用进程 (progression)</span> <span class="tag frame">福格行为模型核心公式 (model)</span> <span class="tag frame">微习惯养成流程 (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>id5</strong>
+		<span class="type-badge survey">survey</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter presents the complete table of contents of the book, outlining the progression from the foundational Fogg Behavior Model (B=MAP) through its three core elements—motivation, ability, and p</p>
+	<div><span class="tag frame">福格行为模型 (model)</span> <span class="tag frame">行为改变系统方案 (process)</span> <span class="tag frame">书籍内容架构 (progression)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>id6</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter serves as the Chinese edition preface where B.J. Fogg introduces the origins of Behavior Design, explains the evolution of the Fogg Behavior Model from B=MAT to B=MAP (replacing 'Trigger'</p>
+	<div><span class="tag frame">Fogg Behavior Model Evolution (progression)</span> <span class="tag frame">Behavior Design Development Timeline (progression)</span> <span class="tag frame">Tiny Habits Implementation Process (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>id7</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter introduces the Fogg Behavior Model as a systematic framework for designing habits without relying on willpower or motivation. It establishes behavior design as the solution to the intenti</p>
+	<div><span class="tag frame">Fogg Behavior Model (model)</span> <span class="tag frame">Old Methods vs Behavior Design (comparison)</span> <span class="tag frame">Five Reasons for Small Changes (taxonomy)</span> <span class="tag frame">Micro Habit Creation Process (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>id8</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter introduces the Fogg Behavior Model (B=MAP), which posits that Behavior occurs when Motivation, Ability, and Prompt converge simultaneously above an Action Line. It establishes that all be</p>
+	<div><span class="tag frame">Fogg Behavior Model (B=MAP) (model)</span> <span class="tag frame">Behavior Problem Solving Process (process)</span> <span class="tag frame">Habit Mechanics Comparison (comparison)</span> <span class="tag frame">Behavior Automation Progression (progression)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>id13</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter introduces the Motivation element of the Fogg Behavior Model and presents a systematic framework for behavior design. It explains why motivation is unreliable (the 'motivation monkey' tra</p>
+	<div><span class="tag frame">Fogg Behavior Model - Motivation Element (model)</span> <span class="tag frame">PAC Person Motivation Sources (taxonomy)</span> <span class="tag frame">Behavior Design Process (process)</span> <span class="tag frame">Focus Mapping Framework (framework)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>id19</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter explains the second element of the Fogg Behavior Model—Ability—and demonstrates why making behaviors simple is crucial for sustainable habit formation. It introduces the Ability Chain dia</p>
+	<div><span class="tag frame">Fogg Behavior Model (Ability Dimension) (model)</span> <span class="tag frame">Ability Chain (model)</span> <span class="tag frame">PAC Framework for Behavioral Ease (process)</span> <span class="tag frame">Micro-Habit Design Taxonomy (taxonomy)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>id24</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter introduces &quot;Prompts&quot; as the third essential element of the Fogg Behavior Model, presenting a taxonomy of three prompt types (Person, Context, and Action) and advocating for Action Prompts</p>
+	<div><span class="tag frame">The Prompt Taxonomy (taxonomy)</span> <span class="tag frame">Anchor Design Protocol (process)</span> <span class="tag frame">Meanwhile Habits Model (model)</span> <span class="tag frame">Pearl Habits Framework (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>id29</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter establishes that behavior design is fundamentally emotion design, introducing 'celebration' as a practical technique to create immediate positive emotions that trigger dopamine release an</p>
+	<div><span class="tag frame">Fogg Behavior Model Extension (Emotion Component) (model)</span> <span class="tag frame">自动化度光谱 (Spectrum of Automaticity) (model)</span> <span class="tag frame">庆祝技巧框架 (Celebration Framework) (process)</span> <span class="tag frame">庆祝时机分类法 (Three Moments of Celebration) (taxonomy)</span> <span class="tag frame">奖励与激励辨析 (Rewards vs Incentives) (comparison)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>id35</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter presents a framework for long-term habit evolution through &quot;high-frequency small successes.&quot; It distinguishes between two modes of habit development—growth (quantitative scaling) and repr</p>
+	<div><span class="tag frame">习惯生长与繁殖模式 (comparison)</span> <span class="tag frame">PAC习惯形成因素 (model)</span> <span class="tag frame">成功动能与动机向量模型 (model)</span> <span class="tag frame">五大改变技巧体系 (taxonomy)</span> <span class="tag frame">行为设计七步骤 (progression)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>id39</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">本章介绍了行为改变系统方案（Behavior Change System Plan），这是一个三阶段的框架，用于循序渐进地终止下山型习惯（Downhill Habits）。作者使用&quot;解绳结&quot;的隐喻，强调一次只解决一个具体习惯而非抽象的概括型习惯，详细阐述了从提示、能力和动机三个要素入手终止旧习惯的方法，并提供了当直接终止失败时用新习惯替代旧习惯的流程。</p>
+	<div><span class="tag frame">行为改变系统方案 (model)</span> <span class="tag frame">习惯分类法 (taxonomy)</span> <span class="tag frame">阶段2终止习惯流程 (process)</span> <span class="tag frame">能力链干预模型 (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>id43</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter extends the Fogg Behavior Model to group settings, presenting a practical framework for helping families, teams, and communities change together. It introduces two core principles (help p</p>
+	<div><span class="tag frame">Two Principles for Changing Others (framework)</span> <span class="tag frame">Ringleader and Ninja Typology (taxonomy)</span> <span class="tag frame">Seven-Step Group Behavior Design Process (process)</span> <span class="tag frame">Fogg Behavior Model Zones (model)</span> <span class="tag frame">Power Zone Feedback Model (model)</span> <span class="tag frame">Queen B Solution (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>id48</strong>
+		<span class="type-badge narrative">narrative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">The conclusion chapter shares deeply personal stories including the tragic death of the author's nephew Garrett and how the Tiny Habits method transformed his sister Linda's life after multiple traged</p>
+	<div><span class="tag frame">Linda's Transformation Journey (progression)</span> <span class="tag frame">Creating a Culture of Change (process)</span> <span class="tag frame">Evolution of Peace Innovation (progression)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>id50</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">本附录章节提供福格行为模型的实用工具箱，包含2分钟教学脚本、ABC步骤框架、32种感受成功的方式、100种庆祝方法，以及针对15种不同生活场景（如职场女性、大学生、照顾者等）的300个微习惯配方，将理论转化为可立即执行的具体行动指南。</p>
+	<div><span class="tag frame">福格行为模型2分钟教学脚本 (process)</span> <span class="tag frame">ABC行为设计框架 (model)</span> <span class="tag frame">32种感受成功的方式分类 (taxonomy)</span> <span class="tag frame">100种庆祝方式清单 (taxonomy)</span> <span class="tag frame">300个微习惯配方分类系统 (taxonomy)</span></div>
+</div>
+
+<h2>Atoms (first 50 of 200)</h2>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">example_of</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> 亚马逊网站行为学改造<br><span class="role-name">concept:</span> 行为设计<br><span class="role-name">detail:</span> 通过设计寻宝游戏引导用户获取折扣券，结合用户游戏反馈、浏览历史和同类人群偏好进行大数据画像，实现精准推荐，从而提高用户对非书籍产品的感知度</div>
+	<div style="font-size:0.8rem;color:#888">When: 需要提高用户对特定产品类别的感知度, 拥有用户行为数据可供分析</div>
+	<div><span class="tag domain">行为设计</span> <span class="tag domain">电商产品</span> <span class="tag domain">游戏化设计</span> <span class="tag domain">大数据分析</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">heuristic</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">situation:</span> 需要提高用户参与度或引导用户探索特定内容<br><span class="role-name">action:</span> 设计有趣的寻宝游戏，设置有限时间挑战和折扣券奖励机制<br><span class="role-name">rationale:</span> 通过游戏化增加互动愉悦感，降低用户探索门槛，同时收集行为数据用于优化推荐</div>
+	<div style="font-size:0.8rem;color:#888">When: 用户对产品感知度低, 需要增加平台互动性</div>
+	<div><span class="tag domain">游戏化设计</span> <span class="tag domain">用户增长</span> <span class="tag domain">行为设计</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">heuristic</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">situation:</span> 面对宏大、困难的目标或想要养成新习惯<br><span class="role-name">action:</span> 将复杂目标拆解成极小的事项逐一完成，从翻开书读一页开始，庆祝每一个小进步<br><span class="role-name">rationale:</span> 小事做起来轻松愉悦且不累，更容易长久坚持并养成习惯，最终积少成多完成原本认为无法完成的宏大目标</div>
+	<div style="font-size:0.8rem;color:#888">When: 目标看起来难以完成, 需要建立长期习惯, 容易产生畏难情绪</div>
+	<div><span class="tag domain">习惯养成</span> <span class="tag domain">个人成长</span> <span class="tag domain">行为设计</span> <span class="tag domain">微习惯</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">heuristic</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">situation:</span> 已经拥有动机但需要将想法付诸实践<br><span class="role-name">action:</span> 在对的行为上找到对的激励点来激活行动<br><span class="role-name">rationale:</span> 动机本身不足以产生行为，需要找到具体的触发点和激励来源才能将动机转化为实际行动</div>
+	<div style="font-size:0.8rem;color:#888">When: 有明确目标但迟迟未开始, 动机充足但缺乏行动力</div>
+	<div><span class="tag domain">行为设计</span> <span class="tag domain">动机心理学</span> <span class="tag domain">行动触发</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">heuristic</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">situation:</span> 面对复杂问题需要寻找根本解决方法<br><span class="role-name">action:</span> 使用行为设计方法论作为工具箱中的尺来拆解和衡量问题，化繁为简<br><span class="role-name">rationale:</span> 系统化地找准增长点和问题根源，通过标准化、流程化的方法形成强大习惯与能力</div>
+	<div style="font-size:0.8rem;color:#888">When: 问题复杂难以入手, 需要系统化解决方案</div>
+	<div><span class="tag domain">问题解决</span> <span class="tag domain">行为设计</span> <span class="tag domain">产品管理</span> <span class="tag domain">系统化思维</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">deviation</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">theory:</span> 行为改变需要强大的意志力，过程是痛苦困难的，必须与自己较劲、承受焦虑和负担<br><span class="role-name">reality:</span> 行为改变可以十分轻松愉悦，不需要太多负担，养成好习惯并不难，过程可以是轻松且愉悦的<br><span class="role-name">implication:</span> 降低行为改变的心理门槛，强调通过设计让改变自然发生而非依赖意志力对抗</div>
+	<div style="font-size:0.8rem;color:#888">When: 传统习惯养成观念占主导, 人们认为改变必须吃苦</div>
+	<div><span class="tag domain">行为设计</span> <span class="tag domain">习惯养成</span> <span class="tag domain">意志力研究</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">principle</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">statement:</span> 游戏、技术开发、金融服务的本质都是为客户提供标准化、流程化的高质量服务，以赋予客户愉悦且满意的交互体验为目的<br><span class="role-name">scope:</span> 所有服务行业，包括游戏、技术开发、金融服务<br><span class="role-name">implication:</span> 这些行业背后指导的都是行为学和心理学原理，行为设计是提供优质服务的基础方法论</div>
+	<div style="font-size:0.8rem;color:#888">When: 设计产品或服务, 需要提升客户满意度</div>
+	<div><span class="tag domain">服务设计</span> <span class="tag domain">行为学</span> <span class="tag domain">心理学</span> <span class="tag domain">产品管理</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">heuristic</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">situation:</span> 需要提供精准推荐或个性化服务<br><span class="role-name">action:</span> 结合用户游戏反馈、浏览历史和同类人群偏好进行大数据画像<br><span class="role-name">rationale:</span> 通过多维度数据构建用户画像，实现精准推荐，更好地满足客户潜在需求</div>
+	<div style="font-size:0.8rem;color:#888">When: 拥有用户行为数据, 需要提升推荐精准度</div>
+	<div><span class="tag domain">大数据</span> <span class="tag domain">用户画像</span> <span class="tag domain">精准推荐</span> <span class="tag domain">行为分析</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">is_a</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> 福格行为模型<br><span class="role-name">category:</span> 系统化、完整的行为设计理论体系</div>
+	<div style="font-size:0.8rem;color:#888">When: 需要理解和改变人类行为</div>
+	<div><span class="tag domain">行为设计</span> <span class="tag domain">心理学</span> <span class="tag domain">行为经济学</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">is_a</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> BJ的方法论<br><span class="role-name">category:</span> 拆解和衡量问题的工具</div>
+	<div style="font-size:0.8rem;color:#888">When: 需要分析行为动因, 寻找问题根本解决方法</div>
+	<div><span class="tag domain">行为设计</span> <span class="tag domain">问题分析</span> <span class="tag domain">决策工具</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">causal_chain</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">trigger:</span> 坚持使用化繁为简的工作方法<br><span class="role-name">mechanism:</span> 十年如一日的实践、拆解问题、逐一完成小事的迭代过程<br><span class="role-name">outcome:</span> 形成促使不断前进的能力和强大习惯，在事业和家庭中都能运用自如</div>
+	<div style="font-size:0.8rem;color:#888">When: 长期坚持使用行为设计方法, 持续拆解和解决小问题</div>
+	<div><span class="tag domain">习惯养成</span> <span class="tag domain">能力构建</span> <span class="tag domain">长期主义</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">formula</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">name:</span> 福格行为模型<br><span class="role-name">expression:</span> B=MAP<br><span class="role-name">terms:</span> B代表行为(Behavior)，M代表动机(Motivation)，A代表能力(Ability)，P代表提示(Prompt)</div>
+	<div style="font-size:0.8rem;color:#888">When: 应用行为设计时</div>
+	<div><span class="tag domain">行为设计</span> <span class="tag domain">福格行为模型</span> <span class="tag domain">行为改变</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> 动机(Motivation)<br><span class="role-name">meaning:</span> 福格行为模型的核心要素之一，指驱动行为发生的愿望、欲望或内在驱动力</div>
+	<div style="font-size:0.8rem;color:#888">When: 使用B=MAP模型时</div>
+	<div><span class="tag domain">行为设计</span> <span class="tag domain">心理学</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> 能力(Ability)<br><span class="role-name">meaning:</span> 福格行为模型的核心要素之一，指执行特定行为的技能、资源或容易程度</div>
+	<div style="font-size:0.8rem;color:#888">When: 使用B=MAP模型时</div>
+	<div><span class="tag domain">行为设计</span> <span class="tag domain">能力分析</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> 提示(Prompt)<br><span class="role-name">meaning:</span> 福格行为模型的核心要素之一，指触发行为发生的信号、线索或提醒</div>
+	<div style="font-size:0.8rem;color:#888">When: 使用B=MAP模型时</div>
+	<div><span class="tag domain">行为设计</span> <span class="tag domain">触发机制</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">is_a</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> B.J.福格(B.J. Fogg)<br><span class="role-name">category:</span> 行为设计学创始人</div>
+	<div style="font-size:0.8rem;color:#888">When: 在行为科学领域</div>
+	<div><span class="tag domain">行为设计</span> <span class="tag domain">学术身份</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> B.J.福格<br><span class="role-name">property:</span> 被誉为硅谷亿万富翁制造机</div>
+	<div style="font-size:0.8rem;color:#888">When: 在创业教育领域</div>
+	<div><span class="tag domain">硅谷</span> <span class="tag domain">创业</span> <span class="tag domain">教育影响</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">example_of</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> Instagram联合创始人迈克·克里格(Mike Krieger)<br><span class="role-name">concept:</span> 福格博士的学生<br><span class="role-name">detail:</span> 体现福格在硅谷科技创业界的影响力和教学成果</div>
+	<div style="font-size:0.8rem;color:#888">When: 列举福格的学生时</div>
+	<div><span class="tag domain">案例</span> <span class="tag domain">教育</span> <span class="tag domain">硅谷</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">procedure</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">goal:</span> 通过习惯叠加养成新习惯<br><span class="role-name">steps:</span> 选择一个已存在的稳固旧习惯作为锚点(anchor),将新习惯插入到锚点习惯完成之后立即执行<br><span class="role-name">context:</span> 日常生活行为设计，利用现有行为链条</div>
+	<div style="font-size:0.8rem;color:#888">When: 当需要建立新习惯且已有稳固日常习惯时</div>
+	<div><span class="tag domain">习惯养成</span> <span class="tag domain">行为设计</span> <span class="tag domain">习惯叠加</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">example_of</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> 洗完碗后擦橱柜台面<br><span class="role-name">concept:</span> 习惯叠加(habit stacking)<br><span class="role-name">detail:</span> 将新习惯(擦台面)插入到旧习惯(洗碗)之后，利用厨房场景的一致性建立行为链条</div>
+	<div style="font-size:0.8rem;color:#888">When: 在厨房场景下建立清洁习惯时</div>
+	<div><span class="tag domain">习惯养成</span> <span class="tag domain">家务管理</span> <span class="tag domain">行为设计</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">heuristic</span>
+		<span class="atom-confidence">90%</span>
+	</div>
+	<div class="roles"><span class="role-name">situation:</span> 选择习惯叠加的锚点习惯时<br><span class="role-name">action:</span> 选择与目标新习惯在场景、地点或主题上高度相关的旧习惯作为锚点<br><span class="role-name">rationale:</span> 场景一致性可以降低认知负荷，使新习惯更容易触发和维持</div>
+	<div style="font-size:0.8rem;color:#888">When: 实施习惯叠加技术时</div>
+	<div><span class="tag domain">习惯设计</span> <span class="tag domain">行为链</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> 行为设计<br><span class="role-name">meaning:</span> 一套综合系统，通过它，可以厘清人类行为，并设计出简单的方法来改变人生</div>
+	<div style="font-size:0.8rem;color:#888">When: 应用于个人行为改变, 应用于商业产品设计</div>
+	<div><span class="tag domain">行为设计</span> <span class="tag domain">行为改变</span> <span class="tag domain">习惯养成</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> 信息–行动谬误<br><span class="role-name">meaning:</span> 认为如果能为人们提供正确的信息，就能改变人们的态度，进而改变人们的行为的观点</div>
+	<div style="font-size:0.8rem;color:#888">When: 教育或信息传递场景, 行为干预设计</div>
+	<div><span class="tag domain">行为改变</span> <span class="tag domain">认知偏见</span> <span class="tag domain">教育理论</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">deviation</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">theory:</span> 提供正确的信息能够改变态度，进而改变行为<br><span class="role-name">reality:</span> 仅有信息是无法保证有效改变行为的，仅凭信息无法使人的生活发生改变<br><span class="role-name">implication:</span> 需要行为设计系统而非仅依靠教育或信息传递来实现改变</div>
+	<div style="font-size:0.8rem;color:#888">When: 个人改变, 组织变革, 健康干预</div>
+	<div><span class="tag domain">行为改变</span> <span class="tag domain">信息传播</span> <span class="tag domain">行为设计</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">taxonomy</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">concept:</span> 能带来持久改变的因素<br><span class="role-name">categories:</span> 经历顿悟,改变环境,从细微之处着手改变自身习惯<br><span class="role-name">basis:</span> 可行性与效果</div>
+	<div style="font-size:0.8rem;color:#888">When: 寻求持久行为改变</div>
+	<div><span class="tag domain">行为改变</span> <span class="tag domain">习惯养成</span> <span class="tag domain">行为设计</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">heuristic</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">situation:</span> 想要促使自己或他人真正产生持久改变<br><span class="role-name">action:</span> 排除经历顿悟的选项，专注于改变环境和从细微之处着手改变自身习惯<br><span class="role-name">rationale:</span> 促使自己或他人真正产生顿悟是很困难甚至是不可能的，而改变环境和小步骤有很强的可行性</div>
+	<div style="font-size:0.8rem;color:#888">When: 行为改变计划制定, 个人发展</div>
+	<div><span class="tag domain">行为设计</span> <span class="tag domain">习惯养成</span> <span class="tag domain">决策策略</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> 微习惯<br><span class="role-name">meaning:</span> 一套最高效、最便捷的个人提升工具，通过将想要做到的行为拆解成微小步骤（baby steps）并融入生活，然后促进其成长，从而在不依赖意志力的情况下促成巨大改变</div>
+	<div style="font-size:0.8rem;color:#888">When: 个人习惯养成, 行为改变</div>
+	<div><span class="tag domain">微习惯</span> <span class="tag domain">行为设计</span> <span class="tag domain">个人提升</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">is_a</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> 微习惯<br><span class="role-name">category:</span> 个人提升工具</div>
+	<div style="font-size:0.8rem;color:#888">When: 寻求个人成长</div>
+	<div><span class="tag domain">微习惯</span> <span class="tag domain">个人发展</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">procedure</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">goal:</span> 创建持久的积极习惯并实现巨大改变<br><span class="role-name">steps:</span> 选择你想要做到的行为,把行为拆解成微习惯并融入生活,促进微习惯的成长<br><span class="role-name">context:</span> 个人行为改变，可用于终止不良习惯或实现愿望清单如跑马拉松</div>
+	<div style="font-size:0.8rem;color:#888">When: 任何希望改变行为的场景</div>
+	<div><span class="tag domain">微习惯</span> <span class="tag domain">行为设计</span> <span class="tag domain">习惯养成</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">heuristic</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">situation:</span> 想要做出持久的改变<br><span class="role-name">action:</span> 最好从小改变着手，创建微小的积极习惯作为培养更大习惯的途径<br><span class="role-name">rationale:</span> 坚持小习惯感觉不难，积少成多能促成很大改变，且过程感觉自然、有趣，不需要依赖意志力</div>
+	<div style="font-size:0.8rem;color:#888">When: 制定改变计划, 设立目标</div>
+	<div><span class="tag domain">微习惯</span> <span class="tag domain">行为改变</span> <span class="tag domain">目标设定</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">example_of</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> 每次上完厕所后做两个俯卧撑<br><span class="role-name">concept:</span> 微习惯<br><span class="role-name">detail:</span> 看起来很傻但非常成功的微习惯实践，体现了将行为拆解到极小步骤的原则</div>
+	<div style="font-size:0.8rem;color:#888">When: 健身习惯养成</div>
+	<div><span class="tag domain">微习惯</span> <span class="tag domain">健身</span> <span class="tag domain">行为设计</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">example_of</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> 每顿午餐吃一个橙子<br><span class="role-name">concept:</span> 非微习惯的传统改变尝试<br><span class="role-name">detail:</span> 看起来很合理但没能坚持下来，与成功的微习惯形成对比，说明步骤不够微小或融入不当</div>
+	<div style="font-size:0.8rem;color:#888">When: 饮食习惯改变</div>
+	<div><span class="tag domain">微习惯</span> <span class="tag domain">饮食</span> <span class="tag domain">行为改变</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">causal_chain</span>
+		<span class="atom-confidence">90%</span>
+	</div>
+	<div class="roles"><span class="role-name">trigger:</span> 坚持小习惯（微习惯）<br><span class="role-name">mechanism:</span> 积少成多<br><span class="role-name">outcome:</span> 促成很大的改变，生活发生显著改善（如体重减轻9千克、身体更健康强壮、工作效率提高）</div>
+	<div style="font-size:0.8rem;color:#888">When: 长期持续实践微习惯</div>
+	<div><span class="tag domain">微习惯</span> <span class="tag domain">复利效应</span> <span class="tag domain">行为改变</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">principle</span>
+		<span class="atom-confidence">85%</span>
+	</div>
+	<div class="roles"><span class="role-name">statement:</span> 改变自身行为不是自然而然就能学会的，而是一个需要刻意练习的过程<br><span class="role-name">scope:</span> 个人行为改变与习惯养成</div>
+	<div style="font-size:0.8rem;color:#888">When: 学习行为设计, 养成生活习惯</div>
+	<div><span class="tag domain">行为设计</span> <span class="tag domain">学习理论</span> <span class="tag domain">习惯养成</span></div>
+	<span class="tag flag">missing_role:implication</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">heuristic</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">situation:</span> 使用微习惯策略时<br><span class="role-name">action:</span> 无论多么小的成功都要庆祝一番<br><span class="role-name">rationale:</span> 充分利用大脑的神经化学反应，将有意识的动作快速转化为无意识的习惯；感受成功有助于固化新习惯，还能激励做更多事情</div>
+	<div style="font-size:0.8rem;color:#888">When: 使用微习惯策略, 实现任何程度的成功</div>
+	<div><span class="tag domain">行为设计</span> <span class="tag domain">微习惯</span> <span class="tag domain">习惯养成</span> <span class="tag domain">心理学</span> <span class="tag domain">神经化学</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">causal_chain</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">trigger:</span> 庆祝微小成功<br><span class="role-name">mechanism:</span> 大脑的神经化学反应<br><span class="role-name">outcome:</span> 有意识的动作快速转化为无意识的习惯</div>
+	<div style="font-size:0.8rem;color:#888">When: 使用微习惯策略</div>
+	<div><span class="tag domain">行为设计</span> <span class="tag domain">神经科学</span> <span class="tag domain">习惯养成</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">example_of</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> 琳达在遭遇飓风级人生风暴（儿子药物过量死亡、女儿躁郁症、家族生意破产、丈夫阿尔茨海默症、失去房子和积蓄）时，通过每天早晨醒来双脚落地大声说'今天又是美好的一天'的毛伊习惯走出抑郁<br><span class="role-name">concept:</span> 微习惯在极端危机中的 transformative power（转变力量）<br><span class="role-name">detail:</span> 这微小的调整成为她人生改变的转折点，让她从无法下床到能够抚养孩子、拯救生意，最终成为微习惯教练</div>
+	<div style="font-size:0.8rem;color:#888">When: 处于极度困难的生活危机中, 感到 overwhelmed 和抑郁</div>
+	<div><span class="tag domain">案例研究</span> <span class="tag domain">微习惯</span> <span class="tag domain">危机应对</span> <span class="tag domain">毛伊习惯</span> <span class="tag domain">心理韧性</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">heuristic</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">situation:</span> 处于飓风级人生风暴中（多重重大打击、悲痛欲绝、无暇感伤而陷入抑郁）<br><span class="role-name">action:</span> 使用微习惯策略，从最小的行为开始（如毛伊习惯），专注于每天早晨的挑战以获得良好感受<br><span class="role-name">rationale:</span> 当无法承受更大挑战时，微习惯是唯一的选择；小成功带来成功的感觉，让人变得更高效、更健康、更坚强；这些习惯成为播撒在生活裂缝中的种子，能够茁壮成长</div>
+	<div style="font-size:0.8rem;color:#888">When: 遭遇多重人生危机, 感到无力改变, 抑郁状态</div>
+	<div><span class="tag domain">危机干预</span> <span class="tag domain">微习惯</span> <span class="tag domain">心理韧性</span> <span class="tag domain">行为设计</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">principle</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">statement:</span> 鼓励自己而非打击自己，才能让改变的种子深深地扎根<br><span class="role-name">implication:</span> 自我肯定是习惯长期维持的关键心理机制，自我批评会阻碍习惯的固化<br><span class="role-name">scope:</span> 个人改变和习惯养成</div>
+	<div style="font-size:0.8rem;color:#888">When: 培养新习惯, 自我对话时</div>
+	<div><span class="tag domain">心理学</span> <span class="tag domain">自我对话</span> <span class="tag domain">习惯养成</span> <span class="tag domain">行为设计</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 微习惯<br><span class="role-name">property:</span> 像播撒在生活裂缝中的微小种子，能够不断茁壮成长，即使在新的裂缝出现时也能让人意识到有能力感受成功</div>
+	<div style="font-size:0.8rem;color:#888">When: 持续实践微习惯, 生活中出现新的挑战</div>
+	<div><span class="tag domain">隐喻</span> <span class="tag domain">微习惯</span> <span class="tag domain">心理韧性</span> <span class="tag domain">行为设计</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">example_of</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> 琳达6年后辅导成千上万人使用微习惯策略，仍然每天早晨醒来双脚踩在地板上后立刻说出'今天又是美好的一天'，不再有任何彷徨<br><span class="role-name">concept:</span> 微习惯的长期可持续性和复利效应<br><span class="role-name">detail:</span> 微习惯不仅帮助她度过危机，还成为她的事业基础，证明成功的证据之花可以持续绽放，只需持续灌溉</div>
+	<div style="font-size:0.8rem;color:#888">When: 长期坚持微习惯, 6年时间跨度</div>
+	<div><span class="tag domain">长期行为改变</span> <span class="tag domain">微习惯</span> <span class="tag domain">职业发展</span> <span class="tag domain">案例研究</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> 福格行为模型<br><span class="role-name">meaning:</span> 用于解读和设计所有人类行为的框架，揭示行为由锚点、微行为和即时庆祝三个基本要素及其相互关系组成</div>
+	<div style="font-size:0.8rem;color:#888">When: 行为设计, 习惯养成, 改变行为</div>
+	<div><span class="tag domain">行为科学</span> <span class="tag domain">习惯设计</span> <span class="tag domain">心理学</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> 锚点时刻<br><span class="role-name">meaning:</span> 提醒你去执行新的微行为的关键时点，可以是某个日常习惯（如刷牙）或某件必然发生的事情（如电话铃声响起）</div>
+	<div style="font-size:0.8rem;color:#888">When: 实施微习惯策略, 设计新习惯</div>
+	<div><span class="tag domain">行为设计</span> <span class="tag domain">习惯养成</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> 新的微行为<br><span class="role-name">meaning:</span> 锚点出现后立刻去执行的微行为，是新习惯的极度简化版，规模小且容易执行</div>
+	<div style="font-size:0.8rem;color:#888">When: 实施微习惯策略, 设计新习惯</div>
+	<div><span class="tag domain">行为设计</span> <span class="tag domain">习惯养成</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> 即时庆祝<br><span class="role-name">meaning:</span> 完成新的微行为后要立刻进行的庆祝活动，任何能带来积极情绪的事情都可以，用于强化行为并创造良好感觉</div>
+	<div style="font-size:0.8rem;color:#888">When: 实施微习惯策略, 完成微行为后</div>
+	<div><span class="tag domain">行为设计</span> <span class="tag domain">心理学</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">formula</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">name:</span> ABC微习惯公式<br><span class="role-name">expression:</span> Anchor（锚点）→ Behavior（行为）→ Celebration（庆祝）<br><span class="role-name">terms:</span> A=锚点时刻，提醒执行的关键时点；B=新的微行为，简化版的新习惯；C=即时庆祝，带来积极情绪的强化动作</div>
+	<div style="font-size:0.8rem;color:#888">When: 设计新习惯, 改变行为, 养成微习惯</div>
+	<div><span class="tag domain">行为科学</span> <span class="tag domain">习惯设计</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">consists_of</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">whole:</span> 人类行为<br><span class="role-name">dimension:</span> 相同的基本要素（锚点、行为、庆祝）及其相互关系<br><span class="role-name">description:</span> 无论是好习惯还是坏习惯，所有行为都由这些相同的基本要素组成，其相互关系驱动每一个行为和反应</div>
+	<div style="font-size:0.8rem;color:#888">When: 分析行为, 理解行为机制</div>
+	<div><span class="tag domain">行为科学</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">principle</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">statement:</span> 人们在感觉良好而不是感觉难过的状态下进行改变，效果最佳<br><span class="role-name">implication:</span> 通过即时庆祝创造积极情绪来强化和维持行为改变，而非依赖意志力、自我批评或感到难过<br><span class="role-name">scope:</span> 行为改变、习惯养成、个人发展、自我提升</div>
+	<div style="font-size:0.8rem;color:#888">When: 进行行为改变, 养成习惯, 设计干预措施</div>
+	<div><span class="tag domain">行为科学</span> <span class="tag domain">心理学</span> <span class="tag domain">自我提升</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">procedure</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">goal:</span> 养成使用牙线的习惯<br><span class="role-name">steps:</span> 找到你喜欢的牙线（可能需要尝试几种）,把牙线放在洗漱台上，最好是放在牙刷旁边,放下牙刷后，拿起牙线盒，取出一支牙线,清洁一颗牙齿,对镜子里的自己微笑，为自己创建了一个新习惯而感到高兴<br><span class="role-name">context:</span> 提升习惯自动化程度，暂时不考虑规模大小；超过一颗牙齿的清洁视为额外加分项，因为付出了额外努力</div>
+	<div style="font-size:0.8rem;color:#888">When: 希望养成牙线使用习惯, 已有刷牙习惯作为锚点</div>
+	<div><span class="tag domain">习惯养成</span> <span class="tag domain">口腔卫生</span> <span class="tag domain">微习惯实践</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">procedure</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">goal:</span> 养成每天吃黑巧克力的习惯<br><span class="role-name">steps:</span> 买一些你认为健康的黑巧克力,每天早上泡完咖啡或吃完维生素之后，吃一小块黑巧克力,好好品尝巧克力的美味，为生活中增加了一个健康习惯而感到高兴<br><span class="role-name">context:</span> 这是一个小盆景式的习惯，虽然微小但赏心悦目，不需要由小及大扩展规模</div>
+	<div style="font-size:0.8rem;color:#888">When: 希望养成健康饮食微习惯, 有喝咖啡或吃维生素的晨间例行习惯</div>
+	<div><span class="tag domain">习惯养成</span> <span class="tag domain">健康饮食</span> <span class="tag domain">微习惯实践</span></div>
+	
+</div>
+<p style="color:#888;font-style:italic">...and 150 more atoms in the JSON file.</p>
+</body></html>

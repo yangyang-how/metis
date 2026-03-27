@@ -62,6 +62,10 @@ export async function extract(input: ExtractInput): Promise<ExtractionResult> {
 				(sa) => sa.sectionId === section.id,
 			) ?? makeDefaultAnalysis(section);
 
+		console.error(
+			`    [section ${i + 1}/${sections.length}] ${section.title.slice(0, 40)}... (${countBlocks(section)} blocks)`,
+		);
+
 		// Extract atoms from section
 		const result = await extractSection(
 			section,

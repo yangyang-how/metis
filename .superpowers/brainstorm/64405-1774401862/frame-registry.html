@@ -1,0 +1,155 @@
+<h2>Frame Type Registry</h2>
+<p class="subtitle">17 core types ship with Metis. Domain types are proposed during extraction.</p>
+
+<div class="section">
+  <h3>How It Works</h3>
+  <div class="mockup">
+    <div class="mockup-header">Extraction Flow</div>
+    <div class="mockup-body" style="padding: 1.5rem; font-size: 0.9rem;">
+      <div style="display: flex; gap: 1rem; align-items: stretch;">
+        <!-- Step 1 -->
+        <div style="flex: 1; background: #ede9fe; border-radius: 8px; padding: 1rem; border: 2px solid #c4b5fd;">
+          <div style="font-weight: 700; color: #5b21b6; margin-bottom: 0.5rem;">1. Registry Loaded</div>
+          <div style="font-size: 0.85rem; color: #444;">17 core types pre-loaded at startup. Each type has a name, role schema, and description.</div>
+        </div>
+        <div style="display:flex;align-items:center;font-size:1.5rem;color:#999;">→</div>
+        <!-- Step 2 -->
+        <div style="flex: 1; background: #dbeafe; border-radius: 8px; padding: 1rem; border: 2px solid #93c5fd;">
+          <div style="font-weight: 700; color: #1e40af; margin-bottom: 0.5rem;">2. Section Extracted</div>
+          <div style="font-size: 0.85rem; color: #444;">Cheap model extracts atoms using known types. If knowledge doesn't fit, it <em>proposes</em> a new type.</div>
+        </div>
+        <div style="display:flex;align-items:center;font-size:1.5rem;color:#999;">→</div>
+        <!-- Step 3 -->
+        <div style="flex: 1; background: #dcfce7; border-radius: 8px; padding: 1rem; border: 2px solid #86efac;">
+          <div style="font-weight: 700; color: #166534; margin-bottom: 0.5rem;">3. Type Registered</div>
+          <div style="font-size: 0.85rem; color: #444;">New type validated (name, ≥2 roles, description), deduplicated, and added to registry. Available for future sections.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Core Frame Types (17)</h3>
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;">
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.6rem;">
+      <div style="font-weight: 600; font-size: 0.9rem;">definition</div>
+      <div style="font-size: 0.75rem; color: #666;">term → meaning</div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.6rem;">
+      <div style="font-weight: 600; font-size: 0.9rem;">has_property</div>
+      <div style="font-size: 0.75rem; color: #666;">entity → property</div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.6rem;">
+      <div style="font-weight: 600; font-size: 0.9rem;">is_a</div>
+      <div style="font-size: 0.75rem; color: #666;">instance → category</div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.6rem;">
+      <div style="font-weight: 600; font-size: 0.9rem;">consists_of</div>
+      <div style="font-size: 0.75rem; color: #666;">whole → dimension → description</div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.6rem;">
+      <div style="font-weight: 600; font-size: 0.9rem;">example_of</div>
+      <div style="font-size: 0.75rem; color: #666;">instance → concept → detail</div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.6rem;">
+      <div style="font-weight: 600; font-size: 0.9rem;">taxonomy</div>
+      <div style="font-size: 0.75rem; color: #666;">concept → categories → basis</div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.6rem;">
+      <div style="font-weight: 600; font-size: 0.9rem;">causal</div>
+      <div style="font-size: 0.75rem; color: #666;">cause → effect</div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.6rem;">
+      <div style="font-weight: 600; font-size: 0.9rem;">causal_chain</div>
+      <div style="font-size: 0.75rem; color: #666;">trigger → mechanism → outcome</div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.6rem;">
+      <div style="font-weight: 600; font-size: 0.9rem;">heuristic</div>
+      <div style="font-size: 0.75rem; color: #666;">situation → action → rationale</div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.6rem;">
+      <div style="font-weight: 600; font-size: 0.9rem;">principle</div>
+      <div style="font-size: 0.75rem; color: #666;">statement → implication → scope</div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.6rem;">
+      <div style="font-weight: 600; font-size: 0.9rem;">procedure</div>
+      <div style="font-size: 0.75rem; color: #666;">goal → steps → context</div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.6rem;">
+      <div style="font-weight: 600; font-size: 0.9rem;">formula</div>
+      <div style="font-size: 0.75rem; color: #666;">name → expression → terms</div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.6rem;">
+      <div style="font-weight: 600; font-size: 0.9rem; color: #b91c1c;">deviation</div>
+      <div style="font-size: 0.75rem; color: #666;">theory → reality → implication</div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.6rem;">
+      <div style="font-weight: 600; font-size: 0.9rem;">threshold</div>
+      <div style="font-size: 0.75rem; color: #666;">metric → value → transition → direction</div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.6rem;">
+      <div style="font-weight: 600; font-size: 0.9rem;">method_comparison</div>
+      <div style="font-size: 0.75rem; color: #666;">method_a → method_b → difference → when_to_use</div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.6rem;">
+      <div style="font-weight: 600; font-size: 0.9rem;">sequence</div>
+      <div style="font-size: 0.75rem; color: #666;">name → layers → rule</div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.6rem;">
+      <div style="font-weight: 600; font-size: 0.9rem;">evaluation_matrix</div>
+      <div style="font-size: 0.75rem; color: #666;">name → dimensions → quadrants → rule</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Example: Domain Type Proposed During Extraction</h3>
+  <div style="display: flex; gap: 1rem;">
+    <div style="flex: 1;">
+      <div style="background: #fef3c7; border: 2px solid #fbbf24; border-radius: 8px; padding: 1rem;">
+        <div style="font-weight: 700; color: #92400e; margin-bottom: 0.5rem;">📖 Source Text (Section)</div>
+        <div style="font-size: 0.85rem; color: #555; font-style: italic;">
+          "In the growth stage, penetration rate is 10-35%, competition intensifies, and companies focus on market share over profitability..."
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;font-size:1.5rem;color:#999;">→</div>
+    <div style="flex: 1;">
+      <div style="background: #dcfce7; border: 2px solid #4ade80; border-radius: 8px; padding: 1rem;">
+        <div style="font-weight: 700; color: #166534; margin-bottom: 0.5rem;">🆕 Proposed Type</div>
+        <div style="font-size: 0.85rem;">
+          <div><strong>Name:</strong> stage_characteristics</div>
+          <div><strong>Roles:</strong></div>
+          <div style="padding-left: 1rem;">
+            stage → "which lifecycle stage"<br>
+            penetration_rate → "market penetration range"<br>
+            competition → "competitive dynamics"<br>
+            focus → "strategic priority"
+          </div>
+          <div><strong>Domain:</strong> industry-analysis</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Does this registry design make sense?</h3>
+  <div class="options">
+    <div class="option" data-choice="yes" onclick="toggleSelect(this)">
+      <div class="letter">A</div>
+      <div class="content">
+        <h3>Yes, looks good</h3>
+        <p>Core types + propose-on-the-fly + validation + deduplication</p>
+      </div>
+    </div>
+    <div class="option" data-choice="concerns" onclick="toggleSelect(this)">
+      <div class="letter">B</div>
+      <div class="content">
+        <h3>I have concerns</h3>
+        <p>Something about this doesn't feel right — I'll explain in the terminal</p>
+      </div>
+    </div>
+  </div>
+</div>

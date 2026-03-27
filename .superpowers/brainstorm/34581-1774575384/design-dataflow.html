@@ -1,0 +1,127 @@
+<h2>Integrate Stage Design — Section 1: Data Flow</h2>
+<p class="subtitle">The complete flow from Extract output to finalized knowledge graph.</p>
+
+<!-- Full pipeline diagram -->
+<div style="margin: 2rem 0;">
+  <div style="position: relative; padding: 1.5rem; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
+
+    <!-- Input -->
+    <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.5rem;">
+      <div style="padding: 0.75rem 1.25rem; background: rgba(88,166,255,0.1); border: 1px solid rgba(88,166,255,0.3); border-radius: 8px;">
+        <p style="margin: 0; color: #58a6ff; font-size: 0.85rem; font-weight: bold;">INPUT</p>
+        <p style="margin: 0.25rem 0 0; color: #8b949e; font-size: 0.8rem;">CandidateAtom[] from Extract<br>+ existing KnowledgeGraph (if incremental)</p>
+      </div>
+      <div style="color: #58a6ff;">→</div>
+      <div style="padding: 0.75rem 1.25rem; background: rgba(88,166,255,0.05); border: 1px dashed rgba(88,166,255,0.2); border-radius: 8px;">
+        <p style="margin: 0; color: #c9d1d9; font-size: 0.8rem;">
+          <strong>Incremental mode:</strong> new atoms compared against existing graph<br>
+          <strong>Batch mode:</strong> integrate() called per-book on empty graph → same code path
+        </p>
+      </div>
+    </div>
+
+    <!-- Steps -->
+    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+
+      <!-- Step 1 -->
+      <div style="display: flex; gap: 1rem; align-items: stretch;">
+        <div style="width: 160px; padding: 0.75rem; background: rgba(88,166,255,0.08); border-radius: 8px; border-left: 3px solid #58a6ff; display: flex; flex-direction: column; justify-content: center;">
+          <p style="margin: 0; color: #58a6ff; font-size: 0.8rem; font-weight: bold;">① Embed</p>
+          <p style="margin: 0.2rem 0 0; color: #6e7681; font-size: 0.75rem;">embedding-service.ts</p>
+        </div>
+        <div style="flex: 1; padding: 0.75rem; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
+          <p style="margin: 0; color: #8b949e; font-size: 0.82rem;">
+            Embed all new atoms (concatenate role values → natural language sentence → OpenAI embed).
+            Cache embeddings to avoid re-embedding on rebuild. <strong>Output:</strong> Map&lt;atomId, float[3072]&gt;
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div style="display: flex; gap: 1rem; align-items: stretch;">
+        <div style="width: 160px; padding: 0.75rem; background: rgba(210,168,255,0.08); border-radius: 8px; border-left: 3px solid #d2a8ff; display: flex; flex-direction: column; justify-content: center;">
+          <p style="margin: 0; color: #d2a8ff; font-size: 0.8rem; font-weight: bold;">② Resolve Entities</p>
+          <p style="margin: 0.2rem 0 0; color: #6e7681; font-size: 0.75rem;">entity-resolver.ts</p>
+        </div>
+        <div style="flex: 1; padding: 0.75rem; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
+          <p style="margin: 0; color: #8b949e; font-size: 0.82rem;">
+            Extract entity mentions from roles → normalize → cluster within domain (embedding similarity ≥0.85) →
+            LLM disambiguate ambiguous clusters (0.70–0.85) → assign canonical names → create cross-domain links (≥0.75).
+            <strong>Output:</strong> EntityIndex (entities with atomId refs + cross-domain links)
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div style="display: flex; gap: 1rem; align-items: stretch;">
+        <div style="width: 160px; padding: 0.75rem; background: rgba(240,136,62,0.08); border-radius: 8px; border-left: 3px solid #f0883e; display: flex; flex-direction: column; justify-content: center;">
+          <p style="margin: 0; color: #f0883e; font-size: 0.8rem; font-weight: bold;">③ Detect Relations</p>
+          <p style="margin: 0.2rem 0 0; color: #6e7681; font-size: 0.75rem;">relation-detector.ts</p>
+        </div>
+        <div style="flex: 1; padding: 0.75rem; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
+          <p style="margin: 0; color: #8b949e; font-size: 0.82rem;">
+            For atoms sharing entities: compute frame-aware similarity → classify as reinforcement (≥0.90),
+            contradiction (opposite roles), extension (different frame, same entity), or unrelated.
+            Ambiguous pairs (0.75–0.90) go to LLM. <strong>Output:</strong> Relation[] (type + atom pair + confidence)
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div style="display: flex; gap: 1rem; align-items: stretch;">
+        <div style="width: 160px; padding: 0.75rem; background: rgba(63,185,80,0.08); border-radius: 8px; border-left: 3px solid #3fb950; display: flex; flex-direction: column; justify-content: center;">
+          <p style="margin: 0; color: #3fb950; font-size: 0.8rem; font-weight: bold;">④ Build Graph</p>
+          <p style="margin: 0.2rem 0 0; color: #6e7681; font-size: 0.75rem;">graph-builder.ts</p>
+        </div>
+        <div style="flex: 1; padding: 0.75rem; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
+          <p style="margin: 0; color: #8b949e; font-size: 0.82rem;">
+            Finalize atoms (add entityRefs, reinforcedBy, contradictedBy, extendedBy, update confidence).
+            Build adjacency list from entity links + detected relations.
+            <strong>Output:</strong> Atom[] (finalized) + GraphIndex (adjacency list) + VectorIndex (embeddings)
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Output -->
+    <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.06);">
+      <div style="padding: 0.75rem 1.25rem; background: rgba(63,185,80,0.1); border: 1px solid rgba(63,185,80,0.3); border-radius: 8px;">
+        <p style="margin: 0; color: #3fb950; font-size: 0.85rem; font-weight: bold;">OUTPUT — KnowledgeGraph</p>
+        <p style="margin: 0.25rem 0 0; color: #8b949e; font-size: 0.8rem;">4 JSON files written to disk</p>
+      </div>
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <code style="font-size: 0.75rem; padding: 0.3rem 0.6rem; background: rgba(255,255,255,0.05); border-radius: 4px; color: #c9d1d9;">atoms.json</code>
+        <code style="font-size: 0.75rem; padding: 0.3rem 0.6rem; background: rgba(255,255,255,0.05); border-radius: 4px; color: #c9d1d9;">entities.json</code>
+        <code style="font-size: 0.75rem; padding: 0.3rem 0.6rem; background: rgba(255,255,255,0.05); border-radius: 4px; color: #c9d1d9;">graph.json</code>
+        <code style="font-size: 0.75rem; padding: 0.3rem 0.6rem; background: rgba(255,255,255,0.05); border-radius: 4px; color: #c9d1d9;">embeddings.json</code>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div style="margin-top: 1.5rem; padding: 1rem; background: rgba(88,166,255,0.05); border-radius: 8px; border: 1px solid rgba(88,166,255,0.15);">
+  <p style="margin: 0; color: #8b949e; font-size: 0.85rem;">
+    <strong style="color: #58a6ff;">Incremental behavior:</strong> When integrating a new book, the existing <code>atoms.json</code>,
+    <code>entities.json</code>, <code>graph.json</code>, and <code>embeddings.json</code> are loaded first.
+    New atoms are embedded, resolved against existing entities, compared against existing atoms for relations,
+    and then all four files are updated. Entity resolution merges new mentions into existing clusters.
+    The graph grows incrementally — no full rebuild needed.
+  </p>
+</div>
+
+<div class="options" style="margin-top: 1.5rem;">
+  <div class="option" data-choice="approve" onclick="toggleSelect(this)">
+    <div class="letter">✓</div>
+    <div class="content">
+      <h3>Data flow looks right</h3>
+    </div>
+  </div>
+  <div class="option" data-choice="modify" onclick="toggleSelect(this)">
+    <div class="letter">~</div>
+    <div class="content">
+      <h3>Needs changes — I'll describe in terminal</h3>
+    </div>
+  </div>
+</div>

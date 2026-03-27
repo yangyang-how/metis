@@ -1,0 +1,150 @@
+<h2>Integrate Stage Design — Section 4: Testing & Error Handling</h2>
+<p class="subtitle">How we verify each module and what happens when things go wrong.</p>
+
+<div class="section">
+  <h3>Test Structure</h3>
+  <pre style="font-size: 0.8rem; color: #c9d1d9; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px; overflow-x: auto;"><code>engine/test/integrate/
+  ├── embedding-service.test.ts    <span style="color:#8b949e;">// atom→text conversion, batch splitting, cache hits</span>
+  ├── entity-resolver.test.ts      <span style="color:#8b949e;">// mention extraction, clustering, disambiguation</span>
+  ├── relation-detector.test.ts    <span style="color:#8b949e;">// pair finding, scoring, classification</span>
+  ├── graph-builder.test.ts        <span style="color:#8b949e;">// atom finalization, adjacency list, edge types</span>
+  ├── integration.test.ts          <span style="color:#8b949e;">// full pipeline: integrate() end-to-end</span>
+  └── fixtures/
+      ├── sample-atoms.ts          <span style="color:#8b949e;">// small set of CandidateAtoms from 2-3 "books"</span>
+      └── mock-embeddings.ts       <span style="color:#8b949e;">// pre-computed embeddings for deterministic tests</span></code></pre>
+</div>
+
+<div class="section">
+  <h3>Test Strategy Per Module</h3>
+
+  <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem;">
+
+    <div style="padding: 1rem; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
+      <p style="margin: 0; color: #58a6ff; font-size: 0.85rem; font-weight: bold;">embedding-service.test.ts</p>
+      <ul style="color: #8b949e; font-size: 0.82rem; margin: 0.5rem 0 0; padding-left: 1.2rem;">
+        <li><strong style="color:#c9d1d9">atomToText</strong> — each frame type produces readable English/Chinese sentence</li>
+        <li><strong style="color:#c9d1d9">batching</strong> — 100 atoms with maxBatchSize=50 produces 2 API calls</li>
+        <li><strong style="color:#c9d1d9">cache</strong> — already-embedded atoms skipped, new atoms embedded</li>
+        <li><strong style="color:#c9d1d9">cosineSimilarity</strong> — known vectors produce expected scores</li>
+        <li>Mock EmbeddingProvider — returns deterministic vectors, no real API calls</li>
+      </ul>
+    </div>
+
+    <div style="padding: 1rem; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
+      <p style="margin: 0; color: #d2a8ff; font-size: 0.85rem; font-weight: bold;">entity-resolver.test.ts</p>
+      <ul style="color: #8b949e; font-size: 0.82rem; margin: 0.5rem 0 0; padding-left: 1.2rem;">
+        <li><strong style="color:#c9d1d9">extractMentions</strong> — correct roles extracted per frame type, nothing from non-entity roles</li>
+        <li><strong style="color:#c9d1d9">exact clustering</strong> — "replication lag" and "Replication Lag" merge</li>
+        <li><strong style="color:#c9d1d9">embedding clustering</strong> — similar mentions (cosine ≥ 0.85) merge within domain</li>
+        <li><strong style="color:#c9d1d9">domain boundary</strong> — same text in different domains stays separate</li>
+        <li><strong style="color:#c9d1d9">incremental</strong> — new mention merges into existing entity, not creates duplicate</li>
+        <li><strong style="color:#c9d1d9">disambiguation</strong> — mock LLM returns merge/separate, entities update accordingly</li>
+        <li><strong style="color:#c9d1d9">cross-domain links</strong> — similar entities across domains get linked, not merged</li>
+      </ul>
+    </div>
+
+    <div style="padding: 1rem; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
+      <p style="margin: 0; color: #f0883e; font-size: 0.85rem; font-weight: bold;">relation-detector.test.ts</p>
+      <ul style="color: #8b949e; font-size: 0.82rem; margin: 0.5rem 0 0; padding-left: 1.2rem;">
+        <li><strong style="color:#c9d1d9">pair filtering</strong> — only atoms sharing entities are compared; same-book pairs excluded</li>
+        <li><strong style="color:#c9d1d9">reinforcement</strong> — two causal atoms with same roles from different books → reinforces</li>
+        <li><strong style="color:#c9d1d9">contradiction</strong> — two atoms with opposing claims about same entity → contradicts</li>
+        <li><strong style="color:#c9d1d9">extension</strong> — definition + has_property on same entity → extends</li>
+        <li><strong style="color:#c9d1d9">LLM tiebreaker</strong> — ambiguous similarity sends to mock LLM, respects response</li>
+        <li><strong style="color:#c9d1d9">no false positives</strong> — unrelated atoms sharing an entity get entity_link only, no relation</li>
+      </ul>
+    </div>
+
+    <div style="padding: 1rem; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
+      <p style="margin: 0; color: #3fb950; font-size: 0.85rem; font-weight: bold;">graph-builder.test.ts</p>
+      <ul style="color: #8b949e; font-size: 0.82rem; margin: 0.5rem 0 0; padding-left: 1.2rem;">
+        <li><strong style="color:#c9d1d9">finalize</strong> — CandidateAtom promoted to Atom with all new fields populated</li>
+        <li><strong style="color:#c9d1d9">confidence</strong> — reinforcement boosts (+0.05/source), contradictions don't change, caps at 1.0</li>
+        <li><strong style="color:#c9d1d9">bidirectional edges</strong> — A reinforces B → edges on both A and B</li>
+        <li><strong style="color:#c9d1d9">edge types</strong> — correct EdgeType for each relation kind</li>
+        <li><strong style="color:#c9d1d9">incremental merge</strong> — new atoms + edges merged into existing graph without duplicates</li>
+      </ul>
+    </div>
+
+    <div style="padding: 1rem; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
+      <p style="margin: 0; color: #c9d1d9; font-size: 0.85rem; font-weight: bold;">integration.test.ts</p>
+      <ul style="color: #8b949e; font-size: 0.82rem; margin: 0.5rem 0 0; padding-left: 1.2rem;">
+        <li><strong style="color:#c9d1d9">first book</strong> — integrate() on empty graph → produces valid KnowledgeGraph</li>
+        <li><strong style="color:#c9d1d9">second book</strong> — incremental integrate finds entities, relations, grows graph</li>
+        <li><strong style="color:#c9d1d9">batch rebuild</strong> — integrating all books sequentially on empty graph = same result as incremental</li>
+        <li><strong style="color:#c9d1d9">stats</strong> — IntegrationStats accurately counts everything</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<div class="section">
+  <h3>Error Handling</h3>
+  <div style="margin-top: 1rem;">
+    <table style="width: 100%; font-size: 0.82rem; color: #8b949e; border-collapse: collapse;">
+      <thead>
+        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+          <th style="text-align: left; padding: 0.5rem 0.75rem; color: #c9d1d9;">Failure</th>
+          <th style="text-align: left; padding: 0.5rem 0.75rem; color: #c9d1d9;">Behavior</th>
+          <th style="text-align: left; padding: 0.5rem 0.75rem; color: #c9d1d9;">Rationale</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+          <td style="padding: 0.5rem 0.75rem;">Embedding API fails</td>
+          <td style="padding: 0.5rem 0.75rem;">Retry 2x with backoff. If still fails, abort integration — can't proceed without embeddings.</td>
+          <td style="padding: 0.5rem 0.75rem;">Embeddings are required for all downstream steps.</td>
+        </tr>
+        <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+          <td style="padding: 0.5rem 0.75rem;">LLM disambiguation fails</td>
+          <td style="padding: 0.5rem 0.75rem;">Retry 2x. On failure, treat ambiguous clusters as <strong>separate</strong> (conservative). Log warning.</td>
+          <td style="padding: 0.5rem 0.75rem;">False separation is safer than false merge. Can rerun later.</td>
+        </tr>
+        <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+          <td style="padding: 0.5rem 0.75rem;">LLM relation classification fails</td>
+          <td style="padding: 0.5rem 0.75rem;">Retry 2x. On failure, skip the pair — entity_link edge still exists. Log warning.</td>
+          <td style="padding: 0.5rem 0.75rem;">Missing a relation is recoverable. The graph is still connected via entities.</td>
+        </tr>
+        <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+          <td style="padding: 0.5rem 0.75rem;">LLM returns unparseable JSON</td>
+          <td style="padding: 0.5rem 0.75rem;">Retry with same prompt (LLM non-determinism often fixes it). After 2 retries, skip batch.</td>
+          <td style="padding: 0.5rem 0.75rem;">Same pattern as Extract stage. Lenient — don't lose the whole run.</td>
+        </tr>
+        <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+          <td style="padding: 0.5rem 0.75rem;">Existing graph files corrupt/missing</td>
+          <td style="padding: 0.5rem 0.75rem;">If any file missing or unparseable, treat as empty graph (batch rebuild mode). Log warning.</td>
+          <td style="padding: 0.5rem 0.75rem;">Rebuilding is always safe. Better than crashing on corrupt state.</td>
+        </tr>
+        <tr>
+          <td style="padding: 0.5rem 0.75rem;">Atom has no domain tags</td>
+          <td style="padding: 0.5rem 0.75rem;">Assign to "untagged" domain. Entity resolution still works within that bucket.</td>
+          <td style="padding: 0.5rem 0.75rem;">Don't drop atoms. Degrade gracefully.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top: 1rem; padding: 1rem; background: rgba(88,166,255,0.05); border-radius: 8px; border: 1px solid rgba(88,166,255,0.15);">
+    <p style="margin: 0; color: #8b949e; font-size: 0.85rem;">
+      <strong style="color: #58a6ff;">Design principle:</strong> Same as Extract stage — <strong>lenient, never lose data</strong>.
+      LLM failures degrade to conservative algorithmic defaults. The graph is always buildable from entities alone.
+      Relations are enrichment, not requirements.
+    </p>
+  </div>
+</div>
+
+<div class="options" style="margin-top: 1.5rem;">
+  <div class="option" data-choice="approve" onclick="toggleSelect(this)">
+    <div class="letter">✓</div>
+    <div class="content">
+      <h3>Testing & error handling looks right — proceed</h3>
+    </div>
+  </div>
+  <div class="option" data-choice="modify" onclick="toggleSelect(this)">
+    <div class="letter">~</div>
+    <div class="content">
+      <h3>Needs changes — I'll describe in terminal</h3>
+    </div>
+  </div>
+</div>

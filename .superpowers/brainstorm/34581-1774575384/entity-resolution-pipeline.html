@@ -1,0 +1,83 @@
+<h2>Entity Resolution Pipeline</h2>
+<p class="subtitle">How do we go from 4,101 atoms to a resolved entity index?</p>
+
+<div style="margin: 2rem 0;">
+  <!-- Pipeline diagram -->
+  <div style="display: flex; gap: 0.5rem; align-items: stretch; flex-wrap: wrap;">
+
+    <div style="flex: 1; min-width: 180px; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+      <p class="label" style="color: #58a6ff;">Step 1: Extract Mentions</p>
+      <p style="color: #8b949e; font-size: 0.85rem; margin: 0;">Pull entity candidates from atom roles. <code>definition.term</code>, <code>has_property.entity</code>, <code>is_a.instance</code>, <code>causal.cause</code>, <code>causal.effect</code>, etc. Each mention = (text, atomId, domain, role).</p>
+      <p style="color: #c9d1d9; font-size: 0.8rem; margin-top: 0.5rem;"><strong>~8K-12K mentions</strong> from 4,101 atoms</p>
+    </div>
+
+    <div style="display:flex;align-items:center;color:#58a6ff;font-size:1.2rem;padding: 0 0.25rem;">→</div>
+
+    <div style="flex: 1; min-width: 180px; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+      <p class="label" style="color: #d2a8ff;">Step 2: Cluster Algorithmically</p>
+      <p style="color: #8b949e; font-size: 0.85rem; margin: 0;">Group mentions by exact match + normalized form (lowercase, trim, remove articles). Within each domain, embed mentions and cluster by cosine similarity (threshold ~0.85).</p>
+      <p style="color: #c9d1d9; font-size: 0.8rem; margin-top: 0.5rem;"><strong>No LLM needed.</strong> Fast pass.</p>
+    </div>
+
+    <div style="display:flex;align-items:center;color:#58a6ff;font-size:1.2rem;padding: 0 0.25rem;">→</div>
+
+    <div style="flex: 1; min-width: 180px; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+      <p class="label" style="color: #f0883e;">Step 3: LLM Disambiguation</p>
+      <p style="color: #8b949e; font-size: 0.85rem; margin: 0;">For ambiguous clusters (similarity 0.70–0.85), batch them to a cheap LLM: "Are these the same concept in this domain?" Returns merge/separate/unsure.</p>
+      <p style="color: #c9d1d9; font-size: 0.8rem; margin-top: 0.5rem;"><strong>~50-200 LLM calls</strong> (batched)</p>
+    </div>
+
+    <div style="display:flex;align-items:center;color:#58a6ff;font-size:1.2rem;padding: 0 0.25rem;">→</div>
+
+    <div style="flex: 1; min-width: 180px; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+      <p class="label" style="color: #3fb950;">Step 4: Cross-Domain Linking</p>
+      <p style="color: #8b949e; font-size: 0.85rem; margin: 0;">Compare entity canonical names across domains using embedding similarity. Above threshold (0.75) → create <code>cross_domain_link</code>. No merge, just a signal.</p>
+      <p style="color: #c9d1d9; font-size: 0.8rem; margin-top: 0.5rem;"><strong>Pure embedding math.</strong> No LLM.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>The Embedding Question</h3>
+  <p class="subtitle">Where do we get embeddings? This affects cost and quality.</p>
+
+  <div class="options">
+    <div class="option" data-choice="a" onclick="toggleSelect(this)">
+      <div class="letter">A</div>
+      <div class="content">
+        <h3>Local Embeddings (transformers.js / Ollama)</h3>
+        <p>Run a small embedding model locally (e.g., <code>nomic-embed-text</code> via Ollama, or <code>all-MiniLM-L6-v2</code> via transformers.js). Free, fast, no API dependency. Quality is ~90% of cloud models for English; weaker for Chinese.</p>
+        <div class="pros-cons" style="margin-top: 0.75rem;">
+          <div class="pros"><h4>Pros</h4><ul><li>Zero cost</li><li>No API key needed</li><li>Works offline</li></ul></div>
+          <div class="cons"><h4>Cons</h4><ul><li>Weaker Chinese support</li><li>Requires local model download (~400MB)</li><li>Slightly lower quality</li></ul></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="option" data-choice="b" onclick="toggleSelect(this)">
+      <div class="letter">B</div>
+      <div class="content">
+        <h3>Cloud Embeddings (OpenAI / Voyage)</h3>
+        <p>Use OpenAI's <code>text-embedding-3-small</code> or Voyage AI's bilingual model. Best quality, especially for Chinese-English cross-lingual. ~$0.01 per 1M tokens.</p>
+        <div class="pros-cons" style="margin-top: 0.75rem;">
+          <div class="pros"><h4>Pros</h4><ul><li>Best bilingual quality</li><li>Trivially cheap ($0.02 for our whole corpus)</li><li>Proven at scale</li></ul></div>
+          <div class="cons"><h4>Cons</h4><ul><li>Requires API key</li><li>Online dependency</li><li>Another provider to configure</li></ul></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="option" data-choice="c" onclick="toggleSelect(this)">
+      <div class="letter">C</div>
+      <div class="content">
+        <h3>Provider-Agnostic (same abstraction as LLM calls)</h3>
+        <p>Add an <code>EmbeddingProvider</code> interface to <code>engine/src/llm/</code> — same pattern as LLMProvider. Ship with OpenAI adapter first. Users can swap in local models later. Config via <code>--embedding-provider</code>.</p>
+        <div class="pros-cons" style="margin-top: 0.75rem;">
+          <div class="pros"><h4>Pros</h4><ul><li>Consistent with existing architecture</li><li>Users choose based on their setup</li><li>Local + cloud both supported</li></ul></div>
+          <div class="cons"><h4>Cons</h4><ul><li>More code to write up front</li><li>Still need at least one concrete adapter to ship</li></ul></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top: 1.5rem; font-style: italic;">Shannon's recommendation: C with OpenAI adapter first. Follows the existing provider pattern. Bilingual support matters — half your books are Chinese. And $0.02 to embed the whole corpus is not worth agonizing over.</p>
