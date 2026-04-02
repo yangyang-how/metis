@@ -40,6 +40,17 @@ describe("findCandidatePairs", () => {
 
 		const pairs = findCandidatePairs(bookBAtoms, bookAAtoms, entities);
 		expect(pairs.length).toBeGreaterThan(0);
+		// Books A and B both discuss replication — should find cross-book pairs
+		const hasReplicationPair = pairs.some(
+			(p) =>
+				Object.values(p.atomA.roles).some((v) =>
+					v.toLowerCase().includes("replication"),
+				) &&
+				Object.values(p.atomB.roles).some((v) =>
+					v.toLowerCase().includes("replication"),
+				),
+		);
+		expect(hasReplicationPair).toBe(true);
 	});
 
 	test("excludes same-book pairs", async () => {

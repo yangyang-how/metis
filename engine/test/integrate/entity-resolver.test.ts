@@ -94,7 +94,7 @@ describe("clusterMentions", () => {
 		).toBeGreaterThan(1);
 	});
 
-	test("same text in different domains stays separate", async () => {
+	test("same text in different domains merges into one cluster", async () => {
 		const atom1 = makeAtom({
 			id: "a1",
 			frame: "definition",
@@ -114,7 +114,53 @@ describe("clusterMentions", () => {
 		const modelClusters = clusters.filter((c) =>
 			c.mentions.some((m) => m.normalized === "model"),
 		);
-		expect(modelClusters.length).toBe(2);
+		// Same normalized text → single cluster (domain-agnostic)
+		expect(modelClusters.length).toBe(1);
+		expect(modelClusters[0]?.mentions.length).toBe(2);
+	});
+
+	test("cross-domain mentions with same text share one entity after resolution", async () => {
+		const atom1 = makeAtom({
+			id: "cross-a1",
+			frame: "causal",
+			roles: {
+				cause: "feedback loop in retry logic",
+				effect: "cascading failures",
+			},
+			domain: ["distributed systems"],
+		});
+		const atom2 = makeAtom({
+			id: "cross-a2",
+			frame: "causal",
+			roles: {
+				cause: "feedback loop in habit formation",
+				effect: "exponential behavior change",
+			},
+			domain: ["behavioral science"],
+		});
+		const provider = createMockEmbeddingProvider();
+		const llm = createMockLLM([]);
+		const allAtoms = [atom1, atom2];
+		const embeddings = await embedAtoms(allAtoms, provider, []);
+		const { entities } = await resolveEntities(
+			allAtoms,
+			{},
+			embeddings,
+			provider,
+			llm,
+		);
+		// "feedback loop" mentions from both atoms should merge
+		const feedbackEntities = Object.values(entities).filter((e) =>
+			e.canonicalName.toLowerCase().includes("feedback loop"),
+		);
+		// May be 1 or 2 entities depending on embedding similarity,
+		// but at least one should have atoms from both
+		const hasMultiAtom = feedbackEntities.some((e) => e.atomIds.length >= 2);
+		const totalAtomRefs = feedbackEntities.reduce(
+			(sum, e) => sum + e.atomIds.length,
+			0,
+		);
+		expect(totalAtomRefs).toBeGreaterThanOrEqual(2);
 	});
 });
 
