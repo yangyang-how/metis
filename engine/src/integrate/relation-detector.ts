@@ -40,7 +40,7 @@ export function findCandidatePairs(
 	existingAtoms: CandidateAtom[],
 	entities: EntityIndex,
 ): AtomPair[] {
-	// Build atom → entity mapping
+	// Build atom → entity IDs mapping
 	const atomToEntities = new Map<string, string[]>();
 	for (const [entityId, entity] of Object.entries(entities)) {
 		for (const atomId of entity.atomIds) {
@@ -50,21 +50,52 @@ export function findCandidatePairs(
 		}
 	}
 
+	// Build canonical name → entity IDs mapping (for cross-domain matching)
+	const nameToEntityIds = new Map<string, string[]>();
+	for (const [entityId, entity] of Object.entries(entities)) {
+		const name = entity.canonicalName.toLowerCase();
+		const list = nameToEntityIds.get(name) ?? [];
+		list.push(entityId);
+		nameToEntityIds.set(name, list);
+	}
+
+	// Expand atom entity sets to include entities sharing canonical names
+	// This lets atoms reference the "same concept" even if entity IDs differ
+	function expandedEntityIds(atomId: string): Set<string> {
+		const directIds = atomToEntities.get(atomId) ?? [];
+		const expanded = new Set(directIds);
+		for (const id of directIds) {
+			const entity = entities[id];
+			if (!entity) continue;
+			const siblings =
+				nameToEntityIds.get(entity.canonicalName.toLowerCase()) ?? [];
+			for (const sibId of siblings) {
+				expanded.add(sibId);
+			}
+			// Also include cross-domain links
+			for (const linkId of entity.crossDomainLinks) {
+				expanded.add(linkId);
+			}
+		}
+		return expanded;
+	}
+
 	const pairs: AtomPair[] = [];
 	const seen = new Set<string>();
 
 	for (const newAtom of newAtoms) {
-		const newEntityIds = atomToEntities.get(newAtom.id) ?? [];
-		if (newEntityIds.length === 0) continue;
+		const newEntityIds = expandedEntityIds(newAtom.id);
+		if (newEntityIds.size === 0) continue;
 
 		for (const existingAtom of existingAtoms) {
 			// Skip same-book pairs
 			if (newAtom.source.title === existingAtom.source.title) continue;
 
-			const existingEntityIds = atomToEntities.get(existingAtom.id) ?? [];
-			const shared = newEntityIds.filter((id) =>
-				existingEntityIds.includes(id),
-			);
+			const existingEntitySet = expandedEntityIds(existingAtom.id);
+			const shared: string[] = [];
+			for (const id of newEntityIds) {
+				if (existingEntitySet.has(id)) shared.push(id);
+			}
 			if (shared.length === 0) continue;
 
 			const key = [newAtom.id, existingAtom.id].sort().join(":");

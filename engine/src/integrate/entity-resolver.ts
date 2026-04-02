@@ -37,8 +37,8 @@ const ENTITY_ROLES: Record<string, string[]> = {
 };
 
 const MAX_MENTION_LENGTH = 60;
-const CLUSTER_MERGE_THRESHOLD = 0.85;
-const CLUSTER_AMBIGUOUS_THRESHOLD = 0.7;
+const CLUSTER_MERGE_THRESHOLD = 0.78;
+const CLUSTER_AMBIGUOUS_THRESHOLD = 0.65;
 const CROSS_DOMAIN_THRESHOLD = 0.75;
 const DISAMBIGUATION_BATCH_SIZE = 20;
 
@@ -104,79 +104,82 @@ export async function clusterMentions(
 	provider: EmbeddingProvider,
 	existingEntities: EntityIndex,
 ): Promise<MentionCluster[]> {
-	// Group mentions by domain
-	const byDomain = new Map<string, EntityMention[]>();
+	// Pass 1: exact normalized match (across ALL domains)
+	// Mentions with identical normalized text cluster together regardless of domain.
+	const exactGroups = new Map<string, EntityMention[]>();
 	for (const m of mentions) {
-		const list = byDomain.get(m.domain) ?? [];
+		const list = exactGroups.get(m.normalized) ?? [];
 		list.push(m);
-		byDomain.set(m.domain, list);
+		exactGroups.set(m.normalized, list);
 	}
 
-	const allClusters: MentionCluster[] = [];
+	const clusters: MentionCluster[] = [...exactGroups.entries()].map(
+		([text, ms]) => ({
+			mentions: ms,
+			// Use the most common domain among mentions as the cluster domain
+			domain: modeDomain(ms),
+			centroidText: text,
+		}),
+	);
 
-	for (const [domain, domainMentions] of byDomain) {
-		// Pass 1: exact normalized match
-		const exactGroups = new Map<string, EntityMention[]>();
-		for (const m of domainMentions) {
-			const list = exactGroups.get(m.normalized) ?? [];
-			list.push(m);
-			exactGroups.set(m.normalized, list);
+	// Pass 2: check if any cluster should merge into an existing entity (any domain)
+	const existingList = Object.values(existingEntities);
+	for (const cluster of clusters) {
+		for (const existing of existingList) {
+			if (
+				existing.canonicalName.toLowerCase() === cluster.centroidText ||
+				existing.aliases.some((a) => a.toLowerCase() === cluster.centroidText)
+			) {
+				cluster.centroidText = existing.canonicalName.toLowerCase();
+				break;
+			}
 		}
+	}
 
-		const clusters: MentionCluster[] = [...exactGroups.entries()].map(
-			([text, ms]) => ({
-				mentions: ms,
-				domain,
-				centroidText: text,
-			}),
-		);
+	// Pass 3: embedding-based merge (across ALL domains)
+	if (clusters.length > 1) {
+		const centroidTexts = clusters.map((c) => c.centroidText);
+		const centroidEmbeddings = await provider.embed(centroidTexts);
 
-		// Pass 2: check if any cluster should merge into an existing entity
-		const existingInDomain = Object.values(existingEntities).filter(
-			(e) => e.domain === domain,
-		);
-		for (const cluster of clusters) {
-			for (const existing of existingInDomain) {
-				if (
-					existing.canonicalName.toLowerCase() === cluster.centroidText ||
-					existing.aliases.some((a) => a.toLowerCase() === cluster.centroidText)
-				) {
-					cluster.centroidText = existing.canonicalName.toLowerCase();
-					break;
+		for (let i = 0; i < clusters.length; i++) {
+			for (let j = i + 1; j < clusters.length; j++) {
+				const a = clusters[i];
+				const b = clusters[j];
+				if (!a || !b) continue;
+				if (a.mentions.length === 0 || b.mentions.length === 0) continue;
+
+				const embA = centroidEmbeddings[i];
+				const embB = centroidEmbeddings[j];
+				if (!embA || !embB) continue;
+				const sim = cosineSimilarity(embA, embB);
+
+				if (sim >= CLUSTER_MERGE_THRESHOLD) {
+					a.mentions.push(...b.mentions);
+					a.domain = modeDomain(a.mentions);
+					b.mentions = [];
 				}
 			}
 		}
-
-		// Pass 3: embedding-based merge within domain
-		// Batch-embed all centroid texts once, then compare in memory
-		if (clusters.length > 1) {
-			const centroidTexts = clusters.map((c) => c.centroidText);
-			const centroidEmbeddings = await provider.embed(centroidTexts);
-
-			for (let i = 0; i < clusters.length; i++) {
-				for (let j = i + 1; j < clusters.length; j++) {
-					const a = clusters[i];
-					const b = clusters[j];
-					if (!a || !b) continue;
-					if (a.mentions.length === 0 || b.mentions.length === 0) continue;
-
-					const embA = centroidEmbeddings[i];
-					const embB = centroidEmbeddings[j];
-					if (!embA || !embB) continue;
-					const sim = cosineSimilarity(embA, embB);
-
-					if (sim >= CLUSTER_MERGE_THRESHOLD) {
-						a.mentions.push(...b.mentions);
-						b.mentions = [];
-					}
-				}
-			}
-		}
-
-		allClusters.push(...clusters.filter((c) => c.mentions.length > 0));
 	}
 
-	return allClusters;
+	return clusters.filter((c) => c.mentions.length > 0);
+}
+
+/** Pick the most common domain among a set of mentions. */
+function modeDomain(mentions: EntityMention[]): string {
+	const counts = new Map<string, number>();
+	for (const m of mentions) {
+		counts.set(m.domain, (counts.get(m.domain) ?? 0) + 1);
+	}
+	let best = mentions[0]?.domain ?? "untagged";
+	let bestCount = 0;
+	for (const [domain, count] of counts) {
+		if (count > bestCount) {
+			best = domain;
+			bestCount = count;
+		}
+	}
+	return best;
 }
 
 export async function resolveEntities(
@@ -243,7 +246,6 @@ export async function resolveEntities(
 			const a = clusters[i];
 			const b = clusters[j];
 			if (!a || !b) continue;
-			if (a.domain !== b.domain) continue;
 			if (a.mentions.length === 0 || b.mentions.length === 0) continue;
 
 			const tA = centroidEmbMap.get(a.centroidText);
@@ -321,16 +323,12 @@ export async function resolveEntities(
 			(a) => a.toLowerCase() !== canonicalName,
 		);
 
-		// Check if this merges into an existing entity
-		// Normalize existing entity domain for comparison
-		const existingEntity = Object.values(entities).find((e) => {
-			const eDomain = normalizeDomain(e.domain, domainMap);
-			return (
-				eDomain === domain &&
-				(e.canonicalName.toLowerCase() === canonicalName ||
-					e.aliases.some((a) => a.toLowerCase() === canonicalName))
-			);
-		});
+		// Check if this merges into an existing entity (domain-agnostic)
+		const existingEntity = Object.values(entities).find(
+			(e) =>
+				e.canonicalName.toLowerCase() === canonicalName ||
+				e.aliases.some((a) => a.toLowerCase() === canonicalName),
+		);
 
 		if (existingEntity) {
 			existingEntity.atomIds = [
@@ -346,7 +344,7 @@ export async function resolveEntities(
 				.replace(/[^a-z0-9\u4e00-\u9fff]+/g, "-")
 				.replace(/^-+|-+$/g, "")
 				.slice(0, 40);
-			const id = `entity:${slug}-${domain.replace(/\s+/g, "-").slice(0, 20)}`;
+			const id = `entity:${slug}`;
 
 			entities[id] = {
 				id,
