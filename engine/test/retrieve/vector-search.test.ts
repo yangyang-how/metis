@@ -46,7 +46,11 @@ describe("queryVectors", () => {
 		const queryEmbedding = [1, 0, 0, 0];
 		const results = queryVectors(queryEmbedding, mockIndex, 5);
 		for (let i = 1; i < results.length; i++) {
-			expect(results[i - 1]?.score).toBeGreaterThanOrEqual(results[i]?.score);
+			const prev = results[i - 1];
+			const curr = results[i];
+			if (prev && curr) {
+				expect(prev.score).toBeGreaterThanOrEqual(curr.score);
+			}
 		}
 	});
 

@@ -109,7 +109,7 @@ export function queryBM25(
 			const dl = index.docLengths[doc] ?? 0;
 			const numerator = tf * (K1 + 1);
 			const denominator = tf + K1 * (1 - B + B * (dl / index.avgDocLength));
-			scores[doc] += termIdf * (numerator / denominator);
+			scores[doc] = (scores[doc] ?? 0) + termIdf * (numerator / denominator);
 		}
 	}
 

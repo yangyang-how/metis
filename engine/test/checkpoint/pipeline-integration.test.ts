@@ -36,8 +36,8 @@ describe("checkpoint pipeline integration", () => {
 			durationMs: 1200,
 		});
 
-		expect(mgr.load("parse")).toEqual(parseResult);
-		expect(mgr.getMeta()?.stages.parse.status).toBe("completed");
+		expect(mgr.load<typeof parseResult>("parse")).toEqual(parseResult);
+		expect(mgr.getMeta()?.stages.parse?.status).toBe("completed");
 	});
 
 	test("saves checkpoint after comprehend stage completes", () => {
@@ -53,7 +53,9 @@ describe("checkpoint pipeline integration", () => {
 			durationMs: 180000,
 		});
 
-		expect(mgr.load("comprehend")).toEqual(comprehendResult);
+		expect(mgr.load<typeof comprehendResult>("comprehend")).toEqual(
+			comprehendResult,
+		);
 	});
 
 	test("on resume, skips parse when parse checkpoint exists", () => {

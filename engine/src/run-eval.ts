@@ -23,15 +23,14 @@ function parseArgs(argv: string[]) {
 	const files: string[] = [];
 	let raw = false;
 	let compare = false;
-	let format: "table" | "json" = "table";
+	let format = "table" as string;
 	let verbose = false;
 
 	for (let i = 0; i < args.length; i++) {
 		const arg = args[i];
 		if (arg === "--raw") raw = true;
 		else if (arg === "--compare") compare = true;
-		else if (arg === "--format")
-			format = (args[++i] ?? "table") as typeof format;
+		else if (arg === "--format") format = args[++i] ?? "table";
 		else if (arg === "--verbose") verbose = true;
 		else if (arg && !arg.startsWith("--")) files.push(arg);
 	}

@@ -67,9 +67,11 @@ describe("queryBM25", () => {
 		// than docs matching only one
 		const results = queryBM25(index, "replication lag", docs.length);
 		if (results.length >= 2) {
-			expect(results[0]?.score).toBeGreaterThan(
-				results[results.length - 1]?.score,
-			);
+			const first = results[0];
+			const last = results[results.length - 1];
+			if (first && last) {
+				expect(first.score).toBeGreaterThan(last.score);
+			}
 		}
 	});
 
@@ -83,7 +85,11 @@ describe("queryBM25", () => {
 	test("returns results sorted by descending score", () => {
 		const results = queryBM25(index, "penetration rate industry", 10);
 		for (let i = 1; i < results.length; i++) {
-			expect(results[i - 1]?.score).toBeGreaterThanOrEqual(results[i]?.score);
+			const prev = results[i - 1];
+			const curr = results[i];
+			if (prev && curr) {
+				expect(prev.score).toBeGreaterThanOrEqual(curr.score);
+			}
 		}
 	});
 });
