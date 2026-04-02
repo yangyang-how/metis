@@ -26,6 +26,7 @@
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { createCheckpointManager, formatCheckpointStatus } from "./checkpoint";
 import { comprehend } from "./comprehend/index";
 import { normalizeChapters } from "./comprehend/structure-inference";
 import { createRegistry, extract } from "./extract/index";
@@ -51,6 +52,8 @@ function parseArgs(argv: string[]) {
 	let skipExtract = false;
 	let skipIntegrate = false;
 	let rebuildGraph = false;
+	let resume = false;
+	let checkpointStatus = false;
 
 	for (let i = 0; i < args.length; i++) {
 		const arg = args[i];
@@ -76,6 +79,10 @@ function parseArgs(argv: string[]) {
 			skipIntegrate = true;
 		} else if (arg === "--rebuild-graph") {
 			rebuildGraph = true;
+		} else if (arg === "--resume") {
+			resume = true;
+		} else if (arg === "--checkpoint-status") {
+			checkpointStatus = true;
 		} else if (!arg?.startsWith("--")) {
 			epubPath = arg ?? "";
 		}
@@ -94,6 +101,8 @@ function parseArgs(argv: string[]) {
 		skipExtract,
 		skipIntegrate,
 		rebuildGraph,
+		resume,
+		checkpointStatus,
 	};
 }
 
@@ -120,6 +129,12 @@ async function main() {
 		console.error(
 			"  --rebuild-graph                       wipe and rebuild graph",
 		);
+		console.error(
+			"  --resume                              resume from last checkpoint",
+		);
+		console.error(
+			"  --checkpoint-status                   show checkpoint status",
+		);
 		console.error("");
 		console.error(
 			"Environment: ANTHROPIC_API_KEY, KIMI_API_KEY, OPENAI_API_KEY",
@@ -127,38 +142,121 @@ async function main() {
 		process.exit(1);
 	}
 
-	// === Phase 1: Parse ===
-	console.error(`[parse] Parsing ${config.epubPath}...`);
-	const tree = await parse({
-		filePath: config.epubPath,
-		options: { extractImages: false },
+	// --- Checkpoint setup ---
+	const bookSlug = config.epubPath
+		.replace(/^.*[\\/]/, "")
+		.replace(/\.epub$/i, "")
+		.toLowerCase()
+		.replace(/[^a-z0-9-]/g, "-");
+	const checkpointDir = join(config.graphDir, ".checkpoints");
+	const checkpoint = createCheckpointManager(bookSlug, checkpointDir);
+
+	if (config.rebuildGraph) {
+		checkpoint.clear();
+	}
+
+	// --- Checkpoint status ---
+	if (config.checkpointStatus) {
+		const meta = checkpoint.getMeta();
+		if (meta) {
+			console.error(formatCheckpointStatus(meta));
+		} else {
+			console.error(`No checkpoint found for "${bookSlug}"`);
+		}
+		return;
+	}
+
+	checkpoint.setConfig({
+		comprehendProvider: config.comprehendProvider,
+		comprehendModel: config.comprehendModel,
+		extractProvider: config.extractProvider,
+		extractModel: config.extractModel,
 	});
-	console.error(
-		`[parse] Done. ${tree.chapters.length} chapters, "${tree.metadata.title}"`,
-	);
+
+	const resumePoint = config.resume ? checkpoint.getResumePoint() : null;
+	if (config.resume && resumePoint) {
+		console.error(`[checkpoint] Resuming "${bookSlug}" from ${resumePoint}`);
+	}
+
+	// === Phase 1: Parse ===
+	let tree: Awaited<ReturnType<typeof parse>>;
+
+	if (config.resume && resumePoint !== "parse" && checkpoint.load("parse")) {
+		tree = checkpoint.load("parse") as typeof tree;
+		console.error(
+			`[parse] Loaded from checkpoint (${tree.chapters.length} chapters)`,
+		);
+	} else {
+		const parseStart = Date.now();
+		console.error(`[parse] Parsing ${config.epubPath}...`);
+		tree = await parse({
+			filePath: config.epubPath,
+			options: { extractImages: false },
+		});
+		console.error(
+			`[parse] Done. ${tree.chapters.length} chapters, "${tree.metadata.title}"`,
+		);
+		checkpoint.save("parse", tree);
+		checkpoint.updateStage("parse", {
+			status: "completed",
+			completedAt: new Date().toISOString(),
+			durationMs: Date.now() - parseStart,
+		});
+	}
 
 	// === Phase 2: Comprehend ===
-	const comprehendProviderConfig: ProviderConfig = {
-		provider: config.comprehendProvider as ProviderConfig["provider"],
-		model: config.comprehendModel,
-	};
-	const comprehendLLM = withRetry(createProvider(comprehendProviderConfig));
+	const shouldSkipComprehend =
+		config.resume &&
+		resumePoint !== "parse" &&
+		resumePoint !== "comprehend" &&
+		checkpoint.load("comprehend");
 
-	console.error(
-		`[comprehend] Starting with ${config.comprehendProvider}/${config.comprehendModel}...`,
-	);
-	console.error(
-		`[comprehend] ${tree.chapters.length} chapters to process (sequential)`,
-	);
+	let comprehendResult: Awaited<ReturnType<typeof comprehend>>;
 
-	const comprehendResult = await comprehend({
-		documentTree: tree,
-		provider: comprehendLLM,
-	});
+	if (shouldSkipComprehend) {
+		comprehendResult = checkpoint.load("comprehend") as typeof comprehendResult;
+		console.error(
+			`[comprehend] Loaded from checkpoint (${comprehendResult.chapterMaps.length} maps)`,
+		);
+	} else {
+		const comprehendStart = Date.now();
+		const comprehendProviderConfig: ProviderConfig = {
+			provider: config.comprehendProvider as ProviderConfig["provider"],
+			model: config.comprehendModel,
+		};
+		const comprehendLLM = withRetry(createProvider(comprehendProviderConfig));
 
-	console.error(
-		`[comprehend] Done. ${comprehendResult.chapterMaps.length} maps, ${comprehendResult.usage.failedChapters.length} failed`,
-	);
+		console.error(
+			`[comprehend] Starting with ${config.comprehendProvider}/${config.comprehendModel}...`,
+		);
+		console.error(
+			`[comprehend] ${tree.chapters.length} chapters to process (sequential)`,
+		);
+
+		try {
+			comprehendResult = await comprehend({
+				documentTree: tree,
+				provider: comprehendLLM,
+			});
+		} catch (err) {
+			checkpoint.updateStage("comprehend", {
+				status: "failed",
+				error: String(err),
+				failedAt: new Date().toISOString(),
+			});
+			throw err;
+		}
+
+		console.error(
+			`[comprehend] Done. ${comprehendResult.chapterMaps.length} maps, ${comprehendResult.usage.failedChapters.length} failed`,
+		);
+		checkpoint.save("comprehend", comprehendResult);
+		checkpoint.updateStage("comprehend", {
+			status: "completed",
+			completedAt: new Date().toISOString(),
+			durationMs: Date.now() - comprehendStart,
+		});
+	}
 
 	if (config.skipExtract) {
 		console.error("[extract] Skipped (--skip-extract)");
@@ -167,69 +265,117 @@ async function main() {
 	}
 
 	// === Phase 3: Extract ===
-	const extractProviderConfig: ProviderConfig = {
-		provider: config.extractProvider as ProviderConfig["provider"],
-		model: config.extractModel,
-	};
-	const extractLLM = withRetry(createProvider(extractProviderConfig));
-	const registry = createRegistry();
-	const normalizedChapters = normalizeChapters(tree);
+	const shouldSkipExtract =
+		config.resume &&
+		resumePoint !== "parse" &&
+		resumePoint !== "comprehend" &&
+		resumePoint !== "extract" &&
+		checkpoint.load("extract");
 
-	console.error(
-		`[extract] Starting with ${config.extractProvider}/${config.extractModel}...`,
-	);
+	let allAtoms: CandidateAtom[];
+	let allProposedTypes: unknown[];
 
-	let totalAtoms = 0;
-	let totalExtractCalls = 0;
-	let totalExtractInput = 0;
-	let totalExtractOutput = 0;
-	const allAtoms: CandidateAtom[] = [];
-	const allProposedTypes: unknown[] = [];
-
-	for (const chapter of normalizedChapters) {
-		const map = comprehendResult.chapterMaps.find(
-			(m) => m.chapterId === chapter.id,
+	if (shouldSkipExtract) {
+		const cached = checkpoint.load<{
+			atoms: CandidateAtom[];
+			proposedTypes: unknown[];
+		}>("extract");
+		allAtoms = cached?.atoms ?? [];
+		allProposedTypes = cached?.proposedTypes ?? [];
+		console.error(
+			`[extract] Loaded from checkpoint (${allAtoms.length} atoms)`,
 		);
-		if (!map) continue;
-
-		console.error(`[extract] Chapter: ${chapter.title.slice(0, 50)}...`);
-
-		const extractResult = await extract({
-			chapter,
-			comprehensionMap: map,
-			bookMetadata: tree.metadata,
-			registry,
-			provider: extractLLM,
-		});
-
-		totalAtoms += extractResult.atoms.length;
-		totalExtractCalls += extractResult.usage.callCount;
-		totalExtractInput += extractResult.usage.inputTokens;
-		totalExtractOutput += extractResult.usage.outputTokens;
-		allAtoms.push(...extractResult.atoms);
-		allProposedTypes.push(...extractResult.proposedFrameTypes);
+	} else {
+		const extractStart = Date.now();
+		const extractProviderConfig: ProviderConfig = {
+			provider: config.extractProvider as ProviderConfig["provider"],
+			model: config.extractModel,
+		};
+		const extractLLM = withRetry(createProvider(extractProviderConfig));
+		const registry = createRegistry();
+		const normalizedChapters = normalizeChapters(tree);
 
 		console.error(
-			`  → ${extractResult.atoms.length} atoms, ${extractResult.skippedSections.length} skipped, ${extractResult.flaggedAtoms.length} flagged`,
+			`[extract] Starting with ${config.extractProvider}/${config.extractModel}...`,
+		);
+
+		let totalAtomCount = 0;
+		let totalExtractCalls = 0;
+		let totalExtractInput = 0;
+		let totalExtractOutput = 0;
+		allAtoms = [];
+		allProposedTypes = [];
+
+		try {
+			for (const chapter of normalizedChapters) {
+				const map = comprehendResult.chapterMaps.find(
+					(m) => m.chapterId === chapter.id,
+				);
+				if (!map) continue;
+
+				console.error(`[extract] Chapter: ${chapter.title.slice(0, 50)}...`);
+
+				const extractResult = await extract({
+					chapter,
+					comprehensionMap: map,
+					bookMetadata: tree.metadata,
+					registry,
+					provider: extractLLM,
+				});
+
+				totalAtomCount += extractResult.atoms.length;
+				totalExtractCalls += extractResult.usage.callCount;
+				totalExtractInput += extractResult.usage.inputTokens;
+				totalExtractOutput += extractResult.usage.outputTokens;
+				allAtoms.push(...extractResult.atoms);
+				allProposedTypes.push(...extractResult.proposedFrameTypes);
+
+				console.error(
+					`  → ${extractResult.atoms.length} atoms, ${extractResult.skippedSections.length} skipped, ${extractResult.flaggedAtoms.length} flagged`,
+				);
+			}
+		} catch (err) {
+			// Save partial progress before failing
+			checkpoint.save("extract", {
+				atoms: allAtoms,
+				proposedTypes: allProposedTypes,
+			});
+			checkpoint.updateStage("extract", {
+				status: "failed",
+				error: String(err),
+				failedAt: new Date().toISOString(),
+			});
+			throw err;
+		}
+
+		checkpoint.save("extract", {
+			atoms: allAtoms,
+			proposedTypes: allProposedTypes,
+		});
+		checkpoint.updateStage("extract", {
+			status: "completed",
+			completedAt: new Date().toISOString(),
+			durationMs: Date.now() - extractStart,
+		});
+
+		// === Report ===
+		console.error("");
+		console.error("=== Results ===");
+		console.error(
+			`Comprehend: ${comprehendResult.chapterMaps.length} chapters, ${comprehendResult.usage.callCount} calls, ${comprehendResult.usage.totalInputTokens} in / ${comprehendResult.usage.totalOutputTokens} out`,
+		);
+		console.error(
+			`Extract: ${totalAtomCount} atoms, ${totalExtractCalls} calls, ${totalExtractInput} in / ${totalExtractOutput} out`,
+		);
+		console.error(`Domain types proposed: ${allProposedTypes.length}`);
+		console.error(
+			`Registry: ${registry.getAll().length} types (${registry.getCoreTypes().length} core + ${registry.getAll().length - registry.getCoreTypes().length} domain)`,
 		);
 	}
 
-	// === Report ===
-	console.error("");
-	console.error("=== Results ===");
-	console.error(
-		`Comprehend: ${comprehendResult.chapterMaps.length} chapters, ${comprehendResult.usage.callCount} calls, ${comprehendResult.usage.totalInputTokens} in / ${comprehendResult.usage.totalOutputTokens} out`,
-	);
-	console.error(
-		`Extract: ${totalAtoms} atoms, ${totalExtractCalls} calls, ${totalExtractInput} in / ${totalExtractOutput} out`,
-	);
-	console.error(`Domain types proposed: ${allProposedTypes.length}`);
-	console.error(
-		`Registry: ${registry.getAll().length} types (${registry.getCoreTypes().length} core + ${registry.getAll().length - registry.getCoreTypes().length} domain)`,
-	);
-
 	// === Phase 4: Integrate ===
 	if (!config.skipIntegrate) {
+		const integrateStart = Date.now();
 		const embeddingProvider = createOpenAIEmbeddingProvider({
 			provider: "openai",
 			model: config.embeddingModel,
@@ -275,32 +421,46 @@ async function main() {
 			}
 		}
 
-		const knowledgeGraph = await integrate({
-			atoms: allAtoms,
-			metadata: tree.metadata,
-			existingGraph,
-			llmProvider: integrateLLM,
-			embeddingProvider,
-		});
+		try {
+			const knowledgeGraph = await integrate({
+				atoms: allAtoms,
+				metadata: tree.metadata,
+				existingGraph,
+				llmProvider: integrateLLM,
+				embeddingProvider,
+			});
 
-		if (!existsSync(graphDir)) mkdirSync(graphDir, { recursive: true });
-		writeFileSync(
-			join(graphDir, "atoms.json"),
-			JSON.stringify(knowledgeGraph.atoms, null, 2),
-		);
-		writeFileSync(
-			join(graphDir, "entities.json"),
-			JSON.stringify(knowledgeGraph.entities, null, 2),
-		);
-		writeFileSync(
-			join(graphDir, "graph.json"),
-			JSON.stringify(knowledgeGraph.graph, null, 2),
-		);
-		writeFileSync(
-			join(graphDir, "embeddings.json"),
-			JSON.stringify(knowledgeGraph.embeddings),
-		);
-		console.error(`[integrate] Graph saved to ${graphDir}`);
+			if (!existsSync(graphDir)) mkdirSync(graphDir, { recursive: true });
+			writeFileSync(
+				join(graphDir, "atoms.json"),
+				JSON.stringify(knowledgeGraph.atoms, null, 2),
+			);
+			writeFileSync(
+				join(graphDir, "entities.json"),
+				JSON.stringify(knowledgeGraph.entities, null, 2),
+			);
+			writeFileSync(
+				join(graphDir, "graph.json"),
+				JSON.stringify(knowledgeGraph.graph, null, 2),
+			);
+			writeFileSync(
+				join(graphDir, "embeddings.json"),
+				JSON.stringify(knowledgeGraph.embeddings),
+			);
+			console.error(`[integrate] Graph saved to ${graphDir}`);
+			checkpoint.updateStage("integrate", {
+				status: "completed",
+				completedAt: new Date().toISOString(),
+				durationMs: Date.now() - integrateStart,
+			});
+		} catch (err) {
+			checkpoint.updateStage("integrate", {
+				status: "failed",
+				error: String(err),
+				failedAt: new Date().toISOString(),
+			});
+			throw err;
+		}
 	} else {
 		console.error("[integrate] Skipped (--skip-integrate)");
 	}
@@ -311,11 +471,6 @@ async function main() {
 		extraction: {
 			atoms: allAtoms,
 			proposedFrameTypes: allProposedTypes,
-			usage: {
-				inputTokens: totalExtractInput,
-				outputTokens: totalExtractOutput,
-				callCount: totalExtractCalls,
-			},
 		},
 	};
 	console.log(JSON.stringify(output, null, 2));
