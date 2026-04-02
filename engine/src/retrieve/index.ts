@@ -92,20 +92,20 @@ export async function retrieve(
 	const fused = fuseResults(rankedLists, topK);
 
 	// Map back to atoms
-	return fused
-		.map((f) => {
-			const atom = atomMap.get(f.id);
-			if (!atom) return null;
-			return {
-				atom,
-				score: f.score,
-				ranks: {
-					bm25: f.ranks.bm25 ?? null,
-					vector: f.ranks.vector ?? null,
-				},
-			};
-		})
-		.filter((r): r is RetrievalResult => r !== null);
+	const results: RetrievalResult[] = [];
+	for (const f of fused) {
+		const atom = atomMap.get(f.id);
+		if (!atom) continue;
+		results.push({
+			atom,
+			score: f.score,
+			ranks: {
+				bm25: f.ranks.bm25 ?? null,
+				vector: f.ranks.vector ?? null,
+			},
+		});
+	}
+	return results;
 }
 
 function loadJson<T>(dir: string, file: string): T {

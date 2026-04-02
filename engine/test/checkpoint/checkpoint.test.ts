@@ -48,7 +48,7 @@ describe("CheckpointManager", () => {
 
 		const meta = mgr.getMeta();
 		expect(meta).not.toBeNull();
-		expect(meta?.stages.parse.status).toBe("completed");
+		expect(meta?.stages.parse?.status).toBe("completed");
 	});
 
 	test("clear() removes all checkpoint files for a book", () => {
@@ -69,7 +69,7 @@ describe("CheckpointManager", () => {
 		// Directory doesn't exist yet — should create it on save
 		const mgr = createCheckpointManager("new-book", TEST_DIR);
 		mgr.save("parse", { test: true });
-		expect(mgr.load("parse")).toEqual({ test: true });
+		expect(mgr.load<{ test: boolean }>("parse")).toEqual({ test: true });
 	});
 
 	test("different books have isolated checkpoints", () => {
@@ -79,8 +79,8 @@ describe("CheckpointManager", () => {
 		mgr1.save("parse", { book: "a" });
 		mgr2.save("parse", { book: "b" });
 
-		expect(mgr1.load("parse")).toEqual({ book: "a" });
-		expect(mgr2.load("parse")).toEqual({ book: "b" });
+		expect(mgr1.load<{ book: string }>("parse")).toEqual({ book: "a" });
+		expect(mgr2.load<{ book: string }>("parse")).toEqual({ book: "b" });
 	});
 
 	test("getResumePoint() returns first non-completed stage", () => {

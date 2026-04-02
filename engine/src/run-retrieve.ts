@@ -14,13 +14,13 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { atomToText } from "./integrate/embedding-service";
-import { retrieve, type RetrievalResult } from "./retrieve/index";
+import { type RetrievalResult, retrieve } from "./retrieve/index";
 
 function parseArgs(argv: string[]) {
 	const args = argv.slice(2);
 	let query = "";
 	let topK = 10;
-	let method: "hybrid" | "bm25" | "vector" = "hybrid";
+	let method = "hybrid" as string;
 	let graphDir = join(new URL(".", import.meta.url).pathname, "../graph");
 	let verbose = false;
 	let json = false;
@@ -30,7 +30,7 @@ function parseArgs(argv: string[]) {
 		if (arg === "--top-k") {
 			topK = Number.parseInt(args[++i] ?? "10", 10);
 		} else if (arg === "--method") {
-			method = (args[++i] ?? "hybrid") as typeof method;
+			method = args[++i] ?? "hybrid";
 		} else if (arg === "--graph-dir") {
 			graphDir = args[++i] ?? graphDir;
 		} else if (arg === "--verbose") {
@@ -77,9 +77,15 @@ async function main() {
 		console.error('Usage: bun run src/run-retrieve.ts "query" [options]');
 		console.error("");
 		console.error("Options:");
-		console.error("  --top-k <n>                 results to return (default: 10)");
-		console.error("  --method hybrid|bm25|vector retrieval method (default: hybrid)");
-		console.error("  --graph-dir <path>          data directory (default: engine/graph)");
+		console.error(
+			"  --top-k <n>                 results to return (default: 10)",
+		);
+		console.error(
+			"  --method hybrid|bm25|vector retrieval method (default: hybrid)",
+		);
+		console.error(
+			"  --graph-dir <path>          data directory (default: engine/graph)",
+		);
 		console.error("  --verbose                   show per-method ranks");
 		console.error("  --json                      output raw JSON");
 		process.exit(1);
@@ -120,7 +126,9 @@ async function main() {
 		const apiKey = process.env.OPENAI_API_KEY;
 		if (apiKey) {
 			try {
-				const { createOpenAIEmbeddingProvider } = await import("./llm/openai-embedding");
+				const { createOpenAIEmbeddingProvider } = await import(
+					"./llm/openai-embedding"
+				);
 				const provider = createOpenAIEmbeddingProvider({
 					provider: "openai",
 					model: "text-embedding-3-large",
@@ -133,7 +141,9 @@ async function main() {
 		}
 
 		if (!queryEmbedding && config.method === "hybrid") {
-			console.error("[info] No OPENAI_API_KEY or embedding failed — falling back to BM25-only");
+			console.error(
+				"[info] No OPENAI_API_KEY or embedding failed — falling back to BM25-only",
+			);
 		}
 	}
 
@@ -143,7 +153,7 @@ async function main() {
 		embeddings,
 		queryEmbedding,
 		topK: config.topK,
-		method: config.method,
+		method: config.method as "hybrid" | "bm25" | "vector",
 	});
 
 	if (config.json) {
@@ -163,7 +173,8 @@ async function main() {
 	console.error(`Results: ${results.length} of ${atoms.length} atoms\n`);
 
 	for (let i = 0; i < results.length; i++) {
-		console.error(formatResult(results[i]!, i + 1, config.verbose));
+		const result = results[i];
+		if (result) console.error(formatResult(result, i + 1, config.verbose));
 	}
 }
 
