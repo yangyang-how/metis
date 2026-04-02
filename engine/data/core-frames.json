@@ -1,0 +1,138 @@
+[
+	{
+		"name": "definition",
+		"roles": { "term": "the concept being defined", "meaning": "what the concept means" },
+		"requiredRoles": ["term", "meaning"],
+		"description": "What something means",
+		"category": "core",
+		"version": 1
+	},
+	{
+		"name": "has_property",
+		"roles": { "entity": "the thing with the property", "property": "the attribute or characteristic" },
+		"requiredRoles": ["entity", "property"],
+		"description": "Attributes of an entity",
+		"category": "core",
+		"version": 1
+	},
+	{
+		"name": "is_a",
+		"roles": { "instance": "the specific thing", "category": "the class it belongs to" },
+		"requiredRoles": ["instance", "category"],
+		"description": "Classification relationship",
+		"category": "core",
+		"version": 1
+	},
+	{
+		"name": "consists_of",
+		"roles": { "whole": "the composite entity", "dimension": "a component or aspect", "description": "details about this dimension" },
+		"requiredRoles": ["whole", "dimension"],
+		"description": "Composition or structure",
+		"category": "core",
+		"version": 1
+	},
+	{
+		"name": "example_of",
+		"roles": { "instance": "the concrete example", "concept": "the abstract concept", "detail": "what the example illustrates" },
+		"requiredRoles": ["instance", "concept"],
+		"description": "Instantiation — a concrete example of an abstract concept",
+		"category": "core",
+		"version": 1
+	},
+	{
+		"name": "taxonomy",
+		"roles": { "concept": "what is being classified", "categories": "the classification categories", "basis": "the dimension of classification" },
+		"requiredRoles": ["concept", "categories"],
+		"description": "Ordered classifications",
+		"category": "core",
+		"version": 1
+	},
+	{
+		"name": "causal",
+		"roles": { "cause": "what causes the effect", "effect": "what results from the cause" },
+		"requiredRoles": ["cause", "effect"],
+		"description": "Simple causation — A causes B",
+		"category": "core",
+		"version": 1
+	},
+	{
+		"name": "causal_chain",
+		"roles": { "trigger": "the initial cause", "mechanism": "how the cause leads to the effect", "outcome": "the final result" },
+		"requiredRoles": ["trigger", "outcome"],
+		"description": "Multi-step causation with an intermediate mechanism",
+		"category": "core",
+		"version": 1
+	},
+	{
+		"name": "heuristic",
+		"roles": { "situation": "when to apply this guidance", "action": "what to do", "rationale": "why this works" },
+		"requiredRoles": ["situation", "action"],
+		"description": "Actionable guidance — in situation X, do Y because Z",
+		"category": "core",
+		"version": 1
+	},
+	{
+		"name": "principle",
+		"roles": { "statement": "the principle itself", "implication": "what follows from this principle", "scope": "where this principle applies" },
+		"requiredRoles": ["statement"],
+		"description": "Deep truths that guide reasoning",
+		"category": "core",
+		"version": 1
+	},
+	{
+		"name": "procedure",
+		"roles": { "goal": "what the procedure achieves", "steps": "the ordered actions", "context": "when and where to use this procedure" },
+		"requiredRoles": ["goal", "steps"],
+		"description": "Ordered action steps to achieve a goal",
+		"category": "core",
+		"version": 1
+	},
+	{
+		"name": "formula",
+		"roles": { "name": "what the formula is called", "expression": "the formula itself", "terms": "what the variables mean" },
+		"requiredRoles": ["name", "expression"],
+		"description": "Mathematical or logical relationships",
+		"category": "core",
+		"version": 1
+	},
+	{
+		"name": "deviation",
+		"roles": { "theory": "what theory or conventional wisdom says", "reality": "what actually happens", "implication": "why the gap matters" },
+		"requiredRoles": ["theory", "reality"],
+		"description": "Theory vs. reality gaps — where conventional wisdom is wrong",
+		"category": "core",
+		"version": 1
+	},
+	{
+		"name": "threshold",
+		"roles": { "metric": "what is being measured", "threshold_value": "the critical boundary", "transition": "what changes when crossed", "direction": "above or below the threshold" },
+		"requiredRoles": ["metric", "threshold_value"],
+		"description": "Numeric boundary conditions that change behavior",
+		"category": "core",
+		"version": 1
+	},
+	{
+		"name": "method_comparison",
+		"roles": { "method_a": "the first approach", "method_b": "the second approach", "difference": "how they differ", "when_to_use": "when to prefer each" },
+		"requiredRoles": ["method_a", "method_b", "difference"],
+		"description": "Comparing two approaches — when to use which",
+		"category": "core",
+		"version": 1
+	},
+	{
+		"name": "sequence",
+		"roles": { "name": "what the sequence describes", "layers": "the ordered stages or layers", "rule": "the organizing principle" },
+		"requiredRoles": ["name", "layers"],
+		"description": "Ordered layers or stages",
+		"category": "core",
+		"version": 1
+	},
+	{
+		"name": "evaluation_matrix",
+		"roles": { "name": "what the matrix evaluates", "dimensions": "the axes of evaluation", "quadrants": "the resulting categories", "rule": "how to use the matrix" },
+		"requiredRoles": ["name", "dimensions"],
+		"description": "Multi-dimensional assessment tools",
+		"category": "core",
+		"version": 1
+	}
+]

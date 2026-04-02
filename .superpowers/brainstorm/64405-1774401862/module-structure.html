@@ -1,0 +1,145 @@
+<h2>Extract Stage: Module Structure & Error Handling</h2>
+<p class="subtitle">How the code is organized and what happens when things go wrong</p>
+
+<div class="section">
+  <h3>Module Map</h3>
+  <div class="mockup">
+    <div class="mockup-header">engine/src/extract/</div>
+    <div class="mockup-body" style="padding: 1.5rem; font-family: monospace; font-size: 0.85rem; line-height: 2;">
+      <div style="display: grid; grid-template-columns: auto 1fr; gap: 0 1.5rem;">
+        <div style="color: #2563eb; font-weight: 700;">index.ts</div>
+        <div style="color: #666;">Public entry: <code>extract(chapter, map, provider) → ExtractionResult</code></div>
+
+        <div style="color: #2563eb; font-weight: 700;">types.ts</div>
+        <div style="color: #666;">CandidateAtom, ProposedFrameType, ExtractionResult</div>
+
+        <div style="color: #2563eb; font-weight: 700;">errors.ts</div>
+        <div style="color: #666;">ExtractError with typed codes</div>
+
+        <div style="color: #2563eb; font-weight: 700;">frame-registry.ts</div>
+        <div style="color: #666;">Load core types, register domain types, query by name</div>
+
+        <div style="color: #2563eb; font-weight: 700;">section-extractor.ts</div>
+        <div style="color: #666;">One section → CandidateAtom[] (builds prompt, calls LLM, parses)</div>
+
+        <div style="color: #2563eb; font-weight: 700;">atom-validator.ts</div>
+        <div style="color: #666;">Validate atoms, flag issues, adjust confidence scores</div>
+
+        <div style="color: #2563eb; font-weight: 700;">prompts.ts</div>
+        <div style="color: #666;">Extraction prompt templates (separate for easy iteration)</div>
+      </div>
+      <div style="margin-top: 1.5rem; border-top: 1px solid #e2e8f0; padding-top: 1rem;">
+        <div style="display: grid; grid-template-columns: auto 1fr; gap: 0 1.5rem;">
+          <div style="color: #16a34a; font-weight: 700;">engine/data/</div>
+          <div style="color: #666;"></div>
+
+          <div style="color: #16a34a; font-weight: 700;">  core-frames.json</div>
+          <div style="color: #666;">17 core frame types with role schemas (checked into git)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>How One Chapter Gets Extracted</h3>
+  <div class="mockup">
+    <div class="mockup-header">extract() orchestration flow</div>
+    <div class="mockup-body" style="padding: 1.5rem; font-size: 0.85rem;">
+      <div style="position: relative;">
+        <!-- Step boxes with connecting line -->
+        <div style="position: absolute; left: 1.5rem; top: 2rem; bottom: 1rem; width: 2px; background: #cbd5e1;"></div>
+
+        <div style="display: flex; align-items: flex-start; margin-bottom: 1.5rem; position: relative;">
+          <div style="width: 3rem; height: 3rem; background: #ede9fe; border: 2px solid #8b5cf6; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #5b21b6; z-index: 1; flex-shrink: 0;">1</div>
+          <div style="margin-left: 1rem; padding-top: 0.5rem;">
+            <div style="font-weight: 600;">Load frame registry</div>
+            <div style="color: #666;">17 core types + any domain types from earlier chapters</div>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: flex-start; margin-bottom: 1.5rem; position: relative;">
+          <div style="width: 3rem; height: 3rem; background: #dbeafe; border: 2px solid #3b82f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #1e40af; z-index: 1; flex-shrink: 0;">2</div>
+          <div style="margin-left: 1rem; padding-top: 0.5rem;">
+            <div style="font-weight: 600;">Filter sections</div>
+            <div style="color: #666;">Skip sections with &lt;3 content blocks (front matter, headings-only, copyright)</div>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: flex-start; margin-bottom: 1.5rem; position: relative;">
+          <div style="width: 3rem; height: 3rem; background: #fef3c7; border: 2px solid #f59e0b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #92400e; z-index: 1; flex-shrink: 0;">3</div>
+          <div style="margin-left: 1rem; padding-top: 0.5rem;">
+            <div style="font-weight: 600;">For each section (sequential):</div>
+            <div style="color: #666;">
+              a. Build prompt: section content + SectionAnalysis context + full frame type schemas<br>
+              b. Call cheap model (Haiku)<br>
+              c. Parse JSON response into CandidateAtom[]<br>
+              d. Collect any ProposedFrameTypes → register in registry<br>
+              e. <strong>If section fails → log, skip, continue</strong>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: flex-start; margin-bottom: 1.5rem; position: relative;">
+          <div style="width: 3rem; height: 3rem; background: #fce7f3; border: 2px solid #ec4899; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #9d174d; z-index: 1; flex-shrink: 0;">4</div>
+          <div style="margin-left: 1rem; padding-top: 0.5rem;">
+            <div style="font-weight: 600;">Validate all atoms</div>
+            <div style="color: #666;">Check frame types, roles, flag incomplete atoms, adjust confidence scores</div>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: flex-start; position: relative;">
+          <div style="width: 3rem; height: 3rem; background: #dcfce7; border: 2px solid #22c55e; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #166534; z-index: 1; flex-shrink: 0;">5</div>
+          <div style="margin-left: 1rem; padding-top: 0.5rem;">
+            <div style="font-weight: 600;">Return ExtractionResult</div>
+            <div style="color: #666;">All atoms + proposed types + usage stats + skipped sections + flagged atoms</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Error Handling Philosophy</h3>
+  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+    <div style="background: #dcfce7; border: 2px solid #86efac; border-radius: 8px; padding: 1rem; text-align: center;">
+      <div style="font-size: 2rem; margin-bottom: 0.5rem;">🟢</div>
+      <div style="font-weight: 700; color: #166534;">Section succeeds</div>
+      <div style="font-size: 0.85rem; color: #555; margin-top: 0.5rem;">Atoms extracted, validated, confidence adjusted. Normal path.</div>
+    </div>
+    <div style="background: #fef3c7; border: 2px solid #fbbf24; border-radius: 8px; padding: 1rem; text-align: center;">
+      <div style="font-size: 2rem; margin-bottom: 0.5rem;">🟡</div>
+      <div style="font-weight: 700; color: #92400e;">Section fails</div>
+      <div style="font-size: 0.85rem; color: #555; margin-top: 0.5rem;">Log error, skip section, continue to next. Zero atoms from this section.</div>
+    </div>
+    <div style="background: #fce7f3; border: 2px solid #f9a8d4; border-radius: 8px; padding: 1rem; text-align: center;">
+      <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔴</div>
+      <div style="font-weight: 700; color: #9d174d;">Auth / config error</div>
+      <div style="font-size: 0.85rem; color: #555; margin-top: 0.5rem;">Fail immediately. No point processing more sections with bad credentials.</div>
+    </div>
+  </div>
+  <div style="margin-top: 1rem; padding: 0.75rem; background: #f8fafc; border-radius: 6px; font-size: 0.9rem; color: #555; text-align: center;">
+    Same philosophy as Parse and Comprehend: <strong>partial results are better than no results.</strong>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Does the full design look good?</h3>
+  <div class="options">
+    <div class="option" data-choice="approved" onclick="toggleSelect(this)">
+      <div class="letter">A</div>
+      <div class="content">
+        <h3>Design approved — let's write the spec</h3>
+        <p>Module structure, flow, error handling all make sense</p>
+      </div>
+    </div>
+    <div class="option" data-choice="feedback" onclick="toggleSelect(this)">
+      <div class="letter">B</div>
+      <div class="content">
+        <h3>I have feedback</h3>
+        <p>Something needs changing — I'll explain in terminal</p>
+      </div>
+    </div>
+  </div>
+</div>

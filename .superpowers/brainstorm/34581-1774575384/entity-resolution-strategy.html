@@ -1,0 +1,75 @@
+<h2>Entity Resolution: How Aggressive?</h2>
+<p class="subtitle">When "feedback loop" appears in 3 different books across 3 domains, what should happen?</p>
+
+<div style="margin: 2rem 0; padding: 1.5rem; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);">
+  <p style="color: #8b949e; margin: 0; font-size: 0.9rem; line-height: 1.6;">
+    <strong style="color: #c9d1d9;">The scenario:</strong> "Feedback loop" appears in 福格行为模型 (behavioral triggers),
+    Out of Control (emergent complex systems), and DDIA (replication lag). Same term, genuinely related concept,
+    but different domain applications.
+  </p>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Conservative — Domain-Scoped Entities</h3>
+      <p>Each domain gets its own entity node. "feedback loop (behavioral science)" and "feedback loop (distributed systems)" are <strong>separate entities</strong> with a <code>related_to</code> edge between them.</p>
+      <div class="pros-cons" style="margin-top: 1rem;">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>No false merges — domain nuance preserved</li>
+          <li>Retrieval stays precise within a domain</li>
+          <li>Simpler LLM calls (just "same concept in same domain?")</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>Cross-domain insights harder to surface</li>
+          <li>More entity nodes to manage</li>
+          <li>May miss genuine conceptual unity</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Aggressive — Merge Across Domains</h3>
+      <p>One entity node for "feedback loop" regardless of domain. All atoms from all books attach to it. Domain context lives in the atoms, not the entity.</p>
+      <div class="pros-cons" style="margin-top: 1rem;">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>Cross-domain connections are automatic</li>
+          <li>Fewer entities, simpler graph</li>
+          <li>Matches how experts think ("feedback loops are feedback loops")</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>False merges corrupt the graph (hard to undo)</li>
+          <li>Retrieval gets noisy — searching "feedback loop" returns everything</li>
+          <li>LLM must judge cross-domain equivalence (expensive, error-prone)</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Layered — Merge Within Domain, Link Across</h3>
+      <p>Entities are merged within the same domain. Across domains, a <strong>lightweight <code>cross_domain_link</code></strong> edge connects related entities — not a merge, but a signal. The Apply pipeline decides whether to traverse it.</p>
+      <div class="pros-cons" style="margin-top: 1rem;">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>Best of both: precision within domain, serendipity across</li>
+          <li>Cross-domain links are cheap (no LLM, just embedding similarity)</li>
+          <li>Apply pipeline controls the blast radius per query</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>Two-tier resolution adds complexity</li>
+          <li>Must define "same domain" clearly</li>
+          <li>"Related across domains" threshold needs tuning</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top: 2rem; font-style: italic;">Shannon's recommendation: C. Conservative merging preserves domain precision. Cross-domain links are cheap and reversible — the Apply pipeline can choose to follow them or not based on query intent. False merges are expensive to undo; missed links are cheap to add later.</p>
+</div>

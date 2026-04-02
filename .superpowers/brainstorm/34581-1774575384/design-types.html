@@ -1,0 +1,153 @@
+<h2>Integrate Stage Design — Section 2: Type Definitions</h2>
+<p class="subtitle">The interfaces that define the boundaries between modules.</p>
+
+<div class="section">
+  <h3>Input Type</h3>
+  <pre style="font-size: 0.8rem; color: #c9d1d9; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px; overflow-x: auto; line-height: 1.5;"><code><span style="color:#ff7b72;">interface</span> <span style="color:#d2a8ff;">IntegrateInput</span> {
+  <span style="color:#8b949e;">/** New atoms from Extract stage */</span>
+  atoms: CandidateAtom[];
+  <span style="color:#8b949e;">/** Book metadata for provenance */</span>
+  metadata: BookMetadata;
+  <span style="color:#8b949e;">/** Existing graph to integrate into (null for first book / batch rebuild) */</span>
+  existingGraph: KnowledgeGraph | <span style="color:#ff7b72;">null</span>;
+  <span style="color:#8b949e;">/** Provider configs */</span>
+  llmProvider: LLMProvider;
+  embeddingProvider: EmbeddingProvider;
+}</code></pre>
+</div>
+
+<div class="section">
+  <h3>Output Type</h3>
+  <pre style="font-size: 0.8rem; color: #c9d1d9; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px; overflow-x: auto; line-height: 1.5;"><code><span style="color:#ff7b72;">interface</span> <span style="color:#d2a8ff;">KnowledgeGraph</span> {
+  atoms: Atom[];
+  entities: EntityIndex;
+  graph: GraphIndex;
+  embeddings: VectorIndex;
+  stats: IntegrationStats;
+}
+
+<span style="color:#ff7b72;">interface</span> <span style="color:#d2a8ff;">IntegrationStats</span> {
+  totalAtoms: <span style="color:#ff7b72;">number</span>;
+  totalEntities: <span style="color:#ff7b72;">number</span>;
+  newEntities: <span style="color:#ff7b72;">number</span>;
+  mergedEntities: <span style="color:#ff7b72;">number</span>;
+  reinforcements: <span style="color:#ff7b72;">number</span>;
+  contradictions: <span style="color:#ff7b72;">number</span>;
+  extensions: <span style="color:#ff7b72;">number</span>;
+  crossDomainLinks: <span style="color:#ff7b72;">number</span>;
+  llmCalls: <span style="color:#ff7b72;">number</span>;
+  embeddingTokens: <span style="color:#ff7b72;">number</span>;
+}</code></pre>
+</div>
+
+<div class="section">
+  <h3>Finalized Atom (extends CandidateAtom)</h3>
+  <pre style="font-size: 0.8rem; color: #c9d1d9; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px; overflow-x: auto; line-height: 1.5;"><code><span style="color:#ff7b72;">interface</span> <span style="color:#d2a8ff;">Atom</span> <span style="color:#ff7b72;">extends</span> CandidateAtom {
+  <span style="color:#8b949e;">/** Resolved entity IDs referenced by this atom's roles */</span>
+  entityRefs: <span style="color:#ff7b72;">string</span>[];
+  <span style="color:#8b949e;">/** Atom IDs that assert the same claim from different sources */</span>
+  reinforcedBy: <span style="color:#ff7b72;">string</span>[];
+  <span style="color:#8b949e;">/** Atom IDs that contradict this atom */</span>
+  contradictedBy: <span style="color:#ff7b72;">string</span>[];
+  <span style="color:#8b949e;">/** Atom IDs that extend/add nuance to this atom */</span>
+  extendedBy: <span style="color:#ff7b72;">string</span>[];
+}</code></pre>
+</div>
+
+<div class="section">
+  <h3>Entity Index</h3>
+  <pre style="font-size: 0.8rem; color: #c9d1d9; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px; overflow-x: auto; line-height: 1.5;"><code><span style="color:#ff7b72;">interface</span> <span style="color:#d2a8ff;">Entity</span> {
+  id: <span style="color:#ff7b72;">string</span>;                  <span style="color:#8b949e;">// "entity:{slug}"</span>
+  canonicalName: <span style="color:#ff7b72;">string</span>;        <span style="color:#8b949e;">// "replication lag"</span>
+  aliases: <span style="color:#ff7b72;">string</span>[];            <span style="color:#8b949e;">// ["replica delay", "复制延迟"]</span>
+  domain: <span style="color:#ff7b72;">string</span>;               <span style="color:#8b949e;">// primary domain tag</span>
+  atomIds: <span style="color:#ff7b72;">string</span>[];            <span style="color:#8b949e;">// atoms that reference this entity</span>
+  crossDomainLinks: <span style="color:#ff7b72;">string</span>[];   <span style="color:#8b949e;">// entity IDs in other domains</span>
+}
+
+<span style="color:#ff7b72;">type</span> <span style="color:#d2a8ff;">EntityIndex</span> = Record&lt;<span style="color:#ff7b72;">string</span>, Entity&gt;;</code></pre>
+</div>
+
+<div class="section">
+  <h3>Graph Index</h3>
+  <pre style="font-size: 0.8rem; color: #c9d1d9; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px; overflow-x: auto; line-height: 1.5;"><code><span style="color:#ff7b72;">type</span> <span style="color:#d2a8ff;">EdgeType</span> =
+  | <span style="color:#a5d6ff;">"reinforces"</span>      <span style="color:#8b949e;">// same claim, different source</span>
+  | <span style="color:#a5d6ff;">"contradicts"</span>     <span style="color:#8b949e;">// conflicting claims</span>
+  | <span style="color:#a5d6ff;">"extends"</span>         <span style="color:#8b949e;">// adds nuance/detail</span>
+  | <span style="color:#a5d6ff;">"entity_link"</span>     <span style="color:#8b949e;">// atoms share a resolved entity</span>
+  | <span style="color:#a5d6ff;">"cross_domain"</span>;   <span style="color:#8b949e;">// related entities across domains</span>
+
+<span style="color:#ff7b72;">interface</span> <span style="color:#d2a8ff;">GraphEdge</span> {
+  target: <span style="color:#ff7b72;">string</span>;       <span style="color:#8b949e;">// target atom or entity ID</span>
+  type: EdgeType;
+  confidence: <span style="color:#ff7b72;">number</span>;   <span style="color:#8b949e;">// how certain we are about this edge</span>
+  source?: <span style="color:#ff7b72;">string</span>;      <span style="color:#8b949e;">// which book integration created this edge</span>
+}
+
+<span style="color:#8b949e;">/** Adjacency list: nodeId → outgoing edges */</span>
+<span style="color:#ff7b72;">type</span> <span style="color:#d2a8ff;">GraphIndex</span> = Record&lt;<span style="color:#ff7b72;">string</span>, GraphEdge[]&gt;;</code></pre>
+</div>
+
+<div class="section">
+  <h3>Vector Index</h3>
+  <pre style="font-size: 0.8rem; color: #c9d1d9; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px; overflow-x: auto; line-height: 1.5;"><code><span style="color:#ff7b72;">interface</span> <span style="color:#d2a8ff;">VectorEntry</span> {
+  atomId: <span style="color:#ff7b72;">string</span>;
+  text: <span style="color:#ff7b72;">string</span>;           <span style="color:#8b949e;">// the sentence that was embedded</span>
+  embedding: <span style="color:#ff7b72;">number</span>[];    <span style="color:#8b949e;">// float[3072]</span>
+}
+
+<span style="color:#ff7b72;">type</span> <span style="color:#d2a8ff;">VectorIndex</span> = VectorEntry[];</code></pre>
+</div>
+
+<div class="section">
+  <h3>Embedding Provider Interface</h3>
+  <pre style="font-size: 0.8rem; color: #c9d1d9; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px; overflow-x: auto; line-height: 1.5;"><code><span style="color:#ff7b72;">interface</span> <span style="color:#d2a8ff;">EmbeddingProvider</span> {
+  <span style="color:#8b949e;">/** Embed a batch of texts. Returns embeddings in same order. */</span>
+  embed(texts: <span style="color:#ff7b72;">string</span>[]): Promise&lt;<span style="color:#ff7b72;">number</span>[][]&gt;;
+  <span style="color:#8b949e;">/** Model dimensions (e.g., 3072 for text-embedding-3-large) */</span>
+  dimensions: <span style="color:#ff7b72;">number</span>;
+  <span style="color:#8b949e;">/** Max batch size the provider supports */</span>
+  maxBatchSize: <span style="color:#ff7b72;">number</span>;
+}
+
+<span style="color:#ff7b72;">interface</span> <span style="color:#d2a8ff;">EmbeddingConfig</span> {
+  provider: <span style="color:#a5d6ff;">"openai"</span>;   <span style="color:#8b949e;">// extensible later: "ollama" | "voyage"</span>
+  model: <span style="color:#ff7b72;">string</span>;          <span style="color:#8b949e;">// "text-embedding-3-large"</span>
+  apiKey?: <span style="color:#ff7b72;">string</span>;        <span style="color:#8b949e;">// defaults to OPENAI_API_KEY env var</span>
+}</code></pre>
+</div>
+
+<div class="section">
+  <h3>Internal Types (entity-resolver.ts)</h3>
+  <pre style="font-size: 0.8rem; color: #c9d1d9; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px; overflow-x: auto; line-height: 1.5;"><code><span style="color:#ff7b72;">interface</span> <span style="color:#d2a8ff;">EntityMention</span> {
+  text: <span style="color:#ff7b72;">string</span>;          <span style="color:#8b949e;">// raw role value: "replication lag"</span>
+  normalized: <span style="color:#ff7b72;">string</span>;    <span style="color:#8b949e;">// lowercase, trimmed: "replication lag"</span>
+  atomId: <span style="color:#ff7b72;">string</span>;        <span style="color:#8b949e;">// which atom this came from</span>
+  role: <span style="color:#ff7b72;">string</span>;          <span style="color:#8b949e;">// which role: "cause", "term", "entity"</span>
+  frame: <span style="color:#ff7b72;">string</span>;         <span style="color:#8b949e;">// frame type: "definition", "causal"</span>
+  domain: <span style="color:#ff7b72;">string</span>;        <span style="color:#8b949e;">// primary domain tag from atom</span>
+}
+
+<span style="color:#ff7b72;">interface</span> <span style="color:#d2a8ff;">Relation</span> {
+  type: <span style="color:#a5d6ff;">"reinforces"</span> | <span style="color:#a5d6ff;">"contradicts"</span> | <span style="color:#a5d6ff;">"extends"</span>;
+  atomA: <span style="color:#ff7b72;">string</span>;         <span style="color:#8b949e;">// atom ID</span>
+  atomB: <span style="color:#ff7b72;">string</span>;         <span style="color:#8b949e;">// atom ID</span>
+  confidence: <span style="color:#ff7b72;">number</span>;    <span style="color:#8b949e;">// how confident the classification is</span>
+  method: <span style="color:#a5d6ff;">"algorithmic"</span> | <span style="color:#a5d6ff;">"llm"</span>;  <span style="color:#8b949e;">// how it was classified</span>
+}</code></pre>
+</div>
+
+<div class="options" style="margin-top: 1.5rem;">
+  <div class="option" data-choice="approve" onclick="toggleSelect(this)">
+    <div class="letter">✓</div>
+    <div class="content">
+      <h3>Types look right — proceed</h3>
+    </div>
+  </div>
+  <div class="option" data-choice="modify" onclick="toggleSelect(this)">
+    <div class="letter">~</div>
+    <div class="content">
+      <h3>Needs changes — I'll describe in terminal</h3>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,26 @@
+{
+  "name": "metis-engine",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "lint": "npx @biomejs/biome check ./src ./test",
+    "lint:fix": "npx @biomejs/biome check --write ./src ./test"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.0",
+    "@types/bun": "latest",
+    "typescript": "^5.7.0"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.80.0",
+    "fast-xml-parser": "^5.0.0",
+    "fflate": "^0.8.0",
+    "node-html-parser": "^7.0.0",
+    "openai": "^6.32.0"
+  },
+  "trustedDependencies": [
+    "@biomejs/biome"
+  ]
+}

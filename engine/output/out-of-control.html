@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Out of Control — Metis</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, 'Helvetica Neue', sans-serif; max-width: 1100px; margin: 0 auto; padding: 2rem; background: #fafafa; color: #222; line-height: 1.6; }
+h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+h2 { font-size: 1.4rem; margin: 1.5rem 0 0.75rem; border-bottom: 2px solid #2563eb; padding-bottom: 0.3rem; }
+h3 { font-size: 1.1rem; margin: 1rem 0 0.5rem; }
+.subtitle { color: #666; margin-bottom: 1.5rem; }
+.stats { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.stat { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 0.75rem 1.25rem; }
+.stat-value { font-size: 1.4rem; font-weight: 700; color: #2563eb; }
+.stat-label { font-size: 0.8rem; color: #666; }
+.card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1.25rem; margin-bottom: 1rem; }
+.card:hover { border-color: #2563eb; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.tag { display: inline-block; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 3px; padding: 1px 6px; margin: 2px; font-size: 0.78rem; }
+.tag.frame { background: #ede9fe; border-color: #c4b5fd; color: #5b21b6; }
+.tag.domain { background: #dbeafe; border-color: #93c5fd; color: #1e40af; }
+.tag.concept { background: #dcfce7; border-color: #86efac; color: #166534; }
+.tag.flag { background: #fef3c7; border-color: #fde047; color: #854d0e; }
+.type-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.78rem; font-weight: 600; }
+.type-badge.framework { background: #dbeafe; color: #1e40af; }
+.type-badge.narrative { background: #fef3c7; color: #92400e; }
+.type-badge.practical { background: #d1fae5; color: #065f46; }
+.type-badge.argumentative { background: #fce7f3; color: #9d174d; }
+.type-badge.survey { background: #e0e7ff; color: #3730a3; }
+.type-badge.unknown { background: #f3f4f6; color: #6b7280; }
+.atom { border-left: 3px solid #c4b5fd; padding: 0.75rem; margin: 0.5rem 0; background: #fafafa; border-radius: 0 4px 4px 0; }
+.atom-header { display: flex; justify-content: space-between; align-items: center; }
+.atom-frame { font-weight: 600; color: #5b21b6; }
+.atom-confidence { font-size: 0.8rem; color: #666; }
+.roles { margin: 0.5rem 0; font-size: 0.9rem; }
+.role-name { color: #888; font-weight: 500; }
+.bar { height: 20px; border-radius: 3px; display: inline-block; }
+.chart { margin: 0.5rem 0; }
+details summary { cursor: pointer; color: #2563eb; font-weight: 500; padding: 0.25rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 0.5rem 0; }
+th, td { text-align: left; padding: 0.4rem 0.75rem; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+th { background: #f8fafc; font-weight: 600; }
+</style></head><body>
+<p><a href="index.html">← All Books</a></p>
+<h1>Out of Control</h1>
+<p class="subtitle">Kevin Kelly</p>
+<div class="stats">
+<div class="stat"><div class="stat-value">31</div><div class="stat-label">Chapters</div></div>
+<div class="stat"><div class="stat-value">306</div><div class="stat-label">Atoms</div></div>
+<div class="stat"><div class="stat-value">16</div><div class="stat-label">Frame Types</div></div>
+<div class="stat"><div class="stat-value">0</div><div class="stat-label">Failed Chapters</div></div>
+</div>
+
+<h2>Frame Type Distribution</h2>
+<div class="chart"><div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">definition</span>
+		<div class="bar" style="width:300px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">79</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">principle</span>
+		<div class="bar" style="width:132.91139240506328px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">35</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">causal</span>
+		<div class="bar" style="width:129.1139240506329px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">34</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">has_property</span>
+		<div class="bar" style="width:110.12658227848101px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">29</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">example_of</span>
+		<div class="bar" style="width:94.9367088607595px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">25</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">heuristic</span>
+		<div class="bar" style="width:75.9493670886076px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">20</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">is_a</span>
+		<div class="bar" style="width:49.36708860759494px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">13</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">taxonomy</span>
+		<div class="bar" style="width:41.77215189873417px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">11</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">causal_chain</span>
+		<div class="bar" style="width:41.77215189873417px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">11</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">method_comparison</span>
+		<div class="bar" style="width:41.77215189873417px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">11</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">deviation</span>
+		<div class="bar" style="width:41.77215189873417px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">11</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">threshold</span>
+		<div class="bar" style="width:37.9746835443038px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">10</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">consists_of</span>
+		<div class="bar" style="width:22.78481012658228px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">6</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">sequence</span>
+		<div class="bar" style="width:18.9873417721519px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">5</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">procedure</span>
+		<div class="bar" style="width:15.189873417721518px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">4</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">formula</span>
+		<div class="bar" style="width:7.594936708860759px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">2</span>
+	</div></div>
+
+
+
+<h2>Chapters</h2>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid1</strong>
+		<span class="type-badge narrative">narrative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">Front matter introducing Kevin Kelly's 'Out of Control', establishing the book's thematic focus on complex adaptive systems, emergent behavior, and the convergence of biological and technological evol</p>
+	
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid3</strong>
+		<span class="type-badge narrative">narrative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This content represents the title page of the book, presenting the main title 'Out of Control', the subtitle elaborating the thematic scope concerning machines, social systems, and economics, and the </p>
+	
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid4</strong>
+		<span class="type-badge narrative">narrative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This section contains standard front matter bibliographic metadata including Library of Congress cataloging data, ISBN identifiers, copyright and trademark notices, publisher information, and producti</p>
+	
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid5</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter introduces Kevin Kelly's central thesis that biological and technological systems are converging into hybrid 'vivisystems.' Using the author's experience in Biosphere 2 as an anchor, it a</p>
+	<div><span class="tag frame">Convergence of Born and Made (model)</span> <span class="tag frame">Logic Systems Comparison (comparison)</span> <span class="tag frame">Trait Transfer Process (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid6</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter establishes the theoretical framework of 'hive mind'—collective intelligence emerging from distributed, autonomous agents. Through biological examples (bee swarms, ant colonies) and compu</p>
+	<div><span class="tag frame">Superorganism Model (model)</span> <span class="tag frame">Clockwork vs. Swarm Architecture (comparison)</span> <span class="tag frame">Swarm Properties Taxonomy (taxonomy)</span> <span class="tag frame">Emergence Process (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid9</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter presents a framework for understanding intelligence and robotics through distributed, bottom-up control rather than centralized command. Using the case studies of artist Mark Pauline's de</p>
+	<div><span class="tag frame">Subsumption Architecture (model)</span> <span class="tag frame">Centralized versus Distributed Control (comparison)</span> <span class="tag frame">Hierarchy of Robot Behaviors (taxonomy)</span> <span class="tag frame">Evolutionary Progression of Intelligence (progression)</span> <span class="tag frame">Recipe for Distributed Control (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid10</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter uses case studies of ecological restoration (prairie/savanna reconstruction, Bermuda island rehabilitation) and laboratory microcosm experiments to develop a framework for how complex sys</p>
+	<div><span class="tag frame">Complex System Assembly Process (process)</span> <span class="tag frame">Restoration Method Efficacy (comparison)</span> <span class="tag frame">The Humpty Dumpty Effect (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid11</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter uses the 'chameleon on a mirror' thought experiment as a central metaphor to develop the framework of coevolution—reciprocal evolutionary change where organisms and environments adapt to </p>
+	<div><span class="tag frame">Chameleon on the Mirror (model)</span> <span class="tag frame">Coevolutionary Biological Pairs (process)</span> <span class="tag frame">Gaia and Planetary Regulation (model)</span> <span class="tag frame">Game Theory of Mutual Adaptation (model)</span> <span class="tag frame">Network Causality (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid12</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter argues that nature operates in constant disequilibrium rather than seeking stable balance, using ecological evidence from deserts to redwood forests. It establishes 'flux' as the fundamen</p>
+	<div><span class="tag frame">Non-equilibrium Ecology (model)</span> <span class="tag frame">Superorganism vs Individualistic Association (debate)</span> <span class="tag frame">Ecological Succession (process)</span> <span class="tag frame">Connectance Spectrum (framework)</span> <span class="tag frame">Life Expansion and the I-point (progression)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid13</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter traces the historical evolution of automatic control from ancient Chinese devices through Ktesibios's water clock, Watt's steam governor, and the development of cybernetics by Norbert Wie</p>
+	<div><span class="tag frame">Historical Progression of Self-Regulating Machines (progression)</span> <span class="tag frame">Three Regimes of Control (progression)</span> <span class="tag frame">Cybernetic Feedback Model (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid14</strong>
+		<span class="type-badge survey">survey</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter surveys the history of closed ecological systems, from Lloyd Gomez's synthetic coral reef and Clair Folsome's sealed microbial jars to NASA's CELSS program and the monumental Biosphere 2 </p>
+	<div><span class="tag frame">Progression of Closed System Complexity (progression)</span> <span class="tag frame">Approaches to Closed System Design (comparison)</span> <span class="tag frame">Closed System Model (model)</span> <span class="tag frame">Synthetic Ecology Construction (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid15</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter examines the Biosphere 2 experiment as a model for understanding closed ecological systems, planetary metabolism, and the convergence of biological and technological systems. It introduce</p>
+	<div><span class="tag frame">Closed System Ecology Model (model)</span> <span class="tag frame">System Maturation Process (process)</span> <span class="tag frame">Human Intervention Taxonomy (taxonomy)</span> <span class="tag frame">Atmospheric Regulation Process (process)</span> <span class="tag frame">Ecotech Integration (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid16</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter presents industrial ecology as a conceptual framework where machines and manufacturing systems mimic biological ecosystems through closed-loop material flows, adaptive behaviors, and dist</p>
+	<div><span class="tag frame">Industrial Ecology Model (model)</span> <span class="tag frame">Ubiquitous Computing Hierarchy (model)</span> <span class="tag frame">Fuel Carbon Progression (progression)</span> <span class="tag frame">Mechanical vs Organic Design (comparison)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid17</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter establishes network economics as a new economic paradigm where value emerges from connection rather than production. It explores how distributed networks transform business organizations </p>
+	<div><span class="tag frame">Network Economics Framework (model)</span> <span class="tag frame">Zero-Defect Software Development (process)</span> <span class="tag frame">System Types (comparison)</span> <span class="tag frame">Network Economy Characteristics (taxonomy)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid19</strong>
+		<span class="type-badge survey">survey</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter surveys emerging cryptographic technologies enabling untraceable digital commerce and anonymous networks. It traces the cypherpunk movement's efforts to democratize military-grade encrypt</p>
+	<div><span class="tag frame">Steganographic Hiding Model (process)</span> <span class="tag frame">Crypto Anarchy Framework (model)</span> <span class="tag frame">Network Economics Model (model)</span> <span class="tag frame">Information Metering Process (process)</span> <span class="tag frame">Digital Cash Taxonomy (comparison)</span> <span class="tag frame">Cypherpunk Development Process (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid19a</strong>
+		<span class="type-badge survey">survey</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter surveys the rise of &quot;god games&quot; like Populous, SimCity, and SimEarth as models for understanding indirect control in complex systems. It traces the evolution from simple destruction-based</p>
+	<div><span class="tag frame">Evolution of God Games (progression)</span> <span class="tag frame">Spectrum of Simulation Reality (comparison)</span> <span class="tag frame">The Paradox of Divine Control (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid20</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter uses Jorge Luis Borges's &quot;Library of Babel&quot; as a central metaphor to establish the &quot;Library of Form&quot;—a conceptual framework for understanding evolution, creativity, and artificial life as</p>
+	<div><span class="tag frame">The Library of Form (model)</span> <span class="tag frame">The Method (Evolutionary Search) (process)</span> <span class="tag frame">Artificial Evolution Systems (comparison)</span> <span class="tag frame">Reproductive Strategies in Evolutionary Algorithms (taxonomy)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid21</strong>
+		<span class="type-badge survey">survey</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter surveys the field of artificial evolution through computational experiments like Tom Ray's Tierra, John Holland's genetic algorithms, and Danny Hillis's Connection Machine, alongside biol</p>
+	<div><span class="tag frame">Taxonomy of Artificial Evolution Systems (taxonomy)</span> <span class="tag frame">Evolutionary Process Mechanisms (process)</span> <span class="tag frame">Evolution versus Engineering Paradigms (comparison)</span> <span class="tag frame">Historical Progression of Evolutionary Computation (progression)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid22</strong>
+		<span class="type-badge argumentative">argumentative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter traces the evolution of computer animation from hand-crafted drawings to physics-based simulations and autonomous artificial characters. It argues that as synthetic life becomes more soph</p>
+	<div><span class="tag frame">Evolution of Animation Technology (progression)</span> <span class="tag frame">Spectrum of Control (model)</span> <span class="tag frame">Ethological Architecture (model)</span> <span class="tag frame">Synthetic vs Traditional Creation (comparison)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid23</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter establishes open-ended evolution as the defining characteristic of life, arguing that life is a process (verb) rather than a material substance (noun). It synthesizes research from artifi</p>
+	<div><span class="tag frame">Open-Ended Evolution Model (model)</span> <span class="tag frame">Types of Selection in Evolutionary Systems (comparison)</span> <span class="tag frame">Farmer's Taxonomy of Life Traits (taxonomy)</span> <span class="tag frame">Hierarchy of Life Categories (taxonomy)</span> <span class="tag frame">Evolution as Engineering Tool (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid24</strong>
+		<span class="type-badge argumentative">argumentative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter reframes evolution as a universal mechanism of organized change distinct from revolutionary disruption, arguing that evolution itself evolves through stages of increasing complexity—from </p>
+	<div><span class="tag frame">Evolution of Evolution (progression)</span> <span class="tag frame">Revolution versus Evolution (comparison)</span> <span class="tag frame">Baldwin Effect Mechanism (model)</span> <span class="tag frame">Types of Organic Plasticity (taxonomy)</span> <span class="tag frame">Darwinian versus Lamarckian Evolution (debate)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid25</strong>
+		<span class="type-badge argumentative">argumentative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter critiques the sufficiency of Neo-Darwinian theory (natural selection acting on random variation) to explain all evolutionary complexity. It surveys 'postdarwinian' alternatives including </p>
+	<div><span class="tag frame">Deep Evolution Framework (model)</span> <span class="tag frame">Neo-Darwinism vs Postdarwinism (comparison)</span> <span class="tag frame">Evolutionary Mechanisms Taxonomy (taxonomy)</span> <span class="tag frame">From Microevolution to Macroevolution (progression)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid26</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter presents Stuart Kauffman's theory of 'antichaos' or 'order for free,' arguing that spontaneous self-organization is an inherent property of complex networks rather than solely the product</p>
+	<div><span class="tag frame">Kauffman's Boolean Network Model (model)</span> <span class="tag frame">Autocatalytic Closure Process (process)</span> <span class="tag frame">Edge of Chaos Framework (model)</span> <span class="tag frame">Connectivity-Adaptability Relationship (model)</span> <span class="tag frame">Universal Network Comparisons (comparison)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid27</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter proposes the concept of 'Rising Flow' as a fundamental force complementary to entropy, arguing that evolution possesses inherent directionality toward increasing complexity, diversity, an</p>
+	<div><span class="tag frame">Rising Flow vs Entropy (comparison)</span> <span class="tag frame">Seven Trends of Hyper-evolution (taxonomy)</span> <span class="tag frame">Evolution of Evolution (progression)</span> <span class="tag frame">Spherical Graph Model of Life (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid28</strong>
+		<span class="type-badge argumentative">argumentative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter argues that prediction in complex adaptive systems (vivisystems) is possible through 'pockets of predictability' and 'positive myopia'—short-term pattern recognition rather than long-term</p>
+	<div><span class="tag frame">The Two Sides of Chaos (model)</span> <span class="tag frame">Complexity Matrix (Inherent vs. Apparent) (model)</span> <span class="tag frame">Modis's Three Pockets of Predictability (taxonomy)</span> <span class="tag frame">Prediction Methodologies (comparison)</span> <span class="tag frame">Limits to Growth Model Critique (process)</span> <span class="tag frame">Temporal Control Mechanisms (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid29</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This concluding chapter traces the history of cybernetics from the 1959 Macy Conference to its decline, critiques Kuhnian paradigm shifts through the concept of 'retrorecognition,' explores hypertext </p>
+	<div><span class="tag frame">Cybernetics Movement Lifecycle (progression)</span> <span class="tag frame">Models of Scientific Change (comparison)</span> <span class="tag frame">Evolution of Writing Spaces (progression)</span> <span class="tag frame">Holes in Complex Systems Knowledge (taxonomy)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid30</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter presents nine fundamental laws governing the emergence of complex systems from nothing, drawing from computer science, biology, and complexity theory. These principles—ranging from distri</p>
+	<div><span class="tag frame">The Nine Laws of God (taxonomy)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid31</strong>
+		<span class="type-badge narrative">narrative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter acknowledges the intellectual contributions of numerous researchers, writers, and thinkers who informed the book through interviews, conversations, and correspondence. It lists individual</p>
+	<div><span class="tag frame">Contributor Classification (taxonomy)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid32</strong>
+		<span class="type-badge survey">survey</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter presents an annotated bibliography of key texts, papers, and sources related to cybernetics, evolutionary theory, complexity science, artificial life, and distributed systems. It provides</p>
+	<div><span class="tag frame">Taxonomy of Complex Systems Literature (taxonomy)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid33</strong>
+		<span class="type-badge survey">survey</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter serves as a comprehensive alphabetical index to the book's content, cataloging concepts, individuals, technologies, and theories spanning artificial life, cybernetics, complex systems, an</p>
+	<div><span class="tag frame">Alphabetical Knowledge Taxonomy (taxonomy)</span> <span class="tag frame">Semantic Cross-Reference Network (model)</span> <span class="tag frame">Comparative Conceptual Pairs (comparison)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>acid34</strong>
+		<span class="type-badge narrative">narrative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">Brief biographical sketch of Kevin Kelly highlighting his editorial roles at Whole Earth Review and Wired, his founding of influential technology gatherings like The Hackers' Conference and Cyberthon,</p>
+	<div><span class="tag frame">Author Career Progression (progression)</span></div>
+</div>
+
+<h2>Atoms (first 50 of 306)</h2>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> Out of Control (book)<br><span class="role-name">property:</span> ISBN-10 0-201-48340-8</div>
+	<div style="font-size:0.8rem;color:#888">When: for print edition</div>
+	<div><span class="tag domain">bibliography</span> <span class="tag domain">publishing</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> Out of Control (book)<br><span class="role-name">property:</span> ISBN-13 978-0-201-48340-6</div>
+	<div style="font-size:0.8rem;color:#888">When: for print edition</div>
+	<div><span class="tag domain">bibliography</span> <span class="tag domain">publishing</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> Out of Control (book)<br><span class="role-name">property:</span> eBook ISBN 9780786747030</div>
+	<div style="font-size:0.8rem;color:#888">When: for electronic edition</div>
+	<div><span class="tag domain">bibliography</span> <span class="tag domain">publishing</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> Out of Control (book)<br><span class="role-name">property:</span> copyright 1994 by Kevin Kelly</div>
+	
+	<div><span class="tag domain">bibliography</span> <span class="tag domain">publishing</span> <span class="tag domain">law</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> Kevin Kelly<br><span class="role-name">property:</span> born 1952</div>
+	
+	<div><span class="tag domain">bibliography</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">taxonomy</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">concept:</span> Out of Control (book)<br><span class="role-name">categories:</span> Technological innovations—History,Inventions—History,Social networks—History,Social groups—History<br><span class="role-name">basis:</span> Library of Congress subject headings</div>
+	<div style="font-size:0.8rem;color:#888">When: for hardcover edition</div>
+	<div><span class="tag domain">library science</span> <span class="tag domain">classification</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> Out of Control (book)<br><span class="role-name">property:</span> Library of Congress Classification HC79.T4K44 1994</div>
+	<div style="font-size:0.8rem;color:#888">When: for hardcover edition</div>
+	<div><span class="tag domain">library science</span> <span class="tag domain">classification</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> Out of Control (book)<br><span class="role-name">property:</span> Dewey Decimal Classification 338.064</div>
+	<div style="font-size:0.8rem;color:#888">When: for hardcover edition</div>
+	<div><span class="tag domain">library science</span> <span class="tag domain">classification</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> Out of Control (book)<br><span class="role-name">property:</span> published by Basic Books, A Member of the Perseus Books Group</div>
+	<div style="font-size:0.8rem;color:#888">When: current edition</div>
+	<div><span class="tag domain">bibliography</span> <span class="tag domain">publishing</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> Out of Control (book)<br><span class="role-name">property:</span> previously published by Perseus Publishing</div>
+	<div style="font-size:0.8rem;color:#888">When: earlier edition</div>
+	<div><span class="tag domain">bibliography</span> <span class="tag domain">publishing</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">consists_of</span>
+		<span class="atom-confidence">90%</span>
+	</div>
+	<div class="roles"><span class="role-name">whole:</span> Out of Control (book)<br><span class="role-name">dimension:</span> bibliographical references</div>
+	
+	<div><span class="tag domain">bibliography</span></div>
+	<span class="tag flag">missing_role:description</span> <span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">consists_of</span>
+		<span class="atom-confidence">90%</span>
+	</div>
+	<div class="roles"><span class="role-name">whole:</span> Out of Control (book)<br><span class="role-name">dimension:</span> index</div>
+	
+	<div><span class="tag domain">bibliography</span></div>
+	<span class="tag flag">missing_role:description</span> <span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> Out of Control (book)<br><span class="role-name">property:</span> cover design by Jean Seal</div>
+	
+	<div><span class="tag domain">publishing</span> <span class="tag domain">design</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> Out of Control (book)<br><span class="role-name">property:</span> cover illustration by Jamie Clay</div>
+	
+	<div><span class="tag domain">publishing</span> <span class="tag domain">design</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> Out of Control (book)<br><span class="role-name">property:</span> text design by Julia Runk Jones</div>
+	
+	<div><span class="tag domain">publishing</span> <span class="tag domain">design</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> Out of Control (book)<br><span class="role-name">property:</span> typeset in 10-point ITC New Baskerville by Julia Runk Jones</div>
+	
+	<div><span class="tag domain">publishing</span> <span class="tag domain">typography</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> vivisystems<br><span class="role-name">meaning:</span> Systems that encompass both organic communities (organisms, ecologies) and manufactured counterparts (robots, corporations, economies, computer circuits), sharing lifelikeness and comprising both made</div>
+	
+	<div><span class="tag domain">systems theory</span> <span class="tag domain">artificial life</span> <span class="tag domain">complexity</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> bio-logic<br><span class="role-name">meaning:</span> The logical principle of life and Bios that can be extracted from biology and applied to building complex systems, capable of assembling thinking devices and workable systems of magnitude</div>
+	
+	<div><span class="tag domain">biology</span> <span class="tag domain">complexity</span> <span class="tag domain">systems theory</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> technos-logic<br><span class="role-name">meaning:</span> The logic of technology applied to life, exemplified by domestication and genetic engineering to control and improve organic systems</div>
+	
+	<div><span class="tag domain">technology</span> <span class="tag domain">genetic engineering</span> <span class="tag domain">domestication</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> clockwork logic<br><span class="role-name">meaning:</span> The traditional logic of machines that is capable only of building simple contraptions, insufficient for truly complex systems</div>
+	
+	<div><span class="tag domain">mechanical engineering</span> <span class="tag domain">technology</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">85%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> neo-biological civilization<br><span class="role-name">meaning:</span> The future state of civilization where technology mimics life, characterized by the marriage of the born and the made, autonomous and creative rather than made of gray steel</div>
+	
+	<div><span class="tag domain">futurism</span> <span class="tag domain">technology</span> <span class="tag domain">civilization</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> directed artificial evolution<br><span class="role-name">meaning:</span> Purposeful design employed by genetic engineers using precise and powerful control to accelerate improvements in organisms, as opposed to diffuse organic evolution</div>
+	
+	<div><span class="tag domain">genetic engineering</span> <span class="tag domain">evolution</span> <span class="tag domain">biotechnology</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">75%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> laws of god<br><span class="role-name">meaning:</span> Unifying principles shared by all large vivisystems that are self-sustaining and self-improving</div>
+	
+	<div><span class="tag domain">systems theory</span> <span class="tag domain">complexity</span> <span class="tag domain">philosophy</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">is_a</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> Biosphere 2<br><span class="role-name">category:</span> test module for living in space</div>
+	
+	<div><span class="tag domain">space exploration</span> <span class="tag domain">artificial ecologies</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">is_a</span>
+		<span class="atom-confidence">85%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> Biosphere 2<br><span class="role-name">category:</span> vivisystem</div>
+	
+	<div><span class="tag domain">systems theory</span> <span class="tag domain">artificial life</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">is_a</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> domesticated carrots and milk cows<br><span class="role-name">category:</span> human inventions</div>
+	
+	<div><span class="tag domain">domestication</span> <span class="tag domain">anthropology</span> <span class="tag domain">technology</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">is_a</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> domesticated carrots and milk cows<br><span class="role-name">category:</span> examples of technos-logic applied to life</div>
+	
+	<div><span class="tag domain">domestication</span> <span class="tag domain">genetic engineering</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">is_a</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> genetic engineering<br><span class="role-name">category:</span> directed artificial evolution</div>
+	
+	<div><span class="tag domain">genetic engineering</span> <span class="tag domain">biotechnology</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">is_a</span>
+		<span class="atom-confidence">85%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> nature<br><span class="role-name">category:</span> meme bank</div>
+	
+	<div><span class="tag domain">evolution</span> <span class="tag domain">epistemology</span> <span class="tag domain">complexity</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> bio-logic<br><span class="role-name">property:</span> enables self-replication, self-governance, limited self-repair, mild evolution, and partial learning when transferred to mechanical systems</div>
+	
+	<div><span class="tag domain">artificial life</span> <span class="tag domain">complexity</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> truly complex systems such as cells, meadows, economies, or brains<br><span class="role-name">property:</span> require bio-logic rather than clockwork logic to assemble or operate</div>
+	
+	<div><span class="tag domain">complexity</span> <span class="tag domain">systems theory</span> <span class="tag domain">biology</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> future fabrications following the union of born and made<br><span class="role-name">property:</span> will learn, adapt, heal themselves, and evolve</div>
+	<div style="font-size:0.8rem;color:#888">When: when the union of the born and the made is complete</div>
+	<div><span class="tag domain">future technology</span> <span class="tag domain">artificial life</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">85%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> vivisystems<br><span class="role-name">property:</span> are self-sustaining and self-improving</div>
+	
+	<div><span class="tag domain">systems theory</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">consists_of</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">whole:</span> Biosphere 2 test module<br><span class="role-name">dimension:</span> union of sun-fed life and oil-fed machinery<br><span class="role-name">description:</span> neither green plants alone nor heavy machines alone are sufficient; the combination nurtures complexity</div>
+	
+	<div><span class="tag domain">artificial ecologies</span> <span class="tag domain">life support systems</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">consists_of</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">whole:</span> waste recycling system in Biosphere 2<br><span class="role-name">dimension:</span> ducts, pipes, wires, plants, and marsh-microbes<br><span class="role-name">description:</span> system recycles urine and excrement into water and food</div>
+	
+	<div><span class="tag domain">ecological engineering</span> <span class="tag domain">closed systems</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">causal</span>
+		<span class="atom-confidence">85%</span>
+	</div>
+	<div class="roles"><span class="role-name">cause:</span> increasing mechanical complexity of our fabricated environment<br><span class="role-name">effect:</span> we must turn to the world of the born and employ bio-logic for systems to work at all</div>
+	
+	<div><span class="tag domain">complexity</span> <span class="tag domain">technology</span> <span class="tag domain">systems theory</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">causal</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">cause:</span> complexity of computers and human-made systems became as complicated as living things<br><span class="role-name">effect:</span> it became possible to prove that laws of life could be abstracted from biology and applied elsewhere</div>
+	
+	<div><span class="tag domain">complexity</span> <span class="tag domain">computer science</span> <span class="tag domain">artificial life</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">causal</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">cause:</span> using directed artificial evolution (purposeful design) in genetic engineering<br><span class="role-name">effect:</span> greatly accelerated improvements compared to diffuse organic evolution</div>
+	
+	<div><span class="tag domain">genetic engineering</span> <span class="tag domain">evolution</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">causal_chain</span>
+		<span class="atom-confidence">85%</span>
+	</div>
+	<div class="roles"><span class="role-name">trigger:</span> unleashing living forces into our created machines<br><span class="role-name">mechanism:</span> machines acquire wildness and biological behaviors<br><span class="role-name">outcome:</span> we lose complete control of our finest creations</div>
+	
+	<div><span class="tag domain">artificial life</span> <span class="tag domain">control theory</span> <span class="tag domain">ethics</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">example_of</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> carrots developed from Queen Anne's lace through selective breeding<br><span class="role-name">concept:</span> technos-logic applied to life<br><span class="role-name">detail:</span> wild aromatic root fine-tuned over generations by selective herb gatherers into sweet garden carrot</div>
+	
+	<div><span class="tag domain">domestication</span> <span class="tag domain">agriculture</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">example_of</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> milk cows and Holsteins with selectively enlarged udders<br><span class="role-name">concept:</span> technos-logic applied to life<br><span class="role-name">detail:</span> wild bovines unnaturally enlarged to satisfy humans rather than calves</div>
+	
+	<div><span class="tag domain">domestication</span> <span class="tag domain">agriculture</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">example_of</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> Biosphere 2<br><span class="role-name">concept:</span> vivisystem<br><span class="role-name">detail:</span> artificial ecology where living and manufactured are unified into one robust system</div>
+	
+	<div><span class="tag domain">artificial ecologies</span> <span class="tag domain">vivisystems</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">principle</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">statement:</span> Clockwork logic will only build simple contraptions; truly complex systems require bio-logic<br><span class="role-name">implication:</span> mechanical engineering approaches are insufficient for building thinking devices or large-scale workable systems<br><span class="role-name">scope:</span> system design and engineering</div>
+	
+	<div><span class="tag domain">complexity</span> <span class="tag domain">engineering</span> <span class="tag domain">systems theory</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">principle</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">statement:</span> The more mechanical we make our fabricated environment, the more biological it will eventually have to be if it is to work at all<br><span class="role-name">implication:</span> increasing complexity in technology necessitates biological paradigms<br><span class="role-name">scope:</span> technological development and complex systems</div>
+	
+	<div><span class="tag domain">technology</span> <span class="tag domain">complexity</span> <span class="tag domain">systems theory</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">principle</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">statement:</span> As we unleash living forces into our created machines, we lose control of them<br><span class="role-name">implication:</span> creators must accept that they cannot be completely sovereign over their finest creations when they embody biological wildness<br><span class="role-name">scope:</span> artificial life, robotics, and autonomous systems</div>
+	<div style="font-size:0.8rem;color:#888">When: when fabrications incorporate bio-logic and become autonomous, adaptable, and creative</div>
+	<div><span class="tag domain">ethics</span> <span class="tag domain">control theory</span> <span class="tag domain">artificial life</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">sequence</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">name:</span> stages of nature yielding to human use<br><span class="role-name">layers:</span> nature's materials as food, fibers, and shelter,raw materials extracted from biosphere to create synthetic materials,yielding of nature's logic and mind<br><span class="role-name">rule:</span> progressive abstraction from physical resources to information/logic</div>
+	
+	<div><span class="tag domain">anthropology</span> <span class="tag domain">technology</span> <span class="tag domain">epistemology</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">method_comparison</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">method_a:</span> selective breeding (diffuse organic evolution)<br><span class="role-name">method_b:</span> genetic engineering (directed artificial evolution)<br><span class="role-name">difference:</span> selective breeding relies on diffuse organic evolution over generations while genetic engineering employs precise and powerful purposeful design<br><span class="role-name">when_to_use:</span> genetic engineering accelerates improvements when precise control is available; selective breeding was necessary when precise control was unavailable</div>
+	
+	<div><span class="tag domain">genetic engineering</span> <span class="tag domain">evolution</span> <span class="tag domain">agriculture</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">taxonomy</span>
+		<span class="atom-confidence">85%</span>
+	</div>
+	<div class="roles"><span class="role-name">concept:</span> realms of existence<br><span class="role-name">categories:</span> the born (nature),the made (humanly constructed),vivisystems (unified merger)<br><span class="role-name">basis:</span> degree of lifelikeness and origin (natural vs artificial)</div>
+	
+	<div><span class="tag domain">philosophy</span> <span class="tag domain">systems theory</span> <span class="tag domain">technology</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">causal</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">cause:</span> Swarm structure composed of many parts where individual parts can die off or change while the whole persists<br><span class="role-name">effect:</span> System-level adaptability to new stimuli and persistence through component turnover</div>
+	<div style="font-size:0.8rem;color:#888">When: In swarm-based organizations, When components are subject to failure or change</div>
+	<div><span class="tag domain">swarm systems</span> <span class="tag domain">resilience</span> <span class="tag domain">adaptation</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">causal</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">cause:</span> Being a noncollective (non-swarm) system<br><span class="role-name">effect:</span> Inability to evolve in the biological sense</div>
+	<div style="font-size:0.8rem;color:#888">When: When comparing collective vs noncollective architectures</div>
+	<div><span class="tag domain">evolution</span> <span class="tag domain">systems theory</span> <span class="tag domain">complexity</span></div>
+	
+</div>
+<p style="color:#888;font-style:italic">...and 256 more atoms in the JSON file.</p>
+</body></html>

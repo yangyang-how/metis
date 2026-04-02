@@ -1,0 +1,230 @@
+<h2>Integrate Stage Design — Section 3: Module Responsibilities</h2>
+<p class="subtitle">Each file, what it does, and the algorithm inside.</p>
+
+<!-- index.ts -->
+<div style="margin: 1.5rem 0; padding: 1.25rem; background: rgba(255,255,255,0.02); border-radius: 10px; border: 1px solid rgba(255,255,255,0.06);">
+  <div style="display: flex; justify-content: space-between; align-items: baseline;">
+    <h3 style="margin: 0;"><code style="color: #58a6ff;">index.ts</code> — Orchestrator</h3>
+    <span style="color: #6e7681; font-size: 0.8rem;">~80 lines</span>
+  </div>
+  <p style="color: #8b949e; font-size: 0.85rem; margin: 0.75rem 0 0;">
+    Exports <code>integrate(input: IntegrateInput): Promise&lt;KnowledgeGraph&gt;</code>.
+    Calls the four sub-steps in order. Handles loading/saving the knowledge graph files.
+    Collects stats. No business logic lives here.
+  </p>
+  <pre style="font-size: 0.78rem; color: #8b949e; margin: 0.75rem 0 0; padding: 0.75rem; background: rgba(0,0,0,0.2); border-radius: 6px;"><code>async function integrate(input): KnowledgeGraph {
+  // 1. Embed new atoms
+  const embeddings = await embedAtoms(input.atoms, input.embeddingProvider, existing.embeddings)
+
+  // 2. Resolve entities
+  const entities = await resolveEntities(input.atoms, existing.entities, embeddings, input.llmProvider)
+
+  // 3. Detect relations
+  const relations = await detectRelations(input.atoms, existing.atoms, entities, embeddings, input.llmProvider)
+
+  // 4. Build graph
+  return buildGraph(input.atoms, existing, entities, relations, embeddings)
+}</code></pre>
+</div>
+
+<!-- embedding-service.ts -->
+<div style="margin: 1.5rem 0; padding: 1.25rem; background: rgba(255,255,255,0.02); border-radius: 10px; border: 1px solid rgba(255,255,255,0.06);">
+  <div style="display: flex; justify-content: space-between; align-items: baseline;">
+    <h3 style="margin: 0;"><code style="color: #58a6ff;">embedding-service.ts</code> — Embed &amp; Cache</h3>
+    <span style="color: #6e7681; font-size: 0.8rem;">~120 lines</span>
+  </div>
+  <p style="color: #8b949e; font-size: 0.85rem; margin: 0.75rem 0 0;">
+    Converts atoms to embeddable text, calls EmbeddingProvider in batches, caches results.
+  </p>
+  <div style="margin-top: 0.75rem; display: flex; gap: 1rem;">
+    <div style="flex: 1; padding: 0.75rem; background: rgba(0,0,0,0.15); border-radius: 6px;">
+      <p class="label" style="color: #3fb950;">Key functions</p>
+      <ul style="color: #8b949e; font-size: 0.82rem; margin: 0; padding-left: 1.2rem;">
+        <li><code>atomToText(atom)</code> — concatenates role values into a natural language sentence</li>
+        <li><code>embedAtoms(atoms, provider, existingCache)</code> — skips already-embedded atoms, batches new ones</li>
+        <li><code>cosineSimilarity(a, b)</code> — utility for comparing two embeddings</li>
+      </ul>
+    </div>
+    <div style="flex: 1; padding: 0.75rem; background: rgba(0,0,0,0.15); border-radius: 6px;">
+      <p class="label" style="color: #f0883e;">Atom → Text example</p>
+      <pre style="font-size: 0.75rem; color: #8b949e; margin: 0;"><code>// causal atom:
+"replication lag causes stale reads
+ in distributed databases"
+
+// definition atom:
+"replication lag means the delay
+ between a write on the leader and
+ its reflection on a follower"</code></pre>
+    </div>
+  </div>
+</div>
+
+<!-- entity-resolver.ts -->
+<div style="margin: 1.5rem 0; padding: 1.25rem; background: rgba(255,255,255,0.02); border-radius: 10px; border: 1px solid rgba(255,255,255,0.06);">
+  <div style="display: flex; justify-content: space-between; align-items: baseline;">
+    <h3 style="margin: 0;"><code style="color: #d2a8ff;">entity-resolver.ts</code> — Entity Resolution</h3>
+    <span style="color: #6e7681; font-size: 0.8rem;">~250 lines</span>
+  </div>
+  <p style="color: #8b949e; font-size: 0.85rem; margin: 0.75rem 0 0;">
+    The most complex module. Extracts entity mentions, clusters them, disambiguates with LLM, creates cross-domain links.
+  </p>
+
+  <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+
+    <div style="padding: 0.75rem; background: rgba(210,168,255,0.05); border-radius: 6px; border-left: 2px solid #d2a8ff;">
+      <p style="margin: 0; color: #c9d1d9; font-size: 0.82rem;">
+        <strong>extractMentions(atoms)</strong> → EntityMention[]
+      </p>
+      <p style="margin: 0.3rem 0 0; color: #8b949e; font-size: 0.8rem;">
+        Walks all atoms. From each role value, extracts a mention. Which roles are "entity-bearing" depends on frame type:
+        <code>definition.term</code>, <code>has_property.entity</code>, <code>causal.cause</code>, <code>causal.effect</code>,
+        <code>is_a.instance</code>, <code>is_a.category</code>, <code>threshold.metric</code>, etc.
+        A mapping of frame → entity-bearing roles is defined as config, not hardcoded per-role.
+      </p>
+    </div>
+
+    <div style="padding: 0.75rem; background: rgba(210,168,255,0.05); border-radius: 6px; border-left: 2px solid #d2a8ff;">
+      <p style="margin: 0; color: #c9d1d9; font-size: 0.82rem;">
+        <strong>clusterMentions(mentions, embeddings)</strong> → MentionCluster[]
+      </p>
+      <p style="margin: 0.3rem 0 0; color: #8b949e; font-size: 0.8rem;">
+        Groups within each domain. First pass: exact normalized match. Second pass: embed mention text, merge clusters where
+        centroid similarity ≥ 0.85. Incremental: new mentions are compared against existing entity canonical names + aliases first.
+      </p>
+    </div>
+
+    <div style="padding: 0.75rem; background: rgba(210,168,255,0.05); border-radius: 6px; border-left: 2px solid #d2a8ff;">
+      <p style="margin: 0; color: #c9d1d9; font-size: 0.82rem;">
+        <strong>disambiguate(ambiguousClusters, llm)</strong> → MergeDecision[]
+      </p>
+      <p style="margin: 0.3rem 0 0; color: #8b949e; font-size: 0.8rem;">
+        For clusters with similarity 0.70–0.85: batch them to LLM. Prompt: "Given these mentions in [domain], are they the same concept?
+        Respond: merge / separate / unsure." Batched — up to 20 pairs per LLM call to minimize cost.
+      </p>
+    </div>
+
+    <div style="padding: 0.75rem; background: rgba(210,168,255,0.05); border-radius: 6px; border-left: 2px solid #d2a8ff;">
+      <p style="margin: 0; color: #c9d1d9; font-size: 0.82rem;">
+        <strong>linkCrossDomain(entities, embeddings)</strong> → CrossDomainLink[]
+      </p>
+      <p style="margin: 0.3rem 0 0; color: #8b949e; font-size: 0.8rem;">
+        Compare entity canonical names across domains using embedding similarity. Threshold ≥ 0.75 → create cross_domain_link.
+        No LLM — this is a signal for the Apply pipeline, not a merge decision.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- relation-detector.ts -->
+<div style="margin: 1.5rem 0; padding: 1.25rem; background: rgba(255,255,255,0.02); border-radius: 10px; border: 1px solid rgba(255,255,255,0.06);">
+  <div style="display: flex; justify-content: space-between; align-items: baseline;">
+    <h3 style="margin: 0;"><code style="color: #f0883e;">relation-detector.ts</code> — Relation Detection</h3>
+    <span style="color: #6e7681; font-size: 0.8rem;">~200 lines</span>
+  </div>
+  <p style="color: #8b949e; font-size: 0.85rem; margin: 0.75rem 0 0;">
+    Compares atoms that share entities. Classifies pairs as reinforcement, contradiction, extension, or unrelated.
+  </p>
+
+  <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+    <div style="padding: 0.75rem; background: rgba(240,136,62,0.05); border-radius: 6px; border-left: 2px solid #f0883e;">
+      <p style="margin: 0; color: #c9d1d9; font-size: 0.82rem;">
+        <strong>findCandidatePairs(newAtoms, existingAtoms, entities)</strong> → AtomPair[]
+      </p>
+      <p style="margin: 0.3rem 0 0; color: #8b949e; font-size: 0.8rem;">
+        For each new atom, find existing atoms that share at least one entity. Filter out same-book pairs
+        (same source can't reinforce itself). Returns pairs to evaluate.
+      </p>
+    </div>
+
+    <div style="padding: 0.75rem; background: rgba(240,136,62,0.05); border-radius: 6px; border-left: 2px solid #f0883e;">
+      <p style="margin: 0; color: #c9d1d9; font-size: 0.82rem;">
+        <strong>scoreAndClassify(pairs, embeddings, llm)</strong> → Relation[]
+      </p>
+      <p style="margin: 0.3rem 0 0; color: #8b949e; font-size: 0.8rem;">
+        For each pair: compute full-atom embedding similarity. Apply classification rules:<br>
+        • Same frame + similarity ≥ 0.90 → <span style="color:#3fb950">reinforcement</span> (algorithmic)<br>
+        • Same frame + similarity 0.75–0.90 → <span style="color:#f0883e">LLM tiebreaker</span><br>
+        • Same frame + opposing role values → <span style="color:#f85149">contradiction candidate</span> → LLM confirm<br>
+        • Different frame + same entity → <span style="color:#d2a8ff">extension</span> (algorithmic)<br>
+        • Similarity &lt; 0.75 → skip (entity_link edge still exists)
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- graph-builder.ts -->
+<div style="margin: 1.5rem 0; padding: 1.25rem; background: rgba(255,255,255,0.02); border-radius: 10px; border: 1px solid rgba(255,255,255,0.06);">
+  <div style="display: flex; justify-content: space-between; align-items: baseline;">
+    <h3 style="margin: 0;"><code style="color: #3fb950;">graph-builder.ts</code> — Graph Construction</h3>
+    <span style="color: #6e7681; font-size: 0.8rem;">~150 lines</span>
+  </div>
+  <p style="color: #8b949e; font-size: 0.85rem; margin: 0.75rem 0 0;">
+    Takes all resolved data and produces the final KnowledgeGraph. Pure data transformation — no LLM calls.
+  </p>
+
+  <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+    <div style="padding: 0.75rem; background: rgba(63,185,80,0.05); border-radius: 6px; border-left: 2px solid #3fb950;">
+      <p style="margin: 0; color: #c9d1d9; font-size: 0.82rem;">
+        <strong>finalizeAtoms(candidates, entities, relations)</strong> → Atom[]
+      </p>
+      <p style="margin: 0.3rem 0 0; color: #8b949e; font-size: 0.8rem;">
+        Promotes CandidateAtom → Atom. Populates <code>entityRefs</code> from entity index.
+        Populates <code>reinforcedBy</code>, <code>contradictedBy</code>, <code>extendedBy</code> from relations.
+        Updates confidence: +0.05 per reinforcement source (capped at 1.0).
+      </p>
+    </div>
+
+    <div style="padding: 0.75rem; background: rgba(63,185,80,0.05); border-radius: 6px; border-left: 2px solid #3fb950;">
+      <p style="margin: 0; color: #c9d1d9; font-size: 0.82rem;">
+        <strong>buildAdjacencyList(atoms, entities, relations)</strong> → GraphIndex
+      </p>
+      <p style="margin: 0.3rem 0 0; color: #8b949e; font-size: 0.8rem;">
+        Creates edges: <code>entity_link</code> for atoms sharing entities, <code>reinforces</code> / <code>contradicts</code> /
+        <code>extends</code> from detected relations, <code>cross_domain</code> from entity cross-domain links.
+        All edges are bidirectional (A→B and B→A both stored).
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- prompts.ts -->
+<div style="margin: 1.5rem 0; padding: 1.25rem; background: rgba(255,255,255,0.02); border-radius: 10px; border: 1px solid rgba(255,255,255,0.06);">
+  <div style="display: flex; justify-content: space-between; align-items: baseline;">
+    <h3 style="margin: 0;"><code style="color: #8b949e;">prompts.ts</code> — LLM Prompts</h3>
+    <span style="color: #6e7681; font-size: 0.8rem;">~100 lines</span>
+  </div>
+  <p style="color: #8b949e; font-size: 0.85rem; margin: 0.75rem 0 0;">
+    Two prompt templates, both designed for cheap models (Haiku tier):
+  </p>
+  <div style="margin-top: 0.75rem; display: flex; gap: 1rem;">
+    <div style="flex: 1; padding: 0.75rem; background: rgba(0,0,0,0.15); border-radius: 6px;">
+      <p class="label">Entity Disambiguation</p>
+      <p style="color: #8b949e; font-size: 0.8rem; margin: 0;">
+        "Given these entity mentions in [domain], are they the same concept? For each pair, respond: merge / separate / unsure."
+        Batched — up to 20 pairs per call.
+      </p>
+    </div>
+    <div style="flex: 1; padding: 0.75rem; background: rgba(0,0,0,0.15); border-radius: 6px;">
+      <p class="label">Relation Classification</p>
+      <p style="color: #8b949e; font-size: 0.8rem; margin: 0;">
+        "Given these two atoms about [entity], classify the relationship: reinforce (same claim), contradict (opposing claims),
+        extend (adds nuance), or unrelated." Batched — up to 10 pairs per call.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="options" style="margin-top: 1.5rem;">
+  <div class="option" data-choice="approve" onclick="toggleSelect(this)">
+    <div class="letter">✓</div>
+    <div class="content">
+      <h3>Module breakdown looks right — proceed</h3>
+    </div>
+  </div>
+  <div class="option" data-choice="modify" onclick="toggleSelect(this)">
+    <div class="letter">~</div>
+    <div class="content">
+      <h3>Needs changes — I'll describe in terminal</h3>
+    </div>
+  </div>
+</div>

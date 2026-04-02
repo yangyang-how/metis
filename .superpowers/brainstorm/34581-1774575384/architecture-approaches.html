@@ -1,0 +1,91 @@
+<h2>Integrate Stage: Architecture Approaches</h2>
+<p class="subtitle">How should the code be structured? Three options, each with different trade-offs on modularity vs. simplicity.</p>
+
+<div style="margin: 2rem 0; padding: 1.5rem; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);">
+  <p style="color: #8b949e; margin: 0; font-size: 0.9rem; line-height: 1.6;">
+    <strong style="color: #c9d1d9;">Shared context:</strong> All approaches produce the same 4 artifacts (atom store, entity index, graph index, vector index).
+    All use the same algorithms (entity resolution, relation detection). The difference is how the code is organized
+    and how the sub-steps compose.
+  </p>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Monolithic Orchestrator</h3>
+      <p>One <code>integrate()</code> function that runs all sub-steps sequentially. Each sub-step is a private helper in the same module.</p>
+      <pre style="font-size: 0.78rem; color: #8b949e; margin: 0.75rem 0; padding: 0.75rem; background: rgba(0,0,0,0.2); border-radius: 6px;"><code>engine/src/integrate/
+  ├── index.ts           # integrate() — does everything
+  ├── types.ts           # IntegrationResult, Entity, GraphEdge
+  ├── prompts.ts         # LLM prompts for disambiguation
+  └── errors.ts</code></pre>
+      <div class="pros-cons" style="margin-top: 0.75rem;">
+        <div class="pros"><h4>Pros</h4><ul><li>Simple — one entry point, easy to follow</li><li>Fewer files, less indirection</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>index.ts will be 500+ lines</li><li>Hard to test sub-steps independently</li><li>Can't rerun just entity resolution</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Sub-Step Modules (follows Extract pattern)</h3>
+      <p>Each major sub-step gets its own file with a clear interface. <code>index.ts</code> orchestrates. Same pattern as the Extract stage.</p>
+      <pre style="font-size: 0.78rem; color: #8b949e; margin: 0.75rem 0; padding: 0.75rem; background: rgba(0,0,0,0.2); border-radius: 6px;"><code>engine/src/integrate/
+  ├── index.ts               # integrate() — orchestrator only
+  ├── entity-resolver.ts     # extractMentions() + clusterEntities() + disambiguate()
+  ├── relation-detector.ts   # detectRelations() — reinforcement/contradiction/extension
+  ├── graph-builder.ts       # buildGraph() — adjacency list from entities + relations
+  ├── embedding-service.ts   # embedAtoms() — calls EmbeddingProvider, manages cache
+  ├── types.ts               # All Integrate types
+  ├── prompts.ts             # LLM prompts for entity disambiguation + relation classification
+  └── errors.ts
+
+engine/src/llm/
+  ├── embedding-types.ts     # EmbeddingProvider interface
+  └── openai-embedding.ts    # OpenAI adapter</code></pre>
+      <div class="pros-cons" style="margin-top: 0.75rem;">
+        <div class="pros"><h4>Pros</h4><ul><li>Each file is testable independently</li><li>Follows existing codebase pattern</li><li>Can rerun individual steps</li><li>Files stay under ~200 lines each</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>More files to navigate</li><li>Types need to be well-defined at boundaries</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Pipeline-of-Pipelines (over-engineered)</h3>
+      <p>Each sub-step is a mini-pipeline with its own input/output types, own runner, and pluggable strategies. Entity resolution becomes its own configurable pipeline.</p>
+      <pre style="font-size: 0.78rem; color: #8b949e; margin: 0.75rem 0; padding: 0.75rem; background: rgba(0,0,0,0.2); border-radius: 6px;"><code>engine/src/integrate/
+  ├── index.ts
+  ├── entity-resolution/
+  │   ├── index.ts
+  │   ├── mention-extractor.ts
+  │   ├── clusterer.ts
+  │   ├── disambiguator.ts
+  │   └── cross-domain-linker.ts
+  ├── relation-detection/
+  │   ├── index.ts
+  │   ├── similarity-scorer.ts
+  │   ├── classifier.ts
+  │   └── confidence-updater.ts
+  ├── graph/
+  │   ├── index.ts
+  │   ├── builder.ts
+  │   └── serializer.ts
+  ├── types.ts
+  └── prompts.ts</code></pre>
+      <div class="pros-cons" style="margin-top: 0.75rem;">
+        <div class="pros"><h4>Pros</h4><ul><li>Maximum separation of concerns</li><li>Each tiny piece is independently testable</li><li>Easy to swap strategies later</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>14 files for a stage that might be ~800 lines total</li><li>Premature abstraction — we don't know which parts need to vary</li><li>Violates YAGNI hard</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top: 1.5rem; font-style: italic;">
+  Shannon's recommendation: <strong>B</strong>. It follows the Extract stage's pattern exactly — Sam already knows how to navigate it.
+  Each file has one clear job. A is too cramped, C is astronaut architecture for a problem we haven't fully explored yet.
+  If a sub-module grows complex later, we can split it then — that's a refactor, not a rewrite.
+</p>

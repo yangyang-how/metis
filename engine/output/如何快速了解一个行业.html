@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>如何快速了解一个行业 — Metis</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, 'Helvetica Neue', sans-serif; max-width: 1100px; margin: 0 auto; padding: 2rem; background: #fafafa; color: #222; line-height: 1.6; }
+h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+h2 { font-size: 1.4rem; margin: 1.5rem 0 0.75rem; border-bottom: 2px solid #2563eb; padding-bottom: 0.3rem; }
+h3 { font-size: 1.1rem; margin: 1rem 0 0.5rem; }
+.subtitle { color: #666; margin-bottom: 1.5rem; }
+.stats { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.stat { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 0.75rem 1.25rem; }
+.stat-value { font-size: 1.4rem; font-weight: 700; color: #2563eb; }
+.stat-label { font-size: 0.8rem; color: #666; }
+.card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1.25rem; margin-bottom: 1rem; }
+.card:hover { border-color: #2563eb; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.tag { display: inline-block; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 3px; padding: 1px 6px; margin: 2px; font-size: 0.78rem; }
+.tag.frame { background: #ede9fe; border-color: #c4b5fd; color: #5b21b6; }
+.tag.domain { background: #dbeafe; border-color: #93c5fd; color: #1e40af; }
+.tag.concept { background: #dcfce7; border-color: #86efac; color: #166534; }
+.tag.flag { background: #fef3c7; border-color: #fde047; color: #854d0e; }
+.type-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.78rem; font-weight: 600; }
+.type-badge.framework { background: #dbeafe; color: #1e40af; }
+.type-badge.narrative { background: #fef3c7; color: #92400e; }
+.type-badge.practical { background: #d1fae5; color: #065f46; }
+.type-badge.argumentative { background: #fce7f3; color: #9d174d; }
+.type-badge.survey { background: #e0e7ff; color: #3730a3; }
+.type-badge.unknown { background: #f3f4f6; color: #6b7280; }
+.atom { border-left: 3px solid #c4b5fd; padding: 0.75rem; margin: 0.5rem 0; background: #fafafa; border-radius: 0 4px 4px 0; }
+.atom-header { display: flex; justify-content: space-between; align-items: center; }
+.atom-frame { font-weight: 600; color: #5b21b6; }
+.atom-confidence { font-size: 0.8rem; color: #666; }
+.roles { margin: 0.5rem 0; font-size: 0.9rem; }
+.role-name { color: #888; font-weight: 500; }
+.bar { height: 20px; border-radius: 3px; display: inline-block; }
+.chart { margin: 0.5rem 0; }
+details summary { cursor: pointer; color: #2563eb; font-weight: 500; padding: 0.25rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 0.5rem 0; }
+th, td { text-align: left; padding: 0.4rem 0.75rem; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+th { background: #f8fafc; font-weight: 600; }
+</style></head><body>
+<p><a href="index.html">← All Books</a></p>
+<h1>如何快速了解一个行业</h1>
+<p class="subtitle">肖璟</p>
+<div class="stats">
+<div class="stat"><div class="stat-value">11</div><div class="stat-label">Chapters</div></div>
+<div class="stat"><div class="stat-value">634</div><div class="stat-label">Atoms</div></div>
+<div class="stat"><div class="stat-value">16</div><div class="stat-label">Frame Types</div></div>
+<div class="stat"><div class="stat-value">2</div><div class="stat-label">Failed Chapters</div></div>
+</div>
+
+<h2>Frame Type Distribution</h2>
+<div class="chart"><div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">has_property</span>
+		<div class="bar" style="width:300px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">99</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">heuristic</span>
+		<div class="bar" style="width:293.93939393939394px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">97</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">causal</span>
+		<div class="bar" style="width:227.27272727272728px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">75</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">example_of</span>
+		<div class="bar" style="width:212.12121212121212px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">70</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">definition</span>
+		<div class="bar" style="width:206.06060606060606px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">68</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">taxonomy</span>
+		<div class="bar" style="width:124.24242424242425px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">41</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">consists_of</span>
+		<div class="bar" style="width:112.12121212121212px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">37</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">principle</span>
+		<div class="bar" style="width:103.03030303030303px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">34</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">causal_chain</span>
+		<div class="bar" style="width:75.75757575757576px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">25</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">deviation</span>
+		<div class="bar" style="width:57.57575757575757px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">19</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">procedure</span>
+		<div class="bar" style="width:48.48484848484849px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">16</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">sequence</span>
+		<div class="bar" style="width:45.45454545454545px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">15</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">formula</span>
+		<div class="bar" style="width:39.3939393939394px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">13</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">is_a</span>
+		<div class="bar" style="width:33.33333333333333px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">11</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">threshold</span>
+		<div class="bar" style="width:27.272727272727273px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">9</span>
+	</div>
+<div style="display:flex;align-items:center;gap:0.5rem;margin:2px 0">
+		<span style="width:140px;font-size:0.85rem;text-align:right">method_comparison</span>
+		<div class="bar" style="width:15.15151515151515px;background:#8b5cf6">&nbsp;</div>
+		<span style="font-size:0.8rem;color:#666">5</span>
+	</div></div>
+
+
+
+<h2>Chapters</h2>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>uV3awgspRwgGQxc7bj3p483</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter serves as the book's front matter and abstract, providing publication metadata and summarizing the comprehensive methodology for rapid industry analysis. It outlines the book's coverage o</p>
+	<div><span class="tag frame">Industry Analysis Methodology Framework (framework)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>u6z22EIVhzSdWMUZy4Ui7J3</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter consists of endorsements and testimonials from industry experts, academics, investors, and practitioners validating the author's systematic methodology and the book's practical value for </p>
+	<div><span class="tag frame">Credibility validation through expert taxonomy (taxonomy)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>uAgx88BBmD8L5R3Ezn2Sa48</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This preface chapter establishes the necessity of industry research as a skill for generating both active and passive income. It introduces the author's McKinsey background and the motivation behind c</p>
+	<div><span class="tag frame">Universal Industry Research Framework (model)</span> <span class="tag frame">Income Generation Taxonomy (taxonomy)</span> <span class="tag frame">Research Skill Application Domains (taxonomy)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>uRdI9OOwLbMU3Xu9xOwz3WH</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter transitions from theoretical frameworks to practical application by conducting a comprehensive case study of the new energy vehicle (NEV) industry. It systematically applies the industry </p>
+	<div><span class="tag frame">Industry Lifecycle Determination Model (model)</span> <span class="tag frame">Business Model Feasibility Framework (model)</span> <span class="tag frame">Market Sizing Calculation Model (process)</span> <span class="tag frame">Moat Disruption Analysis Framework (comparison)</span> <span class="tag frame">Value Chain Profit Distribution Model (taxonomy)</span> <span class="tag frame">Growth Phase Valuation Framework (model)</span> <span class="tag frame">PEST External Environment Model (model)</span> <span class="tag frame">Industry Prosperity Monitoring System (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>uyxEV7yfLfZKekaDKzdZeHE</strong>
+		<span class="type-badge framework">framework</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter introduces systematic research methodologies based on the 'input-process-output' information model. It covers Chapter 10 on the nature of research (defining three types of information asy</p>
+	<div><span class="tag frame">Three Types of Information Asymmetry (model)</span> <span class="tag frame">DIKW Information Hierarchy (model)</span> <span class="tag frame">Information Classification by Breadth (taxonomy)</span> <span class="tag frame">Information Cooking Method (process)</span> <span class="tag frame">Hypothesis-Driven Research Process (process)</span> <span class="tag frame">Pyramid Principle (model)</span> <span class="tag frame">SCQR Storytelling Framework (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>uwyeZjKcEV5EGVgRjMDlYE9</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">作为全书的结语，本章提醒读者阅读本书仅是起点而非终点，强调必须通过高频次案例练习将分析框架内化为肌肉记忆，并指出在技术日新月异的研究新时代中，持续学习和掌握AI等新工具才是保持竞争力的关键。</p>
+	<div><span class="tag frame">能力内化进程 (progression)</span> <span class="tag frame">分析师成长对比 (comparison)</span> <span class="tag frame">持续学习要求 (process)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>uZJHlswMBz5DjZJjVkGdrvF</strong>
+		<span class="type-badge narrative">narrative</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This closing acknowledgments chapter reflects on the author's two-year writing journey for his third book, which synthesizes McKinsey methodologies with nine years of entrepreneurial experience. The a</p>
+	
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>u3acHdC3YXH9phdyBpJjWaA</strong>
+		<span class="type-badge survey">survey</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">本附录作为全书的术语参考指南，系统梳理并定义了书中涉及的55个核心概念，涵盖行业分类体系、产业经济学理论、投资估值方法、商业分析框架及认知科学模型五大领域，按书中出现先后顺序排列，方便读者查阅理解。</p>
+	<div><span class="tag frame">产业分类体系 (taxonomy)</span> <span class="tag frame">产业生命周期模型 (progression)</span> <span class="tag frame">创新扩散过程 (process)</span> <span class="tag frame">创新层级金字塔 (taxonomy)</span> <span class="tag frame">市场层次结构 (progression)</span> <span class="tag frame">商业护城河体系 (taxonomy)</span> <span class="tag frame">DIKW知识层级 (progression)</span> <span class="tag frame">双系统思维模型 (comparison)</span> <span class="tag frame">PEST宏观分析框架 (model)</span> <span class="tag frame">结构化思维工具集 (model)</span></div>
+</div>
+<div class="card">
+	<div style="display:flex;justify-content:space-between;align-items:center">
+		<strong>utnkE2syFf3kvdZPnYDm9eF</strong>
+		<span class="type-badge practical">practical</span>
+	</div>
+	<p style="color:#555;margin:0.25rem 0;font-size:0.9rem">This chapter contains the copyright and legal notice for the simplified Chinese edition of the book. It specifies the authorization chain from Beijing Xingju Culture Media Co., Ltd. to People's Posts </p>
+	
+</div>
+
+<h2>Atoms (first 50 of 634)</h2>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">is_a</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> 如何快速了解一个行业<br><span class="role-name">category:</span> book</div>
+	
+	<div><span class="tag domain">publishing</span> <span class="tag domain">bibliography</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 如何快速了解一个行业<br><span class="role-name">property:</span> author: 肖璟</div>
+	
+	<div><span class="tag domain">publishing</span> <span class="tag domain">bibliography</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 如何快速了解一个行业<br><span class="role-name">property:</span> publisher: 人民邮电出版社</div>
+	
+	<div><span class="tag domain">publishing</span> <span class="tag domain">bibliography</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 如何快速了解一个行业<br><span class="role-name">property:</span> publication location: 北京</div>
+	
+	<div><span class="tag domain">publishing</span> <span class="tag domain">bibliography</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 本书《如何快速了解一个行业》<br><span class="role-name">property:</span> 提供底层分析框架，包含易懂的图表和系统化的分析方法</div>
+	<div style="font-size:0.8rem;color:#888">When: 进行行业研究时, 需要系统化分析工具时</div>
+	<div><span class="tag domain">industry analysis</span> <span class="tag domain">business framework</span> <span class="tag domain">research methodology</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 作者肖璟<br><span class="role-name">property:</span> 具备麦肯锡研究分析师专业背景，能够在短时间内针对领域给出全面而精准的信息和洞见（包括市场趋势、玩家画像、成功要素等）</div>
+	<div style="font-size:0.8rem;color:#888">When: 需要快速获取行业洞察时</div>
+	<div><span class="tag domain">consulting</span> <span class="tag domain">McKinsey methodology</span> <span class="tag domain">expertise</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 本书内容<br><span class="role-name">property:</span> 实操性强的心法总结，融合多年研习经验</div>
+	<div style="font-size:0.8rem;color:#888">When: 需要将理论应用于实际工作时</div>
+	<div><span class="tag domain">practical know-how</span> <span class="tag domain">industry research</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">90%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 本书<br><span class="role-name">property:</span> 涵盖系统化的行业研究方法，同时包含对生成式AI最新趋势的思考</div>
+	<div style="font-size:0.8rem;color:#888">When: 进行传统行业研究时, 关注AI技术趋势时</div>
+	<div><span class="tag domain">industry research</span> <span class="tag domain">generative AI</span> <span class="tag domain">technology trends</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 本书研究范围<br><span class="role-name">property:</span> 系统全面，覆盖从行业初探到深层次研究的完整谱系</div>
+	<div style="font-size:0.8rem;color:#888">When: 行业研究的不同阶段, 从入门到精通的进阶过程</div>
+	<div><span class="tag domain">industry research</span> <span class="tag domain">investment analysis</span> <span class="tag domain">learning path</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 本书<br><span class="role-name">property:</span> 包含200多张图表，帮助直观掌握底层研究方法</div>
+	<div style="font-size:0.8rem;color:#888">When: 需要可视化学习工具时, 理解复杂分析框架时</div>
+	<div><span class="tag domain">data visualization</span> <span class="tag domain">visual learning</span> <span class="tag domain">research methods</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 本书方法论<br><span class="role-name">property:</span> 理论与实践相结合的范例，提供清晰且系统化的框架，辅以丰富案例</div>
+	<div style="font-size:0.8rem;color:#888">When: 学术研究与商业实践结合时, 建立投资基础时</div>
+	<div><span class="tag domain">academic-practice integration</span> <span class="tag domain">industry research</span> <span class="tag domain">investment foundation</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 本书方法体系<br><span class="role-name">property:</span> 融入麦肯锡式训练精髓与多年理财博主实战经验</div>
+	<div style="font-size:0.8rem;color:#888">When: 需要咨询公司级分析方法时, 内容创作与专业研究结合时</div>
+	<div><span class="tag domain">McKinsey methodology</span> <span class="tag domain">content creation</span> <span class="tag domain">financial analysis</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">sequence</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">name:</span> 快速了解事物的分析层次<br><span class="role-name">layers:</span> 微观层面（公司、标的、事件）,中观层面（行业洞察）,宏观层面（经济政策和经济规律）<br><span class="role-name">rule:</span> 由具体到抽象，由个体到系统的分析尺度递进</div>
+	<div style="font-size:0.8rem;color:#888">When: 博主进行快速研究时, 需要从多维度理解研究对象时</div>
+	<div><span class="tag domain">multi-level analysis</span> <span class="tag domain">research methodology</span> <span class="tag domain">content creation</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">taxonomy</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">concept:</span> 快速行业洞察的关键维度<br><span class="role-name">categories:</span> 市场趋势,玩家画像,成功要素<br><span class="role-name">basis:</span> 行业竞争分析的核心要素</div>
+	<div style="font-size:0.8rem;color:#888">When: 进行快速行业扫描时, 麦肯锡式研究分析时</div>
+	<div><span class="tag domain">industry analysis</span> <span class="tag domain">market research</span> <span class="tag domain">competitive analysis</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> 分析师的工作（行业研究）<br><span class="role-name">meaning:</span> 从纷繁复杂的世界中整理出有用的事实与数据，基于它们给出合理的假设，再进一步搜集信息验证或证伪这些假设，分析对象为宏观经济、行业或企业</div>
+	<div style="font-size:0.8rem;color:#888">When: 适用于咨询公司、投资机构等金融分析岗位</div>
+	<div><span class="tag domain">行业研究</span> <span class="tag domain">分析师职业</span> <span class="tag domain">研究方法</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 行业研究能力<br><span class="role-name">property:</span> 并非门槛特别高的天赋，而是只要掌握正确、系统的方法论，大多数人都可以得出准确率很高的分析结果的可学习技能</div>
+	<div style="font-size:0.8rem;color:#888">When: 适用于系统学习场景</div>
+	<div><span class="tag domain">行业研究</span> <span class="tag domain">能力培养</span> <span class="tag domain">方法论</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">heuristic</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">situation:</span> 在新项目或新行业工作的第一周<br><span class="role-name">action:</span> 进行大量的研究，快速摸透项目所针对的行业或领域<br><span class="role-name">rationale:</span> 为了在一周后能够与行业内的专家流畅对话，甚至说出资深人士才懂的见解</div>
+	<div style="font-size:0.8rem;color:#888">When: 适用于麦肯锡等管理咨询公司项目制工作, 适用于投资领域快速轮动的行情</div>
+	<div><span class="tag domain">咨询行业</span> <span class="tag domain">快速学习</span> <span class="tag domain">行业分析</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">taxonomy</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">concept:</span> 本书的目标读者<br><span class="role-name">categories:</span> 基金股票投资者、金融行业从业者、计划从业人士、问题解决爱好者<br><span class="role-name">basis:</span> 职业身份和学习需求</div>
+	<div style="font-size:0.8rem;color:#888">When: 适用于本书阅读指导</div>
+	<div><span class="tag domain">读者定位</span> <span class="tag domain">投资</span> <span class="tag domain">金融职业</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> 赚钱的两种方式<br><span class="role-name">meaning:</span> 被动收入（主要通过投资来赚钱）和主动收入（主要通过工作来赚钱）</div>
+	<div style="font-size:0.8rem;color:#888">When: 适用于个人财富积累策略</div>
+	<div><span class="tag domain">财富管理</span> <span class="tag domain">收入类型</span> <span class="tag domain">投资</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">causal</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">cause:</span> 建立了自己的行业研究框架<br><span class="role-name">effect:</span> 能够在被动收入（投资）和主动收入（工作）两种方式上都获得帮助，提升赚钱能力</div>
+	<div style="font-size:0.8rem;color:#888">When: 适用于职业发展和投资决策</div>
+	<div><span class="tag domain">行业研究价值</span> <span class="tag domain">投资决策</span> <span class="tag domain">职业规划</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">sequence</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">name:</span> 自上而下投资研究流程<br><span class="role-name">layers:</span> 宏观研究、行业研究、公司研究<br><span class="role-name">rule:</span> 从宏观到微观的分析层级递进</div>
+	<div style="font-size:0.8rem;color:#888">When: 适用于证券公司研究部门设置, 适用于系统化投研</div>
+	<div><span class="tag domain">投资研究</span> <span class="tag domain">行研流程</span> <span class="tag domain">宏观分析</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">example_of</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> 2021年新能源指数上涨54.75%而上证指数仅涨4.8%；2022年煤炭指数上涨23.55%而上证指数下跌15.12%；2023年AIGC板块暴涨63.41%而上证指数下跌3.7%<br><span class="role-name">concept:</span> 结构性行情<br><span class="role-name">detail:</span> 不同行业在市场整体表现不同甚至下跌的情况下呈现巨大差异收益，行业选择比市场整体判断更重要</div>
+	<div style="font-size:0.8rem;color:#888">When: 适用于A股市场分析, 适用于2019年后的市场常态</div>
+	<div><span class="tag domain">A股投资</span> <span class="tag domain">结构性行情</span> <span class="tag domain">行业配置</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">heuristic</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">situation:</span> 在A股市场进行行业投资<br><span class="role-name">action:</span> 用动态的眼光进行行业研究，持续挖掘更赚钱的行业，不指望一个行业连续长期上涨<br><span class="role-name">rationale:</span> A股的一般规律是'事不过三'——一个行业很难连续3年上涨，需在行业间动态切换</div>
+	<div style="font-size:0.8rem;color:#888">When: 适用于A股行业轮动策略</div>
+	<div><span class="tag domain">A股投资</span> <span class="tag domain">行业轮动</span> <span class="tag domain">投资策略</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">causal</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">cause:</span> 普通投资者使用系统化的投资研究理论武装自己，预判机构动向<br><span class="role-name">effect:</span> 能够凭借资金的灵活性战胜机构，避免被'割韭菜'<br><span class="role-name">mechanism:</span> 机构对股价影响力越来越大，行业研究是机构惯用分析手段，知彼知己才能百战不殆</div>
+	<div style="font-size:0.8rem;color:#888">When: 适用于个人投资者对抗机构投资者的A股市场环境</div>
+	<div><span class="tag domain">投资策略</span> <span class="tag domain">机构行为</span> <span class="tag domain">个人投资</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">causal</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">cause:</span> 通过行业研究判断行业发展前景，选择前景光明的行业<br><span class="role-name">effect:</span> 获得远高于'疯狂内卷'的职业收益，避免由于业务规模收缩而被裁员的风险<br><span class="role-name">mechanism:</span> 选对行业所带来的收益远远高于多赚加班费，高速发展的赛道提供更多机会</div>
+	<div style="font-size:0.8rem;color:#888">When: 适用于职业规划和转行决策</div>
+	<div><span class="tag domain">职业规划</span> <span class="tag domain">行业选择</span> <span class="tag domain">主动收入</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">deviation</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">theory:</span> 资深从业者对自己所在行业有深入了解<br><span class="role-name">reality:</span> 很多资深从业者对自己所在行业的了解仅仅局限于自己待过的公司，甚至仅了解自己所在部门的工作，缺乏对整个产业链的系统性认知<br><span class="role-name">implication:</span> 需要进行全面的行业研究以获得完整视角，不能仅依赖单一专家意见</div>
+	<div style="font-size:0.8rem;color:#888">When: 适用于咨询访谈和专家尽职调查</div>
+	<div><span class="tag domain">专家访谈</span> <span class="tag domain">认知偏差</span> <span class="tag domain">产业链分析</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> 行业研究的核心内容<br><span class="role-name">meaning:</span> 了解产业链上的每个环节，预判行业的潜在成长空间和未来的竞争格局，把握推动行业发展的底层驱动力</div>
+	<div style="font-size:0.8rem;color:#888">When: 适用于系统性行业分析</div>
+	<div><span class="tag domain">行业研究</span> <span class="tag domain">产业链</span> <span class="tag domain">竞争格局</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> 创业者需要掌握的三大技能<br><span class="role-name">meaning:</span> 找方向（确定商业模式）、找资金（融资）、找人才（团队建设）</div>
+	<div style="font-size:0.8rem;color:#888">When: 适用于创业准备和实践</div>
+	<div><span class="tag domain">创业</span> <span class="tag domain">商业技能</span> <span class="tag domain">企业管理</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">causal_chain</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">trigger:</span> 通过行业研究分析商业模式、潜在市场规模和构建护城河（如资源垄断或网络效应）<br><span class="role-name">mechanism:</span> 找到靠谱的方向才能吸引资金和人才，讲出投资人爱听的故事才能获得融资，构建护城河才能留住关键人才<br><span class="role-name">outcome:</span> 创业成功，公司能够上市或获得持续发展</div>
+	<div style="font-size:0.8rem;color:#888">When: 适用于创业初期的战略制定</div>
+	<div><span class="tag domain">创业</span> <span class="tag domain">商业模式</span> <span class="tag domain">护城河</span> <span class="tag domain">PE/VC融资</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">sequence</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">name:</span> 本书四部分结构<br><span class="role-name">layers:</span> 行研框架篇（第1-8章，基础框架）、行研实战篇（第9章，新能源汽车案例分析）、研究方法篇（第10-11章，麦肯锡问题分析方法）、研究工具篇（第12-13章，资讯来源和生成式AI工具）<br><span class="role-name">rule:</span> 从基础理论到实战应用，再到方法论深度解析和工具实操</div>
+	<div style="font-size:0.8rem;color:#888">When: 适用于本书阅读路径规划</div>
+	<div><span class="tag domain">书籍结构</span> <span class="tag domain">学习路径</span> <span class="tag domain">行研框架</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">heuristic</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">situation:</span> 使用本书进行行业研究学习<br><span class="role-name">action:</span> 根据不同需求选择四种用法：作为模板（套用分析维度）、作为地图（寻找资讯源）、作为培训材料（系统梳理框架）、作为案例集（获取论据）<br><span class="role-name">rationale:</span> 本书定位为工具书，需根据读者基础（新手或老手）选择不同阅读顺序和使用方式</div>
+	<div style="font-size:0.8rem;color:#888">When: 适用于不同基础的读者使用本书</div>
+	<div><span class="tag domain">学习方法</span> <span class="tag domain">工具书使用</span> <span class="tag domain">阅读策略</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> 全能框架<br><span class="role-name">meaning:</span> 可以覆盖对所有行业研究的普适的、系统的行业研究框架，提炼所有行业共性而非针对单一行业的特定框架</div>
+	<div style="font-size:0.8rem;color:#888">When: 适用于跨行业研究</div>
+	<div><span class="tag domain">框架理论</span> <span class="tag domain">通用方法论</span> <span class="tag domain">行业研究</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">principle</span>
+		<span class="atom-confidence">80%</span>
+	</div>
+	<div class="roles"><span class="role-name">statement:</span> 研究前需明确学习动机（为什么学），只有搞清楚学习动机才能提高学习效率，有的放矢，避免在不重要的事情上钻牛角尖<br><span class="role-name">scope:</span> 适用于学习新知识和阅读本书前</div>
+	<div style="font-size:0.8rem;color:#888">When: 适用于学习策略制定</div>
+	<div><span class="tag domain">学习理论</span> <span class="tag domain">动机管理</span> <span class="tag domain">研究方法论</span></div>
+	<span class="tag flag">missing_role:implication</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> 快速了解一个行业的方法<br><span class="role-name">meaning:</span> 掌握一个系统的方法论，使行业研究事半功倍</div>
+	
+	<div><span class="tag domain">行业研究</span> <span class="tag domain">方法论</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">taxonomy</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">concept:</span> 行业研究方法论的学习来源<br><span class="role-name">categories:</span> 大学商学院课本、网上免费慕课（MOOC）、券商提供的付费课程<br><span class="role-name">basis:</span> 教学渠道和形式</div>
+	
+	<div><span class="tag domain">行业研究</span> <span class="tag domain">教育</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">deviation</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">theory:</span> 商学院课本上的知识（如PEST分析法、波特五力模型）<br><span class="role-name">reality:</span> 产业界的实际应用<br><span class="role-name">implication:</span> 两者之间存在一条鸿沟，导致即使背景优秀的实习生也会生搬硬套模型而不得要领</div>
+	<div style="font-size:0.8rem;color:#888">When: 使用商学院传统框架进行行业分析时</div>
+	<div><span class="tag domain">行业研究</span> <span class="tag domain">理论与实践</span> <span class="tag domain">商学院教育</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">example_of</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> 具有985/211高校或美国常春藤盟校背景，并在不少券商研究部门实习过的优秀实习生<br><span class="role-name">concept:</span> 商学院理论与产业实际存在鸿沟<br><span class="role-name">detail:</span> 这些背景优秀的实习生在分析行业时仍会眉毛胡子一把抓，生搬硬套学过的模型而不得要领</div>
+	
+	<div><span class="tag domain">行业研究</span> <span class="tag domain">人才培养</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">deviation</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">theory:</span> 课本或在线课程提供的行业研究框架应该是一个整体<br><span class="role-name">reality:</span> 实际上是零散的几个概念模型，不同模型之间并没有建立起联系，知识点之间是割裂的<br><span class="role-name">implication:</span> 大多数人不知道如何使用分析结论，只能拼凑基础资讯应付不懂的老板</div>
+	<div style="font-size:0.8rem;color:#888">When: 使用现有课本或在线课程框架时</div>
+	<div><span class="tag domain">行业研究</span> <span class="tag domain">知识管理</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">example_of</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">instance:</span> 分析了某个新兴行业后知道其市场规模是300亿元、增速是20%，但不知道这代表什么意思<br><span class="role-name">concept:</span> 知识点割裂导致无法使用分析结论<br><span class="role-name">detail:</span> 这是零散概念模型无法建立联系的具体表现，导致无法解读数据含义和商业意义</div>
+	
+	<div><span class="tag domain">行业研究</span> <span class="tag domain">数据分析</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">causal_chain</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">trigger:</span> 使用零散且与产业实际脱节的框架进行行业研究<br><span class="role-name">mechanism:</span> 只能拼凑基础资讯形成报告，无法建立模型间联系，无法解读数据背后的含义<br><span class="role-name">outcome:</span> 报告只能应付不太懂的老板，会被头脑清楚的老板百分之百打回</div>
+	<div style="font-size:0.8rem;color:#888">When: 撰写行业研究报告时</div>
+	<div><span class="tag domain">行业研究</span> <span class="tag domain">报告质量</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 本书第一部分提供的行研分析框架<br><span class="role-name">property:</span> 贴近实际且具备系统性，能够解决理论与实际脱节以及知识点割裂的两大问题</div>
+	
+	<div><span class="tag domain">行业研究</span> <span class="tag domain">方法论</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> 商业模式可行性分析<br><span class="role-name">meaning:</span> 判断一个行业或企业的商业模式是否具备从导入期过渡到成长期的可能性</div>
+	<div style="font-size:0.8rem;color:#888">When: 进行行业研究时, 评估企业成长潜力时</div>
+	<div><span class="tag domain">industry analysis</span> <span class="tag domain">business model</span> <span class="tag domain">investment</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 一级市场投资者（PE和VC）和创业者<br><span class="role-name">property:</span> 更重视商业模式的可行性分析</div>
+	<div style="font-size:0.8rem;color:#888">When: 投资决策过程中</div>
+	<div><span class="tag domain">investment</span> <span class="tag domain">primary market</span> <span class="tag domain">venture capital</span> <span class="tag domain">private equity</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">causal_chain</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">trigger:</span> 创业团队获得PE和VC融资<br><span class="role-name">mechanism:</span> 创业团队砸钱做行业公关，提高声量，炒作概念，引起上市公司关注并影响二级市场<br><span class="role-name">outcome:</span> 二级市场股票投资者也需要审视行业商业模式的可行性</div>
+	<div style="font-size:0.8rem;color:#888">When: 投资上市企业股票时, 关注新兴赛道时</div>
+	<div><span class="tag domain">investment</span> <span class="tag domain">secondary market</span> <span class="tag domain">stock market</span> <span class="tag domain">business model</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">heuristic</span>
+		<span class="atom-confidence">100%</span>
+	</div>
+	<div class="roles"><span class="role-name">situation:</span> 可以提前判断一个行业会失败或'死亡'<br><span class="role-name">action:</span> 不要下注或投资该行业<br><span class="role-name">rationale:</span> 既然知道会输，就没有投资的必要，避免无效投入</div>
+	<div style="font-size:0.8rem;color:#888">When: 行业分析阶段, 投资决策前</div>
+	<div><span class="tag domain">investment strategy</span> <span class="tag domain">risk management</span> <span class="tag domain">decision making</span></div>
+	
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">95%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> 商业模式<br><span class="role-name">meaning:</span> business model，有时也被翻译为'生意模式'</div>
+	
+	<div><span class="tag domain">商业模式</span> <span class="tag domain">基础概念</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">principle</span>
+		<span class="atom-confidence">85%</span>
+	</div>
+	<div class="roles"><span class="role-name">statement:</span> 投资分析应该首先看生意模式<br><span class="role-name">implication:</span> 生意模式是投资分析中最重要的因素，应优先于其他因素考虑<br><span class="role-name">scope:</span> 投资分析、行业研究</div>
+	
+	<div><span class="tag domain">投资分析</span> <span class="tag domain">商业模式</span> <span class="tag domain">价值投资</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">has_property</span>
+		<span class="atom-confidence">85%</span>
+	</div>
+	<div class="roles"><span class="role-name">entity:</span> 商业模式的定义<br><span class="role-name">property:</span> 在学术界和业界尚未形成统一共识</div>
+	
+	<div><span class="tag domain">商业模式</span> <span class="tag domain">学术定义</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">taxonomy</span>
+		<span class="atom-confidence">85%</span>
+	</div>
+	<div class="roles"><span class="role-name">concept:</span> 商业模式的定义侧重点<br><span class="role-name">categories:</span> 盈利模式,交易结构,经营战略<br><span class="role-name">basis:</span> 关注焦点</div>
+	
+	<div><span class="tag domain">商业模式</span> <span class="tag domain">分类学</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<div class="atom">
+	<div class="atom-header">
+		<span class="atom-frame">definition</span>
+		<span class="atom-confidence">85%</span>
+	</div>
+	<div class="roles"><span class="role-name">term:</span> 商业模式（经济学抽象定义）<br><span class="role-name">meaning:</span> 对经济活动中的生产力要素和生产关系要素的各种排列组合</div>
+	
+	<div><span class="tag domain">商业模式</span> <span class="tag domain">经济学</span> <span class="tag domain">马克思主义政治经济学</span></div>
+	<span class="tag flag">no_conditions</span>
+</div>
+<p style="color:#888;font-style:italic">...and 584 more atoms in the JSON file.</p>
+</body></html>

@@ -1,0 +1,11 @@
+{"type":"server-started","port":53904,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:53904","screen_dir":"/Users/shuang/garage/metis/.superpowers/brainstorm/64405-1774401862"}
+{"type":"screen-added","file":"/Users/shuang/garage/metis/.superpowers/brainstorm/64405-1774401862/frame-registry.html"}
+{"source":"user-event","type":"click","text":"A\n      \n        Yes, looks good\n        Core types + propose-on-the-fly + validation + deduplication","choice":"yes","id":null,"timestamp":1774402118594}
+{"source":"user-event","type":"click","text":"A\n      \n        Yes, looks good\n        Core types + propose-on-the-fly + validation + deduplication","choice":"yes","id":null,"timestamp":1774402130351}
+{"type":"screen-added","file":"/Users/shuang/garage/metis/.superpowers/brainstorm/64405-1774401862/extraction-pipeline.html"}
+{"source":"user-event","type":"click","text":"A\n      \n        Yes, looks good\n        The flow, atom format, validation, and confidence adjustment all make sense","choice":"yes","id":null,"timestamp":1774402552586}
+{"type":"screen-added","file":"/Users/shuang/garage/metis/.superpowers/brainstorm/64405-1774401862/module-structure.html"}
+{"source":"user-event","type":"click","text":"A\n      \n        Design approved — let's write the spec\n        Module structure, flow, error handling all make sense","choice":"approved","id":null,"timestamp":1774402699546}
+{"type":"screen-added","file":"/Users/shuang/garage/metis/.superpowers/brainstorm/64405-1774401862/waiting.html"}
+{"type":"screen-added","file":"/Users/shuang/garage/metis/.superpowers/brainstorm/64405-1774401862/spec-done.html"}
+{"type":"server-stopped","reason":"idle timeout"}

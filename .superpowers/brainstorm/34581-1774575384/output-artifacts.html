@@ -1,0 +1,117 @@
+<h2>Integrate Stage Output Artifacts</h2>
+<p class="subtitle">What does the Integrate stage produce? Three stores need concrete formats.</p>
+
+<div style="margin: 2rem 0; padding: 1.5rem; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);">
+  <p style="color: #8b949e; margin: 0; font-size: 0.9rem; line-height: 1.6;">
+    <strong style="color: #c9d1d9;">Context:</strong> The design doc says "starting simple" — flat JSON files, in-memory adjacency list, ChromaDB for vectors.
+    These are consumed by the Apply pipeline (not yet built). We want formats that are easy to inspect, debug, and iterate on.
+  </p>
+</div>
+
+<div class="section">
+  <h3>1. Atom Store</h3>
+  <p>CandidateAtoms become finalized Atoms. What changes?</p>
+  <div style="display: flex; gap: 1rem; margin: 1rem 0;">
+    <div style="flex:1; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
+      <p class="label">CandidateAtom (Extract output)</p>
+      <pre style="font-size: 0.8rem; color: #8b949e; margin: 0.5rem 0;"><code>{
+  id: "ddia-ch5-sec2-3",
+  frame: "causal",
+  roles: { cause: "...", effect: "..." },
+  confidence: 0.85,
+  source: { title, authors, chapterId, sectionId },
+  domain: ["distributed systems"],
+  flags: ["no_conditions"]
+}</code></pre>
+    </div>
+    <div style="display:flex;align-items:center;color:#58a6ff;font-size:1.5rem;">→</div>
+    <div style="flex:1; padding: 1rem; background: rgba(88,166,255,0.05); border-radius: 8px; border: 1px solid rgba(88,166,255,0.15);">
+      <p class="label" style="color: #58a6ff;">Atom (Integrate output)</p>
+      <pre style="font-size: 0.8rem; color: #8b949e; margin: 0.5rem 0;"><code>{
+  id: "ddia-ch5-sec2-3",
+  frame: "causal",
+  roles: { cause: "...", effect: "..." },
+  confidence: 0.90,        // ← boosted by reinforcement
+  source: { ... },
+  domain: ["distributed systems"],
+  flags: ["no_conditions"],
+  <span style="color:#58a6ff">entityRefs: ["entity:replication-lag"],
+  reinforcedBy: ["out-of-control-ch3-1"],
+  contradictedBy: [],
+  extendedBy: ["ddia-ch5-sec4-7"],</span>
+}</code></pre>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>2. Entity Index</h3>
+  <p>A new artifact — the resolved entity registry.</p>
+  <pre style="font-size: 0.8rem; color: #8b949e; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 8px;"><code>{
+  "entity:replication-lag": {
+    canonicalName: "replication lag",
+    aliases: ["replication delay", "复制延迟", "replica staleness"],
+    domain: "distributed systems",
+    atomIds: ["ddia-ch5-sec2-3", "ddia-ch5-sec2-5", ...],
+    crossDomainLinks: []
+  },
+  "entity:feedback-loop-behavioral": {
+    canonicalName: "feedback loop",
+    aliases: ["behavioral feedback", "行为反馈循环"],
+    domain: "behavioral science",
+    atomIds: ["fogg-ch2-sec1-0", ...],
+    crossDomainLinks: ["entity:feedback-loop-complex-systems"]
+  }
+}</code></pre>
+</div>
+
+<div class="section">
+  <h3>3. Graph Index</h3>
+  <p>Adjacency list for traversal. Edges are typed.</p>
+  <pre style="font-size: 0.8rem; color: #8b949e; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 8px;"><code>Edge types:
+  reinforces    — same claim, different source
+  contradicts   — conflicting claims
+  extends       — adds nuance/detail
+  entity_link   — atoms share an entity
+  cross_domain  — related entities across domains
+
+Format: JSON adjacency list
+  { "ddia-ch5-sec2-3": [
+      { target: "out-of-control-ch3-1", type: "reinforces" },
+      { target: "ddia-ch5-sec4-7", type: "extends" }
+  ]}</code></pre>
+</div>
+
+<div class="section">
+  <h3>4. Vector Index</h3>
+  <p>Each atom embedded as a natural language sentence. Used for semantic retrieval in Apply.</p>
+  <div style="padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
+    <p style="color: #8b949e; font-size: 0.85rem; margin: 0;">
+      <strong style="color: #c9d1d9;">Format options:</strong> ChromaDB (design doc's suggestion) vs. flat JSON embeddings file.<br>
+      ChromaDB adds a dependency but gives us similarity search out of the box.<br>
+      Flat JSON means we'd implement our own cosine similarity — simple but O(n) per query.<br><br>
+      <strong style="color: #58a6ff;">Recommendation:</strong> Start with flat JSON embeddings. 4K atoms × 1536-dim = ~24MB. Brute-force cosine similarity
+      is fast enough at this scale. Add ChromaDB when we hit 50K+ atoms.
+    </p>
+  </div>
+</div>
+
+<h3 style="margin-top: 2rem;">Does this output structure look right?</h3>
+<p class="subtitle">Any artifacts missing? Any fields that don't belong?</p>
+
+<div class="options">
+  <div class="option" data-choice="approve" onclick="toggleSelect(this)">
+    <div class="letter">✓</div>
+    <div class="content">
+      <h3>Looks good — proceed</h3>
+      <p>Four artifacts: finalized atoms, entity index, graph index, vector embeddings</p>
+    </div>
+  </div>
+  <div class="option" data-choice="modify" onclick="toggleSelect(this)">
+    <div class="letter">~</div>
+    <div class="content">
+      <h3>Needs changes</h3>
+      <p>I'll describe what to adjust in the terminal</p>
+    </div>
+  </div>
+</div>
