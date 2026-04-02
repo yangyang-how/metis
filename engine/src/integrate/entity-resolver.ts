@@ -7,9 +7,9 @@
 import type { CandidateAtom } from "../extract/types";
 import type { EmbeddingProvider } from "../llm/embedding-types";
 import type { LLMProvider } from "../llm/types";
-import { cosineSimilarity } from "./embedding-service";
 import { buildDomainMap, normalizeDomain } from "./domain-normalizer";
 import type { DomainMap } from "./domain-normalizer";
+import { cosineSimilarity } from "./embedding-service";
 import { entityDisambiguationPrompt } from "./prompts";
 import type { Entity, EntityIndex, EntityMention, VectorIndex } from "./types";
 
@@ -54,7 +54,10 @@ export interface ResolveResult {
 	};
 }
 
-export function extractMentions(atoms: CandidateAtom[], domainMap?: DomainMap): EntityMention[] {
+export function extractMentions(
+	atoms: CandidateAtom[],
+	domainMap?: DomainMap,
+): EntityMention[] {
 	const mentions: EntityMention[] = [];
 
 	for (const atom of atoms) {
@@ -62,7 +65,9 @@ export function extractMentions(atoms: CandidateAtom[], domainMap?: DomainMap): 
 		if (!entityRoles) continue;
 
 		const rawDomain = atom.domain[0] ?? "untagged";
-		const domain = domainMap ? normalizeDomain(rawDomain, domainMap) : rawDomain;
+		const domain = domainMap
+			? normalizeDomain(rawDomain, domainMap)
+			: rawDomain;
 
 		for (const role of entityRoles) {
 			const value = atom.roles[role];
@@ -198,7 +203,9 @@ export async function resolveEntities(
 
 	console.error(`[integrate] Normalizing ${domainCounts.size} domains...`);
 	const domainMap = await buildDomainMap(domainCounts, embeddingProvider);
-	console.error(`[integrate] Collapsed to ${domainMap.canonicals.size} canonical domains`);
+	console.error(
+		`[integrate] Collapsed to ${domainMap.canonicals.size} canonical domains`,
+	);
 
 	// Step 1: Extract mentions from new atoms (with normalized domains)
 	const mentions = extractMentions(newAtoms, domainMap);
@@ -316,14 +323,14 @@ export async function resolveEntities(
 
 		// Check if this merges into an existing entity
 		// Normalize existing entity domain for comparison
-		const existingEntity = Object.values(entities).find(
-			(e) => {
-				const eDomain = normalizeDomain(e.domain, domainMap);
-				return eDomain === domain &&
-					(e.canonicalName.toLowerCase() === canonicalName ||
-						e.aliases.some((a) => a.toLowerCase() === canonicalName));
-			},
-		);
+		const existingEntity = Object.values(entities).find((e) => {
+			const eDomain = normalizeDomain(e.domain, domainMap);
+			return (
+				eDomain === domain &&
+				(e.canonicalName.toLowerCase() === canonicalName ||
+					e.aliases.some((a) => a.toLowerCase() === canonicalName))
+			);
+		});
 
 		if (existingEntity) {
 			existingEntity.atomIds = [

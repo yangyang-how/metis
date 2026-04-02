@@ -36,7 +36,7 @@ describe("extractMentions", () => {
 			(m) => m.role === "term" && m.text === "replication lag",
 		);
 		expect(defMention).toBeDefined();
-		expect(defMention!.frame).toBe("definition");
+		expect(defMention?.frame).toBe("definition");
 	});
 
 	test("extracts cause and effect from causal atoms", () => {
@@ -55,13 +55,13 @@ describe("extractMentions", () => {
 
 	test("uses first domain element as primary domain", () => {
 		const mentions = extractMentions(bookAAtoms);
-		expect(mentions[0]!.domain).toBe("distributed systems");
+		expect(mentions[0]?.domain).toBe("distributed systems");
 	});
 
 	test("atoms with no domain get 'untagged'", () => {
 		const atom = makeAtom({ domain: [] });
 		const mentions = extractMentions([atom]);
-		expect(mentions[0]!.domain).toBe("untagged");
+		expect(mentions[0]?.domain).toBe("untagged");
 	});
 
 	test("truncates long mention text to 60 chars", () => {
@@ -73,7 +73,7 @@ describe("extractMentions", () => {
 			},
 		});
 		const mentions = extractMentions([atom]);
-		expect(mentions[0]!.text.length).toBeLessThanOrEqual(60);
+		expect(mentions[0]?.text.length).toBeLessThanOrEqual(60);
 	});
 });
 
@@ -89,7 +89,7 @@ describe("clusterMentions", () => {
 		);
 		expect(repLagCluster).toBeDefined();
 		expect(
-			repLagCluster!.mentions.filter((m) => m.normalized === "replication lag")
+			repLagCluster?.mentions.filter((m) => m.normalized === "replication lag")
 				.length,
 		).toBeGreaterThan(1);
 	});
@@ -135,7 +135,7 @@ describe("resolveEntities — full pipeline", () => {
 			e.canonicalName.toLowerCase().includes("replication lag"),
 		);
 		expect(repLagEntity).toBeDefined();
-		expect(repLagEntity!.atomIds.length).toBeGreaterThan(1);
+		expect(repLagEntity?.atomIds.length).toBeGreaterThan(1);
 	});
 
 	test("incremental: new mentions merge into existing entities", async () => {

@@ -38,8 +38,7 @@ function main() {
 	for (const a of atoms) {
 		frameCounts[a.frame] = (frameCounts[a.frame] ?? 0) + 1;
 	}
-	const topFrames = Object.entries(frameCounts)
-		.sort((a, b) => b[1] - a[1]);
+	const topFrames = Object.entries(frameCounts).sort((a, b) => b[1] - a[1]);
 
 	// Edge stats
 	const edgeTypes: Record<string, number> = {};
@@ -159,7 +158,12 @@ ${topDomains
 ${bigEntities
 	.map(
 		(e) =>
-			`<tr><td><strong>${escHtml(e.canonicalName)}</strong></td><td><span class="tag">${escHtml(e.domain)}</span></td><td>${e.atomIds.length}</td><td>${e.aliases.slice(0, 3).map((a) => `<span class="tag purple">${escHtml(a.slice(0, 30))}</span>`).join(" ")}</td></tr>`,
+			`<tr><td><strong>${escHtml(e.canonicalName)}</strong></td><td><span class="tag">${escHtml(e.domain)}</span></td><td>${e.atomIds.length}</td><td>${e.aliases
+				.slice(0, 3)
+				.map(
+					(a) => `<span class="tag purple">${escHtml(a.slice(0, 30))}</span>`,
+				)
+				.join(" ")}</td></tr>`,
 	)
 	.join("\n")}
 </table>
