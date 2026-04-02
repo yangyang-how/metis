@@ -7,7 +7,13 @@
  * Reads all engine/output/*.json files and runs Integrate on each book
  * incrementally. No Parse/Comprehend/Extract — just the graph construction.
  */
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import {
+	existsSync,
+	mkdirSync,
+	readFileSync,
+	readdirSync,
+	writeFileSync,
+} from "node:fs";
 import { join } from "node:path";
 import type { CandidateAtom } from "./extract/types";
 import { integrate } from "./integrate/index";
@@ -67,13 +73,27 @@ async function main() {
 		});
 		const elapsed = ((Date.now() - start) / 1000).toFixed(1);
 
-		console.error(`  ${elapsed}s — ${graph.stats.totalEntities} entities, ${graph.stats.reinforcements} reinforcements, ${graph.stats.contradictions} contradictions`);
+		console.error(
+			`  ${elapsed}s — ${graph.stats.totalEntities} entities, ${graph.stats.reinforcements} reinforcements, ${graph.stats.contradictions} contradictions`,
+		);
 
 		// Save after each book (crash recovery)
-		writeFileSync(join(GRAPH_DIR, "atoms.json"), JSON.stringify(graph.atoms, null, 2));
-		writeFileSync(join(GRAPH_DIR, "entities.json"), JSON.stringify(graph.entities, null, 2));
-		writeFileSync(join(GRAPH_DIR, "graph.json"), JSON.stringify(graph.graph, null, 2));
-		writeFileSync(join(GRAPH_DIR, "embeddings.json"), JSON.stringify(graph.embeddings));
+		writeFileSync(
+			join(GRAPH_DIR, "atoms.json"),
+			JSON.stringify(graph.atoms, null, 2),
+		);
+		writeFileSync(
+			join(GRAPH_DIR, "entities.json"),
+			JSON.stringify(graph.entities, null, 2),
+		);
+		writeFileSync(
+			join(GRAPH_DIR, "graph.json"),
+			JSON.stringify(graph.graph, null, 2),
+		);
+		writeFileSync(
+			join(GRAPH_DIR, "embeddings.json"),
+			JSON.stringify(graph.embeddings),
+		);
 	}
 
 	if (!graph) {
@@ -86,7 +106,9 @@ async function main() {
 	console.error("INTEGRATION COMPLETE");
 	console.error(`${"═".repeat(60)}`);
 	console.error(`  Atoms:          ${graph.stats.totalAtoms}`);
-	console.error(`  Entities:       ${graph.stats.totalEntities} (${graph.stats.newEntities} new, ${graph.stats.mergedEntities} merged)`);
+	console.error(
+		`  Entities:       ${graph.stats.totalEntities} (${graph.stats.newEntities} new, ${graph.stats.mergedEntities} merged)`,
+	);
 	console.error(`  Reinforcements: ${graph.stats.reinforcements}`);
 	console.error(`  Contradictions: ${graph.stats.contradictions}`);
 	console.error(`  Extensions:     ${graph.stats.extensions}`);

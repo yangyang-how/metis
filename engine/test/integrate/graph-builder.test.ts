@@ -10,10 +10,10 @@ describe("finalizeAtoms", () => {
 	test("promotes CandidateAtom to Atom with empty cross-references", () => {
 		const atom = makeAtom({ id: "test-1" });
 		const [finalized] = finalizeAtoms([atom], {}, []);
-		expect(finalized!.entityRefs).toEqual([]);
-		expect(finalized!.reinforcedBy).toEqual([]);
-		expect(finalized!.contradictedBy).toEqual([]);
-		expect(finalized!.extendedBy).toEqual([]);
+		expect(finalized?.entityRefs).toEqual([]);
+		expect(finalized?.reinforcedBy).toEqual([]);
+		expect(finalized?.contradictedBy).toEqual([]);
+		expect(finalized?.extendedBy).toEqual([]);
 	});
 
 	test("populates entityRefs from entity index", () => {
@@ -29,7 +29,7 @@ describe("finalizeAtoms", () => {
 			},
 		};
 		const [finalized] = finalizeAtoms([atom], entities, []);
-		expect(finalized!.entityRefs).toEqual(["entity:foo"]);
+		expect(finalized?.entityRefs).toEqual(["entity:foo"]);
 	});
 
 	test("populates reinforcedBy from relations", () => {
@@ -46,10 +46,12 @@ describe("finalizeAtoms", () => {
 		];
 
 		const finalized = finalizeAtoms([atomA, atomB], {}, relations);
-		const fA = finalized.find((a) => a.id === "a")!;
-		const fB = finalized.find((a) => a.id === "b")!;
-		expect(fA.reinforcedBy).toContain("b");
-		expect(fB.reinforcedBy).toContain("a");
+		const fA = finalized.find((a) => a.id === "a");
+		const fB = finalized.find((a) => a.id === "b");
+		expect(fA).toBeDefined();
+		expect(fB).toBeDefined();
+		expect(fA?.reinforcedBy).toContain("b");
+		expect(fB?.reinforcedBy).toContain("a");
 	});
 
 	test("boosts confidence for reinforced atoms (capped at 1.0)", () => {
@@ -79,7 +81,7 @@ describe("finalizeAtoms", () => {
 		];
 		const [finalized] = finalizeAtoms([atom], {}, relations);
 		// 0.9 + 0.05 * 3 = 1.05 → capped at 1.0
-		expect(finalized!.confidence).toBe(1.0);
+		expect(finalized?.confidence).toBe(1.0);
 	});
 
 	test("populates contradictedBy from relations", () => {
@@ -95,8 +97,8 @@ describe("finalizeAtoms", () => {
 			},
 		];
 		const finalized = finalizeAtoms([atomA, atomB], {}, relations);
-		expect(finalized.find((a) => a.id === "a")!.contradictedBy).toContain("b");
-		expect(finalized.find((a) => a.id === "b")!.contradictedBy).toContain("a");
+		expect(finalized.find((a) => a.id === "a")?.contradictedBy).toContain("b");
+		expect(finalized.find((a) => a.id === "b")?.contradictedBy).toContain("a");
 	});
 
 	test("populates extendedBy from relations", () => {
@@ -112,8 +114,8 @@ describe("finalizeAtoms", () => {
 			},
 		];
 		const finalized = finalizeAtoms([atomA, atomB], {}, relations);
-		expect(finalized.find((a) => a.id === "a")!.extendedBy).toContain("b");
-		expect(finalized.find((a) => a.id === "b")!.extendedBy).toContain("a");
+		expect(finalized.find((a) => a.id === "a")?.extendedBy).toContain("b");
+		expect(finalized.find((a) => a.id === "b")?.extendedBy).toContain("a");
 	});
 });
 

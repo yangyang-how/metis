@@ -34,8 +34,7 @@ export async function buildDomainMap(
 	domainCounts: Map<string, number>,
 	provider: EmbeddingProvider,
 ): Promise<DomainMap> {
-	const domains = [...domainCounts.entries()]
-		.sort((a, b) => b[1] - a[1]); // most frequent first
+	const domains = [...domainCounts.entries()].sort((a, b) => b[1] - a[1]); // most frequent first
 
 	if (domains.length === 0) {
 		return { mapping: new Map(), canonicals: new Map() };
@@ -53,7 +52,9 @@ export async function buildDomainMap(
 	for (let i = 0; i < domains.length; i++) {
 		if (assigned.has(i)) continue;
 
-		const [centerName, centerCount] = domains[i]!;
+		const entry = domains[i];
+		if (!entry) continue;
+		const [centerName, centerCount] = entry;
 		const centerEmb = embeddings[i];
 		if (!centerEmb) continue;
 
@@ -70,7 +71,9 @@ export async function buildDomainMap(
 
 			const sim = cosineSimilarity(centerEmb, candidateEmb);
 			if (sim >= DOMAIN_MERGE_THRESHOLD) {
-				const [candidateName, candidateCount] = domains[j]!;
+				const candidate = domains[j];
+				if (!candidate) continue;
+				const [candidateName, candidateCount] = candidate;
 				assigned.add(j);
 				mapping.set(candidateName, centerName);
 				totalCount += candidateCount;
@@ -87,9 +90,6 @@ export async function buildDomainMap(
  * Normalize a domain string using the domain map.
  * Returns the canonical domain, or the original if not in the map.
  */
-export function normalizeDomain(
-	domain: string,
-	domainMap: DomainMap,
-): string {
+export function normalizeDomain(domain: string, domainMap: DomainMap): string {
 	return domainMap.mapping.get(domain) ?? domain;
 }

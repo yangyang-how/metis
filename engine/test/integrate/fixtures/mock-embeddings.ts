@@ -58,7 +58,8 @@ export const MOCK_VECTORS: Record<string, number[]> = {
 function hashToVector(text: string): number[] {
 	const vec = new Array(MOCK_DIMENSIONS).fill(0) as number[];
 	for (let i = 0; i < text.length; i++) {
-		vec[i % MOCK_DIMENSIONS]! += text.charCodeAt(i) / 1000;
+		const idx = i % MOCK_DIMENSIONS;
+		vec[idx] = (vec[idx] ?? 0) + text.charCodeAt(i) / 1000;
 	}
 	// Normalize
 	const mag = Math.sqrt(vec.reduce((s, v) => s + v * v, 0));

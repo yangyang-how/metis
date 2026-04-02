@@ -149,16 +149,17 @@ describe("embedAtoms", () => {
 	test("skips already-cached atoms", async () => {
 		const provider = createMockEmbeddingProvider();
 		const atoms = bookAAtoms.slice(0, 2);
+		const firstAtomId = atoms[0]?.id ?? "missing";
 		const existingCache = [
 			{
-				atomId: atoms[0]!.id,
+				atomId: firstAtomId,
 				text: "cached text",
 				embedding: new Array(provider.dimensions).fill(0),
 			},
 		];
 		const result = await embedAtoms(atoms, provider, existingCache);
 		expect(result).toHaveLength(2);
-		expect(result.find((e) => e.atomId === atoms[0]!.id)?.text).toBe(
+		expect(result.find((e) => e.atomId === firstAtomId)?.text).toBe(
 			"cached text",
 		);
 	});
