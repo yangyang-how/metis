@@ -16,7 +16,7 @@ import { type FusedResult, fuseResults } from "./hybrid";
 import { queryVectors } from "./vector-search";
 
 export interface RetrievalResult {
-	atom: CandidateAtom;
+	atom: CandidateAtom | Atom;
 	score: number;
 	ranks: Record<string, number | null>;
 }
@@ -26,7 +26,7 @@ export interface RetrieveOptions {
 	topK?: number;
 	method?: "hybrid" | "bm25" | "vector";
 	/** Pre-loaded atoms (skips file I/O) */
-	atoms?: CandidateAtom[];
+	atoms?: (CandidateAtom | Atom)[];
 	/** Pre-loaded embeddings (skips file I/O) */
 	embeddings?: VectorIndex;
 	/** Pre-computed query embedding (skips API call) */
