@@ -1,6 +1,6 @@
 // engine/test/apply/compose.test.ts
 import { describe, expect, test } from "bun:test";
-import { compose, groupAtoms } from "../../src/apply/compose";
+import { compose, generateSummaries, groupAtoms } from "../../src/apply/compose";
 import type { QueryPlan, TraversalResult } from "../../src/apply/types";
 import type { Atom } from "../../src/integrate/types";
 import {
@@ -18,6 +18,7 @@ import {
   graphIndex,
   entities,
 } from "./fixtures/sample-graph";
+import { mockSummaryProvider } from "./fixtures/mock-provider";
 
 const basePlan: QueryPlan = {
   intent: "understand replication",
@@ -146,5 +147,31 @@ describe("compose", () => {
     expect(pkg.contradictions.length).toBe(1);
     expect(pkg.contradictions[0]!.topic).toBe("entity-consistency");
     expect(pkg.stats.contradictionsFound).toBe(1);
+  });
+});
+
+describe("generateSummaries", () => {
+  test("adds summary to each section", async () => {
+    const atoms: Atom[] = [atomReplication, atomLeaderFollower];
+    const traversalResult: TraversalResult = {
+      atoms,
+      paths: [],
+      contradictions: [],
+    };
+    const pkg = compose({
+      query: "How does replication work?",
+      plan: basePlan,
+      traversalResult,
+      gaps: [],
+      entities,
+      retrieveCount: 2,
+    });
+    expect(pkg.sections[0]!.summary).toBeUndefined();
+
+    await generateSummaries(pkg, mockSummaryProvider);
+    for (const section of pkg.sections) {
+      expect(section.summary).toBeDefined();
+      expect(section.summary!.length).toBeGreaterThan(0);
+    }
   });
 });

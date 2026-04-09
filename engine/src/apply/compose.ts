@@ -7,6 +7,9 @@
  * Section summaries (LLM) are handled separately via generateSummaries().
  */
 import type { Atom, EntityIndex } from "../integrate/types";
+import type { LLMProvider } from "../llm/types";
+import { buildContent } from "../kx/content";
+import { buildSummaryPrompt } from "./prompts";
 import type {
   ContextPackage,
   ContextSection,
@@ -171,4 +174,34 @@ export function compose(input: ComposeInput): ContextPackage {
       gapsFound: gaps.length,
     },
   };
+}
+
+/**
+ * Generate LLM summaries for each section in a ContextPackage.
+ * Mutates the sections in place (adds .summary field).
+ */
+export async function generateSummaries(
+  pkg: ContextPackage,
+  provider: LLMProvider,
+): Promise<void> {
+  for (const section of pkg.sections) {
+    try {
+      const atomContents = section.atoms.map((a) =>
+        buildContent(a.frame, a.roles),
+      );
+      const messages = buildSummaryPrompt(
+        section.topic,
+        pkg.query,
+        atomContents,
+      );
+      const response = await provider.sendMessage({
+        messages,
+        maxTokens: 256,
+        temperature: 0.3,
+      });
+      section.summary = response.content.trim();
+    } catch {
+      // Non-fatal: section.summary remains undefined
+    }
+  }
 }
