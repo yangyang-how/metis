@@ -3140,7 +3140,7 @@ describe("rerank", () => {
       { atom: atomReplication, score: 1.0, ranks: { bm25: 1, vector: 1 } },
       { atom: atomBTree, score: 0.5, ranks: { bm25: 2, vector: 2 } },
     ];
-    const reranked = rerank(results, noPlan);
+    const reranked = rerank({ results, plan: noPlan });
     expect(reranked[0]!.atom.id).toBe("ds-replication-def");
     expect(reranked[1]!.atom.id).toBe("db-btree-def");
   });
