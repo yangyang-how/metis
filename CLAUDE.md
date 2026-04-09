@@ -14,12 +14,20 @@ any LLM can use to reason like a domain expert. NOT a chatbot or agent.
 ## Directory Structure
 - `site/` — Marketing/docs site (Astro). Content in `site/src/content/`.
 - `design/` — Design documents. Source of truth for architecture decisions.
+  - `00`–`06`: Learn pipeline (vision, architecture, parse, comprehend, extract, resume/demo, implementation plan).
+  - `07-knowledge-exchange.md`: KX format — portable interchange between Metis, Seisei, and other tools.
+  - `08-apply-pipeline.md`: Apply pipeline (query → retrieve → traverse → gap detect → compose).
 - `engine/` — Core pipeline code: parse, comprehend, extract, integrate.
 - `engine/src/llm/` — Shared LLM provider interface. Adapters: Anthropic, Kimi (OpenAI-compatible).
 - `engine/src/comprehend/` — Comprehend stage: structure inference, chapter comprehension, book synthesis.
 - `engine/src/extract/` — Extract stage: per-section atom extraction, frame type registry, atom validation.
+- `engine/src/retrieve/` — Retrieve stage: BM25 + vector + RRF hybrid fusion.
+- `engine/src/eval/` — Evaluation framework: 9 checks across 3 layers.
 - `engine/data/` — Static data files. `core-frames.json` has 17 core frame types.
 - `engine/test/` — Tests mirroring engine structure. Fixtures in `engine/test/parse/fixtures/`.
+- `seisei/` — Skill authoring engine (separate project). Turns knowledge into Claude Code skills.
+  - `PRD.md` — Product requirements document.
+  - `design/` — Technical design specs (architecture, ingest, merge, compose).
 
 ## Commands
 - Site dev: `cd site && npm run dev`
@@ -34,6 +42,9 @@ any LLM can use to reason like a domain expert. NOT a chatbot or agent.
 - Frame types follow a registry pattern: core types are fixed, domain types are proposed by the extraction pipeline and reviewed.
 - Each pipeline stage (parse, comprehend, extract, integrate) is its own module with its own tests.
 - LLM calls are wrapped in a provider interface — never call Anthropic SDK directly from pipeline logic.
+- Knowledge Exchange (KX) is the portable interchange format between tools. See design/07-knowledge-exchange.md.
+- Metis produces KX via the Apply pipeline's `--format kx` flag. Seisei consumes KX as its primary input.
+- Seisei is a separate project with its own design docs. It shares the KX format spec but not Metis internals.
 
 ## Gotchas
 - The site/ and engine/ are separate packages with separate dependencies.
