@@ -27,11 +27,12 @@ export async function understand(
 		const response = await provider.sendMessage({
 			messages,
 			responseSchema: getQueryPlanSchema(),
-			maxTokens: 1024,
+			maxTokens: 4096,
 			temperature: 0.1,
 		});
 
-		const raw = JSON.parse(response.content) as Record<string, unknown>;
+		const cleaned = stripMarkdownFencing(response.content);
+		const raw = JSON.parse(cleaned) as Record<string, unknown>;
 		return normalizeQueryPlan(raw);
 	} catch (error) {
 		throw new ApplyError(
@@ -90,6 +91,17 @@ function getNumber(obj: Record<string, unknown>, ...keys: string[]): number {
 		if (typeof obj[key] === "number") return obj[key] as number;
 	}
 	return 0.5;
+}
+
+function stripMarkdownFencing(text: string): string {
+	const trimmed = text.trim();
+	if (trimmed.startsWith("```")) {
+		const lines = trimmed.split("\n");
+		// Remove first line (```json) and last line (```)
+		const inner = lines.slice(1, lines.length - 1).join("\n");
+		return inner.trim();
+	}
+	return trimmed;
 }
 
 function getGroupingStrategy(raw: Record<string, unknown>): GroupingStrategy {
