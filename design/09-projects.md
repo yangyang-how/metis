@@ -110,21 +110,31 @@ Options:
 
 1. Load `<project-dir>/.metis/config.json` to determine the project's
    strictness profile (default: `standard`).
-2. Scan `<project-dir>/sources/` recursively.
-3. For each file, compute `sourceId = sha1(relPath)[:12]` and
-   `contentHash = sha256(bytes)`.
-4. Load `<project-dir>/.metis/manifest.json` (create empty if absent).
+2. Scan `<project-dir>/sources/` recursively. Compute
+   `contentHash = sha256(bytes)` for each file.
+3. Load `<project-dir>/.metis/manifest.json` (create empty if absent).
+4. Match scanned files to manifest entries (see §8 for rename detection):
+   - First pass: match by `relPath`.
+   - Second pass: match unmatched files to unmatched manifest entries
+     by `contentHash` (rename detection). If a hash matches exactly one
+     unmatched manifest entry, preserve its `sourceId` and update
+     `relPath`. If multiple candidates share the same hash, treat as
+     **ambiguous** — assign new sourceIds and archive the unmatched
+     manifest entries.
 5. Diff:
-   - **new** = in sources, not in manifest → learn
-   - **changed** = in both, `contentHash` differs → archive old atoms,
+   - **new** = no manifest match → assign UUID sourceId, learn
+   - **changed** = matched, `contentHash` differs → archive old atoms,
      then learn
-   - **unchanged** = in both, hashes match → skip
-   - **removed** = in manifest, not in sources → archive atoms,
+   - **unchanged** = matched, hashes match → skip
+   - **removed** = in manifest, no scanned match → archive atoms,
      remove from manifest (warn the user, don't error)
 6. For each file to learn: run parse → comprehend → extract (with
-   profile-appropriate validation) → integrate, merging into the
-   existing graph.
-7. Update `manifest.json` atomically on completion.
+   profile-appropriate validation). Collect all new atoms.
+7. If any atoms were added or removed: **rebuild all derived graph state**
+   (entities, relations, embeddings) from the full live atom set.
+   Embeddings are reused by atom ID for unchanged atoms — only
+   new/changed atoms are re-embedded. See §8 for rationale.
+8. Update `manifest.json` atomically on completion.
 
 **Behavior (`--rebuild`):**
 
@@ -250,19 +260,19 @@ interface CandidateAtom {
     quotedSpans: SourceSpan[];          // verbatim source quotes
     roleSpans?: Record<string, SourceSpan>;  // per-role verbatim spans
     roleTypes?: Record<string, "verbatim" | "paraphrase">;
-    extraction: {
-      extractedAt: string;              // ISO 8601
-      provider: string;
-      model: string;
-      promptVersion: string;            // sha256 of the extract prompt
-    };
+    extraction:
+      | { method: "llm"; provider: string; model: string;
+          promptVersion: string; extractedAt: string }
+      | { method: "human"; author: string; extractedAt: string }
+      | { method: "algorithmic"; tool: string; version: string;
+          extractedAt: string };
   };
 
   conditions: string[];
   confidence: number;
 
   source: {
-    sourceId: string;                   // sha1(relPath within sources/)[:12]
+    sourceId: string;                   // manifest-assigned UUID, stable across renames
     contentHash: string;                // sha256 of source file bytes
     title: string;
     authors: string[];
@@ -286,15 +296,21 @@ interface SourceSpan {
 ### Content-addressed atom IDs
 
 ```
-atom.id = sha256(jcs({ frame, roles, quotedSpans[].text, source.sourceId }))
+atom.id = sha256(jcs({ frame, roles, conditions, source.sourceId }))
 ```
 
-This means:
+The identity payload matches the knowledge model:
+- `frame` + `roles` + `conditions` = the scoped claim.
+- `source.sourceId` = which source it came from (manifest-assigned UUID,
+  stable across file renames).
+- Two claims with the same roles but different `conditions` are different
+  atoms (different scoping = different knowledge).
+- `quotedSpans`, `provenance`, `confidence`, `content`, `domain`,
+  `examples`, and `flags` are **excluded** — they do not define what the
+  claim *is*. Different quote windows or extraction methods do not change
+  the identity of the underlying knowledge.
 - Same source + same extraction → same atom ID. Durable across re-learns.
 - Different model producing different roles → different ID (correct).
-- The `content` display text is excluded — rewording doesn't change identity.
-- The `roles` values are included because under strict profile, roles are
-  verbatim spans and contribute to identity.
 
 ### Profile-aware validation during extraction
 
@@ -356,7 +372,7 @@ retrieve, eval, and tests.
   "lastLearnedAt": "2026-04-15T11:42:00Z",
   "sources": [
     {
-      "sourceId": "a1b2c3d4e5f6",
+      "sourceId": "f47ac10b-58cc",
       "relPath": "sources/porter-competitive-strategy.epub",
       "contentHash": "sha256:...",
       "format": "epub",
@@ -389,26 +405,22 @@ def learn(project_dir, rebuild=False):
     manifest = load_manifest(project_dir) or empty_manifest()
     scanned = scan_sources(project_dir / "sources")
 
-    to_learn = []
-    to_archive = []
-
-    for relPath, (sid, hash, fmt) in scanned.items():
-        existing = manifest.find(sid)
-        if existing is None:
-            to_learn.append(("new", relPath, sid, hash, fmt))
-        elif existing.contentHash != hash:
-            to_learn.append(("changed", relPath, sid, hash, fmt))
-            to_archive.append(sid)
-
-    for entry in manifest.sources:
-        if entry.sourceId not in scanned_ids:
-            to_archive.append(entry.sourceId)
+    # --- Match scanned files to manifest entries ---
+    matched, to_learn, to_archive = match_sources(scanned, manifest)
+    # match_sources implements the two-pass algorithm:
+    #   Pass 1: match by relPath
+    #   Pass 2: match unmatched files by contentHash (rename detection)
+    #     - single hash match → rename, preserve sourceId, update relPath
+    #     - multiple hash matches → ambiguous, assign new sourceIds
+    #   Remaining unmatched files → truly new, assign UUID sourceId
+    #   Remaining unmatched manifest entries → truly removed
 
     if not to_learn and not to_archive:
         print("Up to date.")
         return
 
     graph = load_graph(project_dir / ".metis") or empty_graph()
+    atoms_changed = False
 
     # Archive before removal — never silently lose atoms
     for sid in to_archive:
@@ -416,8 +428,9 @@ def learn(project_dir, rebuild=False):
         old_hash = manifest.find(sid).contentHash
         save_to_history(project_dir / ".metis" / "history" / sid / old_hash,
                         old_atoms)
-        graph = remove_atoms_by_source(graph, sid)
+        graph.atoms = [a for a in graph.atoms if a.source.sourceId != sid]
         manifest.remove(sid)
+        atoms_changed = True
 
     for kind, relPath, sid, hash, fmt in to_learn:
         parsed = parse_file(relPath, format=fmt)
@@ -427,8 +440,27 @@ def learn(project_dir, rebuild=False):
                         profile=profile)
         # Profile-aware validation: rejects atoms that don't meet the bar
         atoms = validate_atoms(atoms, profile, parsed.sectionTexts)
-        graph = integrate(graph, atoms)
+        graph.atoms.extend(atoms)
         manifest.upsert(entry_for(relPath, sid, hash, fmt, parsed, atoms))
+        atoms_changed = True
+
+    # --- Full-rebuild integration after any source mutation ---
+    # Entities, relations, and cross-references are global derived state.
+    # Partial recomputation is where silent corruption lives: entity clusters
+    # can split, surviving relations can change, cross-domain links can
+    # re-route. The only correct v1 approach is full rebuild of derived
+    # state from the live atom set.
+    if atoms_changed:
+        graph.entities = build_entity_index(graph.atoms, llmProvider)
+        graph.relations = build_relations(graph.atoms, graph.entities,
+                                          llmProvider)
+        # Embeddings: reuse by atom ID for unchanged atoms.
+        # Only new/changed atoms are re-embedded.
+        existing_embeddings = {id: vec for id, vec in graph.embeddings.items()
+                               if id in live_atom_ids(graph.atoms)}
+        new_atoms = [a for a in graph.atoms if a.id not in existing_embeddings]
+        new_embeddings = embed(new_atoms, embeddingProvider)
+        graph.embeddings = {**existing_embeddings, **new_embeddings}
 
     save_graph(project_dir / ".metis", graph)
     save_manifest_atomically(project_dir / ".metis" / "manifest.json", manifest)
@@ -450,7 +482,29 @@ def learn(project_dir, rebuild=False):
   report includes a per-source acceptance rate. If below 50%, warn the user
   that the extract prompt may need tuning for this profile.
 
-### History (append-only atom archive)
+### Why full-rebuild integration after any mutation
+
+Entities, relations, reinforcement counts, contradiction links, and
+cross-domain links are **global derived state**. When atoms are added or
+removed, partial recomputation is insufficient:
+
+- Entity clusters can split when a bridging source is removed.
+- Surviving-surviving relations can change when entity resolution changes.
+- Cross-domain links can disappear or re-route.
+- Reinforcement/contradiction state is not a property of just the
+  removed atoms' direct edges — surviving atoms' relationships depend
+  on the full graph topology.
+
+The correct v1 boundary: **incremental extraction, full-rebuild
+integration.** The LLM cost of comprehend + extract is paid only for
+new/changed sources. The integrate cost (entity dedup, relation
+classification) is paid for the full atom set after any mutation, but
+this is cheaper than extraction and guaranteed correct.
+
+Future versions (v2+) may define an affected-subgraph recomputation
+algorithm. v1 does not attempt partial integration.
+
+### History (atom archive)
 
 `.metis/history/<sourceId>/<contentHash>/atoms.json` stores atoms that were
 removed from the live graph. The structure:
@@ -559,6 +613,14 @@ Ordered, each step independently shippable and testable.
 - **Checkpoint keying:** switches from `bookSlug` to `sourceId`. Callers that
   reference `bookSlug` in the checkpoint manager are updated as part of
   step 1 of the implementation plan.
+- **Source identity:** `sourceId` is a manifest-assigned UUID, not derived
+  from the file path. Renames are detected by matching unmatched files
+  against unmatched manifest entries by `contentHash`. Ambiguous hash
+  matches (multiple candidates) are not auto-resolved — new sourceIds
+  are assigned. See §8.
+- **Integration after mutation:** any atom addition or removal triggers
+  full rebuild of derived graph state (entities, relations). Embeddings
+  are reused by atom ID for unchanged atoms. See §8.
 - **Strictness is per-project, not global.** Three profiles: `casual`,
   `standard`, `strict`. Default is `standard`. Config lives in
   `<project-dir>/.metis/config.json`.
@@ -625,20 +687,35 @@ Every link in this chain is verifiable:
 
 ### History as provenance trail
 
-Under `standard` and `strict` profiles, the `.metis/history/` directory
-preserves every atom that was ever extracted and later superseded. This
-means:
+The `.metis/history/` directory preserves atoms that were superseded.
+The guarantees differ by profile:
 
-- If a source file changes and atoms are re-extracted, the old atoms are
-  archived with their content hash and timestamp.
-- If a prompt or model changes and produces different atoms from the same
-  source, the previous extraction is preserved.
-- A complete audit trail exists: "what did Metis believe at time T, based
-  on what source version, extracted by what model?"
+**`strict`:** history is **append-only and durable**. Removed atoms are
+always archived with their content hash and timestamp. History is never
+deleted, even on crashes — the archive write completes before the live
+graph is modified. This is the level required for liability-grade audit:
+"what did Metis believe at time T, based on what source version,
+extracted by what model?" has a complete answer.
 
-The history is not indexed or searchable in v1. It's a flat archive. Future
-versions may add tooling to diff between extractions or surface knowledge
-drift.
+**`standard`:** history is **best-effort**. On clean runs, atoms are
+archived before removal. On crashes mid-learn, history may be
+incomplete (the archive write and the graph update are not atomic under
+standard). This is structural provenance — every live atom has full
+provenance metadata, but the historical record of superseded atoms is
+a bonus, not a guarantee.
+
+**`casual`:** history is **optional**. The engine attempts to archive
+but does not guarantee preservation.
+
+The "liability-grade provenance" narrative in this document applies
+specifically to `strict` profile projects. `standard` provides
+structural provenance (every atom has quotedSpans, roleTypes, extraction
+metadata) but not a guaranteed historical trail. `casual` provides
+minimal provenance. Do not conflate the three.
+
+The history is not indexed or searchable in v1. It's a flat archive.
+Future versions may add tooling to diff between extractions or surface
+knowledge drift.
 
 ## 13. Strictness profiles (detail)
 

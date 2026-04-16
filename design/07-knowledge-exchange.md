@@ -59,10 +59,13 @@ A valid KX document, at any profile, guarantees the following:
    satisfies all standard-profile rules. The validator enforces this —
    the profile is verifiable, not advisory.
 5. **The `contentId` field** is the SHA-256 hash of the document's
-   semantic payload under JCS canonicalization (see §9). Two documents
-   with the same `contentId` contain the same knowledge.
+   semantic payload under JCS canonicalization (see §10). The exact
+   fields included are enumerated in §10. Two documents with the same
+   `contentId` contain the same knowledge in the same classification
+   from the same bibliographic sources.
 6. **The `docId` field** is the SHA-256 hash of the complete document
-   under JCS canonicalization. Two documents with the same `docId` are
+   (excluding `docId` and `contentId` themselves) under JCS
+   canonicalization. Two documents with the same `docId` are
    byte-for-byte identical after canonicalization.
 
 Additional guarantees by profile are listed in §3.
@@ -154,9 +157,12 @@ research, medical claims — anything liability-bearing.
   whitespace collapse).
 - Cross-language extraction blocked. Units must be in the source
   language. Translation/canonicalization for display is a separate,
-  explicitly labeled step.
+  explicitly labeled step. Enforced via `language` field on `KXSource`
+  and `KXUnit` (see §9) — validator checks unit language matches source
+  language.
 - Confidence floor: 0.7.
-- Source `sourceId` and `contentHash` required on `KXSource`.
+- Source `sourceId`, `contentHash`, and `language` required on `KXSource`.
+- `language` required on every `KXUnit`.
 
 ### Profile enforcement
 
@@ -223,13 +229,13 @@ interface KXUnit {
     // Per-role provenance flag (required under standard and strict)
     roleTypes?: Record<string, "verbatim" | "paraphrase">;
 
-    // How this unit was extracted
-    extraction: {
-      extractedAt: string;      // ISO 8601
-      provider: string;         // "kimi" | "anthropic" | ...
-      model: string;            // "kimi-k2-0711-preview"
-      promptVersion: string;    // hash of the extract prompt
-    };
+    // How this unit was produced — discriminated union
+    extraction:
+      | { method: "llm"; provider: string; model: string;
+          promptVersion: string; extractedAt: string }
+      | { method: "human"; author: string; extractedAt: string }
+      | { method: "algorithmic"; tool: string; version: string;
+          extractedAt: string };
   };
 
   conditions: string[];
@@ -237,8 +243,11 @@ interface KXUnit {
 
   source: {
     ref: string;                // matches KXSource.id
-    location?: string;          // "Ch.3, §2" | "page 47"
+    locations?: string[];       // "Ch.3, §2", "Ch.7, §1" — discovery metadata, not identity
   };
+
+  // Language of this unit (required under strict for cross-language check)
+  language?: string;            // BCP 47 tag, e.g. "en", "zh-Hans"
 
   domains: string[];
 }
@@ -271,10 +280,23 @@ describe the same knowledge at different fidelity levels.
 
 Under `strict`, every role in `roles` must have a corresponding entry
 in `provenance.roleSpans` containing the exact source text, and every
-entry in `provenance.roleTypes` must be `"verbatim"`. The value in
-`roles` is the canonical/display form — it may differ from the verbatim
-span (e.g., for readability or normalization), but the span is the
-evidence.
+entry in `provenance.roleTypes` must be `"verbatim"`. Under strict,
+`roles[key]` **must equal** `provenance.roleSpans[key].text` after the
+same normalization used for span verification (Unicode NFC, whitespace
+collapse, quote/dash normalization). There is no separate "display form"
+under strict — the role value IS the verbatim span.
+
+Under `standard`, `roles[key]` may differ from `roleSpans[key].text`.
+The role is the canonical/display form; the span is the evidence. Both
+are present; consumers choose which to use.
+
+### source.location is not identity
+
+A unit's `source.locations` array records where in the source the claim
+was found. If the same claim appears in Ch.3 §2 and Ch.7 §1 of the
+same source, that is **one unit** with two locations, not two units.
+Locations are discovery metadata — they do not contribute to unit
+identity (see §10).
 
 Example under `strict`:
 
@@ -307,6 +329,7 @@ Example under `strict`:
       "consequence": "verbatim"
     },
     "extraction": {
+      "method": "llm",
       "extractedAt": "2026-04-15T12:00:00Z",
       "provider": "anthropic",
       "model": "claude-sonnet-4-6",
@@ -315,7 +338,8 @@ Example under `strict`:
   },
   "conditions": ["feeding infants"],
   "confidence": 0.98,
-  "source": { "ref": "aap-feeding-guide", "location": "Ch.4, §2" },
+  "source": { "ref": "aap-feeding-guide", "locations": ["Ch.4, §2"] },
+  "language": "en",
   "domains": ["pediatric-nutrition", "food-safety"]
 }
 ```
@@ -413,7 +437,7 @@ their respective scopes.
       "content": "Remove everything that isn't essential.",
       "conditions": ["consumer web", "casual users"],
       "confidence": 0.91,
-      "source": { "ref": "krug-dmmt", "location": "Ch.3" },
+      "source": { "ref": "krug-dmmt", "locations": ["Ch.3"] },
       "domains": ["usability"]
     },
     {
@@ -422,7 +446,7 @@ their respective scopes.
       "content": "Expert users need rich affordances, even at the cost of surface complexity.",
       "conditions": ["professional tools", "expert users"],
       "confidence": 0.89,
-      "source": { "ref": "cooper-af", "location": "Ch.12" },
+      "source": { "ref": "cooper-af", "locations": ["Ch.12"] },
       "domains": ["interaction-design"]
     }
   ],
@@ -447,8 +471,11 @@ interface KXSource {
   id: string;                   // referenced by unit.source.ref
 
   // Provenance fields (required under standard and strict profiles)
-  sourceId?: string;            // stable hash of file path within project
+  sourceId?: string;            // manifest-assigned stable UUID
   contentHash?: string;         // sha256 of source file bytes at learn time
+
+  // Language (required under strict for cross-language enforcement)
+  language?: string;            // BCP 47 tag, e.g. "en", "zh-Hans"
 
   type: "book" | "article" | "case-study" | "notes"
       | "guide" | "transcript" | "other";
@@ -472,22 +499,70 @@ consumer should treat the units as unverified.
 
 ### Two hashes, two questions
 
-Every KX document carries two content-addressed identifiers:
+Every KX document carries two content-addressed identifiers. Both
+exclude themselves from the hash input (the document is serialized
+with `contentId` and `docId` fields removed before hashing).
 
 - **`contentId`** = `sha256(jcs(semanticPayload))` — answers "is this
-  the same knowledge?" Computed over units, relations, sources, and
-  domains. Excludes `generatedAt`, `generatedBy`, `docId`, and
-  extraction timestamps. Stable across re-exports that produce the
-  same knowledge from the same graph.
+  the same knowledge?" Stable across re-exports that produce the same
+  knowledge from the same graph.
 
-- **`docId`** = `sha256(jcs(fullDocument))` — answers "is this the
-  exact same artifact?" Computed over the entire document including
-  all metadata. Every re-export produces a new `docId` even if the
-  knowledge is identical (because timestamps differ).
+- **`docId`** = `sha256(jcs(fullDocument minus docId and contentId))` —
+  answers "is this the exact same artifact?" Every re-export produces a
+  new `docId` even if the knowledge is identical (because timestamps
+  differ).
 
 Consumers cite `docId` for compliance-grade provenance ("this exact
 artifact backs this article"). Consumers cite `contentId` for
 aggregation ("show me everything citing this body of knowledge").
+
+### contentId exact field specification
+
+`contentId` is computed over the following fields, serialized via JCS:
+
+**Units** (sorted by `id` before serialization):
+
+| Field | Included | Rationale |
+|---|---|---|
+| `kind` | Yes | Type of knowledge |
+| `roles` | Yes | The structured claim |
+| `conditions` | Yes | Scoping — different conditions = different knowledge |
+| `source.ref` | Yes | Which source it came from |
+| `domains` | Yes | Topic classification |
+| `content` | No | Display text, not semantic identity |
+| `confidence` | No | Subjective assessment, not the claim itself |
+| `source.locations` | No | Where found, not what it says |
+| `provenance` | No | How extracted, not what it says |
+| `language` | No | Property of the source, not the knowledge |
+
+**Relations** (sorted by `from` + `to` + `type`):
+
+| Field | Included | Rationale |
+|---|---|---|
+| `from` | Yes | Which units are linked |
+| `to` | Yes | |
+| `type` | Yes | Semantic relationship |
+| `confidence` | No | Subjective |
+| `note` | No | Human explanation |
+
+**Meta:**
+
+| Field | Included | Rationale |
+|---|---|---|
+| `sources[].id, .type, .title, .authors` | Yes | Identity of what was read |
+| `sources[].sourceId, .contentHash, .url, .language` | No | Implementation/discovery metadata |
+| `meta.domains` (sorted) | Yes | Topic scope |
+| `meta.generatedBy, .generatedAt` | No | Production metadata |
+
+**Conscious tradeoff:** including `domains` and source bibliographic
+metadata (`title`, `authors`) in `contentId` means that retagging
+domains or correcting a source's author name changes `contentId`,
+even if the extracted units are unchanged. This is by design —
+`contentId` represents "same knowledge in the same classification
+from the same bibliographic sources." Consumers who need a narrower
+identity that ignores metadata corrections should aggregate by
+unit-level `id` fields, which are stable across domain retagging and
+source metadata edits.
 
 ### Canonicalization
 
@@ -507,15 +582,25 @@ interop. Using `JSON.stringify` with a key-sort is not sufficient
 
 ### Unit IDs are content-addressed
 
-`KXUnit.id` = `sha256(jcs({ kind, roles, quotedSpans, sourceRef }))`.
+```
+unit.id = sha256(jcs({ kind, roles, conditions, source.ref }))
+```
 
-This means:
+The identity payload matches the knowledge model:
+- `kind` + `roles` + `conditions` = the scoped claim.
+- `source.ref` = which source it came from.
+- Two claims with the same roles but different conditions are different
+  units (e.g., "don't feed honey to infants" scoped to "under 1 year"
+  vs scoped to "immunocompromised children").
+- `source.locations` is **excluded** — the same claim found in Ch.3
+  and Ch.7 of the same source is one unit with two locations, not two
+  units.
+- `content`, `confidence`, `provenance`, `domains`, and `language` are
+  **excluded** — they do not define what the claim *is*.
 - Re-learning the same source and producing the same extraction yields
   the same unit IDs. Durable cross-document references work.
 - A different model producing slightly different roles yields different
   IDs (correct — it's a different unit).
-- The `content` field (human-readable) is excluded from the hash so
-  that rewording the display text doesn't change identity.
 
 ### Immutability guarantee
 
@@ -577,16 +662,39 @@ interface Violation {
 }
 ```
 
-The validator checks:
+**`validateKX(doc, options?)`** — structural validation (no source
+files needed):
+
 - Schema shape (required fields, correct types)
-- Profile compliance (all rules for the claimed profile are met)
+- Profile compliance (all rules for the claimed profile are met,
+  including field presence, roleType flags, confidence floors)
 - Referential integrity (all `source.ref` → `KXSource`, all relation
   IDs → `KXUnit`)
 - Content-address verification (`contentId` and `docId` recomputed
-  and compared)
-- Span verification (under `standard` and `strict`: every `quotedSpan`
-  is present, text fields are non-empty; under `strict`: every
-  `roleSpan` text is verifiable against source if source is available)
+  from the exact field specifications in §10 and compared)
+- Extraction method shape (discriminated union validated per `method`)
+- Language consistency under strict (unit `language` matches source
+  `language` via `source.ref`)
+
+The validator **does not** verify that quoted spans exist in source
+files. It checks that span fields are present, non-empty, and
+structurally correct — not that they are truthful. Structural
+validation is what the contract enforces.
+
+**`verifySpans(doc, sourceDir)`** — source verification (requires
+original project directory):
+
+- For each unit, loads the source file referenced by `source.ref`
+- Verifies `contentHash` matches the file on disk
+- Verifies every `quotedSpan.text` is a substring of the section text
+  (after normalization)
+- Under strict: verifies every `roleSpan.text` is a substring
+- Reports per-unit pass/fail with near-miss diagnostics
+
+This is an **audit operation**, not a contract operation. A consumer
+may not have the source files. `validateKX` is always sufficient to
+decide whether to accept a document. `verifySpans` is for producers
+who want to verify their own output, or auditors with source access.
 
 ### Conformance suite (future direction)
 
@@ -599,14 +707,6 @@ The suite is not shipped in v1, but the spec describes what it would
 check. A future consumer who needs independent trust can reimplement
 the validator against the suite and catch any drift between the spec
 and Metis's reference implementation.
-
-### Validator vs source verification
-
-The validator checks structural and referential integrity. It does
-**not** verify that quoted spans actually exist in the source files,
-because the validator may not have access to the source files. Source
-verification is a separate operation (`verifySpans(doc, sourceDir)`)
-that requires the original project directory.
 
 ---
 
@@ -705,6 +805,7 @@ A small KX document under `standard` profile:
           "meaning": "paraphrase"
         },
         "extraction": {
+          "method": "llm",
           "extractedAt": "2026-04-15T11:30:00Z",
           "provider": "anthropic",
           "model": "claude-sonnet-4-6",
@@ -713,7 +814,7 @@ A small KX document under `standard` profile:
       },
       "conditions": [],
       "confidence": 0.95,
-      "source": { "ref": "norman-doet", "location": "Ch.1" },
+      "source": { "ref": "norman-doet", "locations": ["Ch.1"] },
       "domains": ["interaction-design"]
     },
     {
@@ -739,6 +840,7 @@ A small KX document under `standard` profile:
           "rationale": "verbatim"
         },
         "extraction": {
+          "method": "llm",
           "extractedAt": "2026-04-15T11:32:00Z",
           "provider": "anthropic",
           "model": "claude-sonnet-4-6",
@@ -747,7 +849,7 @@ A small KX document under `standard` profile:
       },
       "conditions": ["web pages", "screen-based reading"],
       "confidence": 0.92,
-      "source": { "ref": "krug-dmmt", "location": "Ch.2" },
+      "source": { "ref": "krug-dmmt", "locations": ["Ch.2"] },
       "domains": ["usability", "web-design"]
     }
   ],
