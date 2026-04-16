@@ -38,11 +38,11 @@ async function runLearn(argv: string[]) {
 	let yes = false;
 	let dryRun = false;
 	let comprehendProvider = "kimi";
-	let comprehendModel = "kimi-k2.5";
+	let comprehendModel = "kimi-for-coding";
 	let extractProvider = "kimi";
-	let extractModel = "kimi-k2.5";
+	let extractModel = "kimi-for-coding";
 	let integrateProvider = "kimi";
-	let integrateModel = "kimi-k2.5";
+	let integrateModel = "kimi-for-coding";
 	let embeddingModel = "text-embedding-3-large";
 
 	for (let i = 0; i < argv.length; i++) {
@@ -220,11 +220,11 @@ function printUsage() {
 	console.error("  --yes                             Skip confirmation prompts");
 	console.error("  --dry-run                         Show what would be learned");
 	console.error("  --comprehend-provider <name>      (default: kimi)");
-	console.error("  --comprehend-model <name>         (default: kimi-k2.5)");
+	console.error("  --comprehend-model <name>         (default: kimi-for-coding)");
 	console.error("  --extract-provider <name>         (default: kimi)");
-	console.error("  --extract-model <name>            (default: kimi-k2.5)");
+	console.error("  --extract-model <name>            (default: kimi-for-coding)");
 	console.error("  --integrate-provider <name>       (default: kimi)");
-	console.error("  --integrate-model <name>          (default: kimi-k2.5)");
+	console.error("  --integrate-model <name>          (default: kimi-for-coding)");
 	console.error("  --embedding-model <name>          (default: text-embedding-3-large)");
 	console.error("");
 	console.error("Apply options:");

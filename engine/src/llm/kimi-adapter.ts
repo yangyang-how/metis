@@ -21,9 +21,7 @@ import type {
 const KIMI_BASE_URL = "https://api.kimi.com/coding/v1";
 
 const KIMI_HEADERS = {
-	"User-Agent": "RooCode/3.30.3",
-	"HTTP-Referer": "https://github.com/RooVetGit/Roo-Cline",
-	"X-Title": "Roo Code",
+	"User-Agent": "claude-code/0.1.0",
 };
 
 /** Injected dependency for testing */
@@ -38,12 +36,13 @@ export function createKimiProvider(
 	config: ProviderConfig,
 	mockClient?: OpenAICompatibleClient,
 ): LLMProvider {
-	const apiKey = config.apiKey ?? process.env.KIMI_API_KEY;
+	const apiKey =
+		config.apiKey ?? process.env.MOONSHOT_API_KEY ?? process.env.KIMI_API_KEY;
 	const client = mockClient ?? createRealClient(apiKey);
 
 	const capabilities: ProviderCapabilities = {
 		vision: false,
-		structuredOutput: false,
+		structuredOutput: true,
 		maxContextTokens: inferMaxTokens(config.model),
 	};
 
@@ -54,8 +53,8 @@ export function createKimiProvider(
 				translateMessage(msg, request.responseSchema),
 			);
 
-			// If responseSchema provided and there's a system message,
-			// inject schema instruction into it (Kimi lacks native structured output)
+			// Keep schema instruction in system prompt for guidance,
+			// but also use native JSON mode for reliable output
 			if (request.responseSchema && messages.length > 0) {
 				const systemIdx = messages.findIndex((m) => m.role === "system");
 				if (systemIdx >= 0) {
@@ -69,8 +68,13 @@ export function createKimiProvider(
 			const args: Record<string, unknown> = {
 				model: config.model,
 				messages,
-				max_tokens: request.maxTokens ?? 4096,
+				max_tokens: request.maxTokens ?? 16384,
 			};
+
+			// Enable native JSON mode when schema is requested
+			if (request.responseSchema) {
+				args.response_format = { type: "json_object" };
+			}
 
 			if (request.temperature !== undefined) {
 				args.temperature = request.temperature;
@@ -99,14 +103,12 @@ function translateMessage(
 	msg: Message,
 	_schema?: Record<string, unknown>,
 ): { role: string; content: string } {
-	// OpenAI format: messages have role + content as string
 	const textParts: string[] = [];
 
 	for (const part of msg.content) {
 		if (part.type === "text") {
 			textParts.push(part.text);
 		} else if (part.type === "image") {
-			// Kimi is text-only — convert images to placeholder
 			textParts.push("[Image]");
 		}
 	}
@@ -153,5 +155,5 @@ function inferMaxTokens(model: string): number {
 	if (model.includes("32k")) return 32_000;
 	if (model.includes("8k")) return 8_000;
 	if (model.includes("k2")) return 128_000;
-	return 128_000; // default for Kimi
+	return 262_144; // Kimi coding default context
 }
