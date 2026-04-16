@@ -48,7 +48,8 @@ Respond with a JSON object using EXACTLY these field names (camelCase):
       "conditions": ["<when this knowledge applies>"],
       "confidence": 0.0-1.0,
       "domain": ["<topic tags>"],
-      "examples": ["<optional illustrative examples>"]
+      "examples": ["<optional illustrative examples>"],
+      "quotedSpans": ["<EXACT verbatim text from the source that supports this atom>"]
     }
   ],
   "proposedFrameTypes": [
@@ -68,6 +69,7 @@ Respond with a JSON object using EXACTLY these field names (camelCase):
 4. Set confidence based on how clearly the source states this knowledge (1.0 = explicit, 0.5 = implied).
 5. If knowledge doesn't fit any existing frame type, propose a new one in proposedFrameTypes.
 6. proposedFrameTypes is optional — only include it if you actually propose new types.
+7. quotedSpans is REQUIRED. Each atom MUST include at least one verbatim quote copied EXACTLY from the section content. Do not paraphrase — copy the exact words as they appear in the text. The quote should be the sentence or passage that directly states the knowledge this atom captures.
 
 IMPORTANT: Use camelCase field names exactly as shown. Do NOT use snake_case.
 Respond with valid JSON only. No markdown code fences. No explanation outside the JSON.`,
@@ -138,8 +140,9 @@ export function getExtractionResponseSchema(): Record<string, unknown> {
 						confidence: { type: "number" },
 						domain: { type: "array", items: { type: "string" } },
 						examples: { type: "array", items: { type: "string" } },
+						quotedSpans: { type: "array", items: { type: "string" } },
 					},
-					required: ["frame", "roles"],
+					required: ["frame", "roles", "quotedSpans"],
 				},
 			},
 			proposedFrameTypes: {
