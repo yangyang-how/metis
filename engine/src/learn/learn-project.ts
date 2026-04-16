@@ -55,12 +55,14 @@ export async function learnProject(
 	const config = loadProjectConfig(projectDir);
 	const profile = config.profile;
 
+	let manifest: Manifest;
 	if (rebuild) {
 		onProgress("[learn] Rebuild mode — archiving existing state...");
 		archiveFullState(metisDir);
+		manifest = emptyManifest(profile);
+	} else {
+		manifest = loadManifest(projectDir) ?? emptyManifest(profile);
 	}
-
-	const manifest = loadManifest(projectDir) ?? emptyManifest(profile);
 	const { files: scanned, unsupported } = scanSources(projectDir);
 
 	if (unsupported.length > 0) {

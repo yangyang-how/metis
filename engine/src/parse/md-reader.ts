@@ -297,9 +297,31 @@ function parseBlocks(lines: string[]): ContentBlock[] {
 			continue;
 		}
 
-		blocks.push({ type: "paragraph", text: line });
+		blocks.push({ type: "paragraph", text: cleanInlineMarkdown(line) });
 		i++;
 	}
 
 	return blocks;
+}
+
+/**
+ * Strip inline markdown formatting to produce clean text.
+ * Removes images, simplifies links to just their text, strips emphasis markers.
+ */
+function cleanInlineMarkdown(text: string): string {
+	return (
+		text
+			// Remove image tags: ![alt](url) → alt (or empty)
+			.replace(/!\[([^\]]*)\]\([^)]*\)/g, "$1")
+			// Simplify links: [text](url) → text
+			.replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+			// Remove bare URLs that aren't useful content
+			.replace(/https?:\/\/[^\s)]+/g, "")
+			// Strip bold/italic markers
+			.replace(/\*{1,3}([^*]+)\*{1,3}/g, "$1")
+			.replace(/_{1,3}([^_]+)_{1,3}/g, "$1")
+			// Collapse multiple spaces left by removals
+			.replace(/\s{2,}/g, " ")
+			.trim()
+	);
 }
