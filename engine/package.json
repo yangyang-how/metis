@@ -18,7 +18,9 @@
     "fast-xml-parser": "^5.0.0",
     "fflate": "^0.8.0",
     "node-html-parser": "^7.0.0",
-    "openai": "^6.32.0"
+    "openai": "^6.32.0",
+    "pdf-parse": "^2.4.5",
+    "unpdf": "^1.6.0"
   },
   "trustedDependencies": [
     "@biomejs/biome"

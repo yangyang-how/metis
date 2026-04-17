@@ -7,7 +7,7 @@ export interface ManifestEntry {
 	sourceId: string;
 	relPath: string;
 	contentHash: string;
-	format: "epub" | "md";
+	format: "epub" | "md" | "pdf";
 	title: string;
 	authors: string[];
 	atomCount: number;
@@ -24,7 +24,7 @@ export interface Manifest {
 export interface ScannedFile {
 	relPath: string;
 	contentHash: string;
-	format: "epub" | "md";
+	format: "epub" | "md" | "pdf";
 }
 
 export interface MatchResult {
@@ -33,7 +33,7 @@ export interface MatchResult {
 		relPath: string;
 		sourceId: string;
 		contentHash: string;
-		format: "epub" | "md";
+		format: "epub" | "md" | "pdf";
 	}>;
 	toArchive: string[];
 	unchanged: string[];
@@ -70,8 +70,9 @@ export function computeContentHash(filePath: string): string {
 	return `sha256:${createHash("sha256").update(bytes).digest("hex")}`;
 }
 
-export function detectFormat(relPath: string): "epub" | "md" | null {
+export function detectFormat(relPath: string): "epub" | "md" | "pdf" | "pdf" | null {
 	if (relPath.endsWith(".epub")) return "epub";
+	if (relPath.endsWith(".pdf")) return "pdf";
 	if (relPath.endsWith(".md") || relPath.endsWith(".markdown")) return "md";
 	return null;
 }

@@ -13,6 +13,7 @@ import { parseContent } from "./content-parser";
 import { readEpub } from "./epub-reader";
 import { ParseError } from "./errors";
 import { parseMarkdown } from "./md-reader";
+import { parsePdf } from "./pdf-reader";
 import { parseToc } from "./toc-parser";
 import type {
 	Chapter,
@@ -26,6 +27,7 @@ import type {
 
 export { ParseError } from "./errors";
 export { parseMarkdown } from "./md-reader";
+export { parsePdf } from "./pdf-reader";
 export type {
 	Chapter,
 	ContentBlock,
@@ -45,6 +47,9 @@ export async function parseFile(filePath: string): Promise<DocumentTree> {
 	}
 	if (filePath.endsWith(".epub")) {
 		return parse({ filePath });
+	}
+	if (filePath.endsWith(".pdf")) {
+		return parsePdf(filePath);
 	}
 	throw new ParseError(
 		`Unsupported file format: ${filePath}`,
