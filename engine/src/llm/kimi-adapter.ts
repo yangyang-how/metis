@@ -1,40 +1,45 @@
 /**
- * Kimi adapter — OpenAI-compatible API with custom base URL.
+ * Kimi adapter — Anthropic Messages-compatible API.
  *
- * Kimi (Moonshot AI) uses the OpenAI message format. This adapter uses
- * the `openai` npm package with baseURL pointed at Kimi's API.
+ * As of 2026, Kimi Code's endpoint migrated from OpenAI-compatible
+ * /chat/completions to Anthropic Messages-compatible /v1/messages.
+ * This adapter uses the Anthropic SDK with base_url pointed at Kimi.
  *
- * This same pattern works for ANY OpenAI-compatible provider:
- * Ollama (local), Together, Groq, etc. — just change the baseURL.
+ * Key differences from direct Anthropic:
+ * - base_url: https://api.kimi.com/coding
+ * - API key: MOONSHOT_API_KEY (not ANTHROPIC_API_KEY)
+ * - Model: kimi-for-coding (the only model served)
+ * - Temperature: 0.0-1.0 only (>1.0 returns 400)
+ * - User-Agent whitelist: claude-code/0.1.0
+ * - supports_reasoning: true (K2.6 is a reasoning model)
  */
-import OpenAI from "openai";
+import Anthropic from "@anthropic-ai/sdk";
 import type {
 	LLMProvider,
 	LLMRequest,
 	LLMResponse,
-	Message,
 	MessageContent,
 	ProviderCapabilities,
 	ProviderConfig,
 } from "./types";
 
-const KIMI_BASE_URL = "https://api.kimi.com/coding/v1";
+const KIMI_BASE_URL = "https://api.kimi.com/coding";
 
 const KIMI_HEADERS = {
 	"User-Agent": "claude-code/0.1.0",
 };
 
 /** Injected dependency for testing */
-export interface OpenAICompatibleClient {
+export interface KimiClient {
 	create(args: Record<string, unknown>): Promise<{
-		choices: Array<{ message: { content: string | null } }>;
-		usage?: { prompt_tokens: number; completion_tokens: number };
+		content: Array<{ type: string; text?: string }>;
+		usage: { input_tokens: number; output_tokens: number };
 	}>;
 }
 
 export function createKimiProvider(
 	config: ProviderConfig,
-	mockClient?: OpenAICompatibleClient,
+	mockClient?: KimiClient,
 ): LLMProvider {
 	const apiKey =
 		config.apiKey ?? process.env.MOONSHOT_API_KEY ?? process.env.KIMI_API_KEY;
@@ -43,84 +48,86 @@ export function createKimiProvider(
 	const capabilities: ProviderCapabilities = {
 		vision: false,
 		structuredOutput: true,
-		maxContextTokens: inferMaxTokens(config.model),
+		maxContextTokens: 262_144,
 	};
 
 	return {
 		capabilities,
 		async sendMessage(request: LLMRequest): Promise<LLMResponse> {
-			const messages = request.messages.map((msg) =>
-				translateMessage(msg, request.responseSchema),
+			// Extract system message (Anthropic format: top-level param)
+			const systemMessages = request.messages.filter(
+				(m) => m.role === "system",
+			);
+			const nonSystemMessages = request.messages.filter(
+				(m) => m.role !== "system",
 			);
 
-			// Keep schema instruction in system prompt for guidance,
-			// but also use native JSON mode for reliable output
-			if (request.responseSchema && messages.length > 0) {
-				const systemIdx = messages.findIndex((m) => m.role === "system");
-				if (systemIdx >= 0) {
-					const existing = messages[systemIdx];
-					if (existing) {
-						existing.content += `\n\nRespond with JSON matching this schema:\n${JSON.stringify(request.responseSchema, null, 2)}\n\nRespond with valid JSON only.`;
-					}
-				}
+			let systemText = systemMessages
+				.flatMap((m) =>
+					m.content
+						.filter(
+							(c): c is Extract<MessageContent, { type: "text" }> =>
+								c.type === "text",
+						)
+						.map((c) => c.text),
+				)
+				.join("\n\n");
+
+			// Inject schema instruction into system prompt
+			if (request.responseSchema) {
+				systemText += `\n\nRespond with JSON matching this schema:\n${JSON.stringify(request.responseSchema, null, 2)}\n\nRespond with valid JSON only. No markdown code fences.`;
 			}
 
+			// Translate messages to Anthropic format
+			const messages = nonSystemMessages.map((msg) => ({
+				role: msg.role as "user" | "assistant",
+				content: msg.content.map(translateContent),
+			}));
+
 			const args: Record<string, unknown> = {
-				model: config.model,
+				model: config.model || "kimi-for-coding",
 				messages,
 				max_tokens: request.maxTokens ?? 16384,
 			};
 
-			// Enable native JSON mode when schema is requested
-			if (request.responseSchema) {
-				args.response_format = { type: "json_object" };
+			if (systemText) {
+				args.system = systemText;
 			}
 
 			if (request.temperature !== undefined) {
-				args.temperature = request.temperature;
+				// Kimi requires temperature 0.0-1.0
+				args.temperature = Math.min(1.0, Math.max(0, request.temperature));
 			}
 
 			const result = await client.create(args);
 
-			const content = result.choices[0]?.message?.content ?? "";
-			const usage = result.usage ?? {
-				prompt_tokens: 0,
-				completion_tokens: 0,
-			};
+			// Extract text content from response
+			const content = result.content
+				.filter((block) => block.type === "text" && block.text)
+				.map((block) => block.text ?? "")
+				.join("");
 
 			return {
 				content,
 				usage: {
-					inputTokens: usage.prompt_tokens,
-					outputTokens: usage.completion_tokens,
+					inputTokens: result.usage.input_tokens,
+					outputTokens: result.usage.output_tokens,
 				},
 			};
 		},
 	};
 }
 
-function translateMessage(
-	msg: Message,
-	_schema?: Record<string, unknown>,
-): { role: string; content: string } {
-	const textParts: string[] = [];
-
-	for (const part of msg.content) {
-		if (part.type === "text") {
-			textParts.push(part.text);
-		} else if (part.type === "image") {
-			textParts.push("[Image]");
-		}
+function translateContent(content: MessageContent): Record<string, unknown> {
+	if (content.type === "text") {
+		return { type: "text", text: content.text };
 	}
-
-	return {
-		role: msg.role,
-		content: textParts.join("\n"),
-	};
+	// Kimi doesn't support images — convert to text placeholder
+	return { type: "text", text: "[Image]" };
 }
 
-function createRealClient(apiKey: string | undefined): OpenAICompatibleClient {
-	const sdk = new OpenAI({
+function createRealClient(apiKey: string | undefined): KimiClient {
+	const sdk = new Anthropic({
 		apiKey: apiKey ?? "",
 		baseURL: KIMI_BASE_URL,
 		defaultHeaders: KIMI_HEADERS,
@@ -128,32 +135,19 @@ function createRealClient(apiKey: string | undefined): OpenAICompatibleClient {
 
 	return {
 		async create(args) {
-			const raw = (await sdk.chat.completions.create(
-				args as unknown as Parameters<typeof sdk.chat.completions.create>[0],
+			const result = (await sdk.messages.create(
+				args as unknown as Parameters<typeof sdk.messages.create>[0],
 			)) as unknown as {
-				choices: Array<{ message: { content: string | null } }>;
-				usage?: { prompt_tokens: number; completion_tokens: number };
+				content: Array<{ type: string; text?: string }>;
+				usage: { input_tokens: number; output_tokens: number };
 			};
-
 			return {
-				choices: raw.choices.map((c) => ({
-					message: { content: c.message.content },
-				})),
-				usage: raw.usage
-					? {
-							prompt_tokens: raw.usage.prompt_tokens,
-							completion_tokens: raw.usage.completion_tokens ?? 0,
-						}
-					: undefined,
+				content: result.content,
+				usage: {
+					input_tokens: result.usage.input_tokens,
+					output_tokens: result.usage.output_tokens,
+				},
 			};
 		},
 	};
-}
-
-function inferMaxTokens(model: string): number {
-	if (model.includes("128k")) return 128_000;
-	if (model.includes("32k")) return 32_000;
-	if (model.includes("8k")) return 8_000;
-	if (model.includes("k2")) return 128_000;
-	return 262_144; // Kimi coding default context
 }

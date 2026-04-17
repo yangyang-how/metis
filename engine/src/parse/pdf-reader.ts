@@ -231,26 +231,44 @@ function buildFromPageGroups(
 
 /**
  * Split text into sections by detecting heading-like patterns.
+ *
+ * Conservative: only ALL CAPS lines are treated as section breaks.
+ * This avoids over-splitting PDF text where every line starts with
+ * a capital letter.
  */
 function buildSectionsFromText(text: string, chapterId: string): Section[] {
 	const lines = text.split("\n");
-	const headingPattern = /^[A-Z][A-Z\s]{4,}$/;
-	const subheadingPattern = /^[A-Z][a-zA-Z\s:—\-]{5,60}$/;
+	// Only strong signal: ALL CAPS lines (at least 3 words)
+	const headingPattern = /^[A-Z][A-Z\s,]{7,}$/;
 
 	const sectionBreaks: Array<{ lineIndex: number; title: string }> = [];
 
 	for (let i = 0; i < lines.length; i++) {
 		const line = (lines[i] ?? "").trim();
 		if (
-			line.length > 5 &&
+			line.length > 7 &&
 			line.length < 80 &&
-			(headingPattern.test(line) || subheadingPattern.test(line)) &&
-			// Must be followed by content (not another heading)
+			headingPattern.test(line) &&
+			// Must have at least 2 words
+			line.split(/\s+/).length >= 2 &&
+			// Must be followed by content
 			i + 1 < lines.length &&
 			(lines[i + 1] ?? "").trim().length > 0
 		) {
 			sectionBreaks.push({ lineIndex: i, title: line });
 		}
+	}
+
+	// If too many section breaks relative to content, the detection is
+	// too aggressive. Fall back to fewer, larger sections.
+	const totalBlocks = textToBlocks(text).length;
+	if (sectionBreaks.length > 0 && totalBlocks / sectionBreaks.length < 5) {
+		// Would average less than 5 blocks per section — too fragmented.
+		// Keep only every Nth break to get ~10-20 blocks per section.
+		const keepEvery = Math.max(1, Math.ceil(sectionBreaks.length / Math.max(1, Math.floor(totalBlocks / 10))));
+		const filtered = sectionBreaks.filter((_, i) => i % keepEvery === 0);
+		sectionBreaks.length = 0;
+		sectionBreaks.push(...filtered);
 	}
 
 	if (sectionBreaks.length === 0) {
@@ -312,16 +330,37 @@ function buildSectionsFromText(text: string, chapterId: string): Section[] {
 
 function textToBlocks(text: string): ContentBlock[] {
 	const blocks: ContentBlock[] = [];
-	const paragraphs = text.split(/\n\s*\n/);
+	const lines = text.split("\n");
 
-	for (const para of paragraphs) {
-		const trimmed = para.trim();
-		if (trimmed.length === 0) continue;
+	// Merge lines into paragraphs. In PDF text, each line is typically
+	// a single line of text. We merge consecutive non-empty lines into
+	// paragraphs, splitting only at blank lines or very short lines
+	// (likely headings or list items followed by a gap).
+	let currentPara: string[] = [];
 
-		// Skip headers/footers (page numbers, short repeated lines)
-		if (trimmed.length < 5 && /^\d+$/.test(trimmed)) continue;
+	for (const line of lines) {
+		const trimmed = line.trim();
 
-		blocks.push({ type: "paragraph", text: trimmed });
+		// Skip page numbers
+		if (trimmed.length > 0 && trimmed.length < 5 && /^\d+$/.test(trimmed)) {
+			continue;
+		}
+
+		if (trimmed.length === 0) {
+			if (currentPara.length > 0) {
+				blocks.push({
+					type: "paragraph",
+					text: currentPara.join(" "),
+				});
+				currentPara = [];
+			}
+		} else {
+			currentPara.push(trimmed);
+		}
+	}
+
+	if (currentPara.length > 0) {
+		blocks.push({ type: "paragraph", text: currentPara.join(" ") });
 	}
 
 	return blocks;

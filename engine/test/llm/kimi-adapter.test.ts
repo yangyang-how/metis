@@ -1,70 +1,63 @@
 import { describe, expect, test } from "bun:test";
 import { createKimiProvider } from "../../src/llm/kimi-adapter";
+import type { KimiClient } from "../../src/llm/kimi-adapter";
 import type { LLMRequest } from "../../src/llm/types";
+
+function mockKimiClient(
+	responseText: string,
+	onCapture?: (args: Record<string, unknown>) => void,
+): KimiClient {
+	return {
+		async create(args: Record<string, unknown>) {
+			if (onCapture) onCapture(args);
+			return {
+				content: [{ type: "text", text: responseText }],
+				usage: { input_tokens: 100, output_tokens: 50 },
+			};
+		},
+	};
+}
 
 describe("createKimiProvider", () => {
 	test("sets capabilities correctly", () => {
 		const provider = createKimiProvider({
 			provider: "kimi",
-			model: "moonshot-v1-128k",
+			model: "kimi-for-coding",
 			apiKey: "test-key",
 		});
 
 		expect(provider.capabilities.vision).toBe(false);
 		expect(provider.capabilities.structuredOutput).toBe(true);
-		expect(provider.capabilities.maxContextTokens).toBe(128_000);
+		expect(provider.capabilities.maxContextTokens).toBe(262_144);
 	});
 
-	test("infers context window from model name", () => {
-		const p32k = createKimiProvider({
-			provider: "kimi",
-			model: "moonshot-v1-32k",
-			apiKey: "test",
-		});
-		expect(p32k.capabilities.maxContextTokens).toBe(32_000);
-
-		const p8k = createKimiProvider({
-			provider: "kimi",
-			model: "moonshot-v1-8k",
-			apiKey: "test",
-		});
-		expect(p8k.capabilities.maxContextTokens).toBe(8_000);
-	});
-
-	test("falls back to KIMI_API_KEY env var", () => {
-		const original = process.env.KIMI_API_KEY;
-		process.env.KIMI_API_KEY = "env-test-key";
+	test("falls back to MOONSHOT_API_KEY then KIMI_API_KEY", () => {
+		const origMoonshot = process.env.MOONSHOT_API_KEY;
+		const origKimi = process.env.KIMI_API_KEY;
+		process.env.MOONSHOT_API_KEY = "moonshot-test";
+		process.env.KIMI_API_KEY = "kimi-test";
 		try {
 			const provider = createKimiProvider({
 				provider: "kimi",
-				model: "moonshot-v1-128k",
+				model: "kimi-for-coding",
 			});
 			expect(provider).toBeDefined();
 		} finally {
-			if (original) {
-				process.env.KIMI_API_KEY = original;
-			} else {
-				process.env.KIMI_API_KEY = undefined as unknown as string;
-			}
+			process.env.MOONSHOT_API_KEY = origMoonshot;
+			process.env.KIMI_API_KEY = origKimi;
 		}
 	});
 });
 
 describe("kimi adapter — sendMessage", () => {
-	test("translates text messages to OpenAI format", async () => {
-		let capturedArgs: Record<string, unknown> = {};
+	test("separates system message as top-level param (Anthropic format)", async () => {
+		let captured: Record<string, unknown> = {};
 
 		const provider = createKimiProvider(
-			{ provider: "kimi", model: "moonshot-v1-128k", apiKey: "test" },
-			{
-				async create(args: Record<string, unknown>) {
-					capturedArgs = args;
-					return {
-						choices: [{ message: { content: '{"result": "ok"}' } }],
-						usage: { prompt_tokens: 100, completion_tokens: 50 },
-					};
-				},
-			},
+			{ provider: "kimi", model: "kimi-for-coding", apiKey: "test" },
+			mockKimiClient('{"result": "ok"}', (args) => {
+				captured = args;
+			}),
 		);
 
 		const request: LLMRequest = {
@@ -80,34 +73,30 @@ describe("kimi adapter — sendMessage", () => {
 
 		const response = await provider.sendMessage(request);
 
-		// System message should stay in messages array (OpenAI style)
-		const messages = capturedArgs.messages as Array<{
+		// System message should be a top-level param (Anthropic format)
+		expect(captured.system).toContain("Be helpful.");
+
+		// Only user message in messages array
+		const messages = captured.messages as Array<{
 			role: string;
-			content: string;
+			content: unknown;
 		}>;
-		expect(messages[0]?.role).toBe("system");
-		expect(messages[0]?.content).toBe("Be helpful.");
-		expect(messages[1]?.role).toBe("user");
-		expect(messages[1]?.content).toBe("Hello");
+		expect(messages).toHaveLength(1);
+		expect(messages[0]?.role).toBe("user");
+
 		expect(response.content).toBe('{"result": "ok"}');
 		expect(response.usage.inputTokens).toBe(100);
 		expect(response.usage.outputTokens).toBe(50);
 	});
 
 	test("converts image content to text placeholder", async () => {
-		let capturedArgs: Record<string, unknown> = {};
+		let captured: Record<string, unknown> = {};
 
 		const provider = createKimiProvider(
-			{ provider: "kimi", model: "moonshot-v1-128k", apiKey: "test" },
-			{
-				async create(args: Record<string, unknown>) {
-					capturedArgs = args;
-					return {
-						choices: [{ message: { content: "I see text only" } }],
-						usage: { prompt_tokens: 50, completion_tokens: 10 },
-					};
-				},
-			},
+			{ provider: "kimi", model: "kimi-for-coding", apiKey: "test" },
+			mockKimiClient("I see text only", (args) => {
+				captured = args;
+			}),
 		);
 
 		await provider.sendMessage({
@@ -126,29 +115,23 @@ describe("kimi adapter — sendMessage", () => {
 			],
 		});
 
-		// Image should be converted to text placeholder
-		const messages = capturedArgs.messages as Array<{
+		const messages = captured.messages as Array<{
 			role: string;
-			content: string;
+			content: Array<{ type: string; text: string }>;
 		}>;
-		expect(messages[0]?.content).toContain("What's this?");
-		expect(messages[0]?.content).toContain("[Image]");
+		const contentTexts = messages[0]?.content.map((c) => c.text).join(" ");
+		expect(contentTexts).toContain("What's this?");
+		expect(contentTexts).toContain("[Image]");
 	});
 
-	test("injects schema into system prompt when responseSchema provided", async () => {
-		let capturedArgs: Record<string, unknown> = {};
+	test("injects schema into system param when responseSchema provided", async () => {
+		let captured: Record<string, unknown> = {};
 
 		const provider = createKimiProvider(
-			{ provider: "kimi", model: "moonshot-v1-128k", apiKey: "test" },
-			{
-				async create(args: Record<string, unknown>) {
-					capturedArgs = args;
-					return {
-						choices: [{ message: { content: '{"name":"test"}' } }],
-						usage: { prompt_tokens: 100, completion_tokens: 20 },
-					};
-				},
-			},
+			{ provider: "kimi", model: "kimi-for-coding", apiKey: "test" },
+			mockKimiClient('{"name":"test"}', (args) => {
+				captured = args;
+			}),
 		);
 
 		await provider.sendMessage({
@@ -165,12 +148,28 @@ describe("kimi adapter — sendMessage", () => {
 			},
 		});
 
-		const messages = capturedArgs.messages as Array<{
-			role: string;
-			content: string;
-		}>;
-		// System message should include schema instruction
-		expect(messages[0]?.content).toContain("Extract data.");
-		expect(messages[0]?.content).toContain("JSON");
+		// Schema should be injected into the system param
+		expect(captured.system).toContain("Extract data.");
+		expect(captured.system).toContain("JSON");
+	});
+
+	test("clamps temperature to 0.0-1.0", async () => {
+		let captured: Record<string, unknown> = {};
+
+		const provider = createKimiProvider(
+			{ provider: "kimi", model: "kimi-for-coding", apiKey: "test" },
+			mockKimiClient("ok", (args) => {
+				captured = args;
+			}),
+		);
+
+		await provider.sendMessage({
+			messages: [
+				{ role: "user", content: [{ type: "text", text: "hi" }] },
+			],
+			temperature: 1.5,
+		});
+
+		expect(captured.temperature).toBe(1.0);
 	});
 });
