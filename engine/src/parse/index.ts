@@ -12,6 +12,7 @@
 import { parseContent } from "./content-parser";
 import { readEpub } from "./epub-reader";
 import { ParseError } from "./errors";
+import { parseMarkdown } from "./md-reader";
 import { parseToc } from "./toc-parser";
 import type {
 	Chapter,
@@ -24,6 +25,7 @@ import type {
 } from "./types";
 
 export { ParseError } from "./errors";
+export { parseMarkdown } from "./md-reader";
 export type {
 	Chapter,
 	ContentBlock,
@@ -32,6 +34,24 @@ export type {
 	ParseInput,
 	Section,
 } from "./types";
+
+/**
+ * Dispatch to the right parser by file extension.
+ * Returns a DocumentTree regardless of source format.
+ */
+export async function parseFile(filePath: string): Promise<DocumentTree> {
+	if (filePath.endsWith(".md") || filePath.endsWith(".markdown")) {
+		return parseMarkdown(filePath);
+	}
+	if (filePath.endsWith(".epub")) {
+		return parse({ filePath });
+	}
+	throw new ParseError(
+		`Unsupported file format: ${filePath}`,
+		"UNSUPPORTED_FORMAT",
+		filePath,
+	);
+}
 
 export async function parse(input: ParseInput): Promise<DocumentTree> {
 	const extractImages = input.options?.extractImages !== false;

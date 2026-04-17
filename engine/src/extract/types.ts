@@ -30,6 +30,39 @@ export interface ExtractionResult {
 	flaggedAtoms: string[];
 }
 
+// --- Source Span ---
+
+export interface SourceSpan {
+	text: string;
+	start?: number;
+	end?: number;
+}
+
+// --- Extraction Provenance ---
+
+export type ExtractionMethod =
+	| {
+			method: "llm";
+			provider: string;
+			model: string;
+			promptVersion: string;
+			extractedAt: string;
+	  }
+	| { method: "human"; author: string; extractedAt: string }
+	| {
+			method: "algorithmic";
+			tool: string;
+			version: string;
+			extractedAt: string;
+	  };
+
+export interface AtomProvenance {
+	quotedSpans: SourceSpan[];
+	roleSpans?: Record<string, SourceSpan>;
+	roleTypes?: Record<string, "verbatim" | "paraphrase">;
+	extraction: ExtractionMethod;
+}
+
 // --- Candidate Atom ---
 
 export interface CandidateAtom {
@@ -39,11 +72,15 @@ export interface CandidateAtom {
 	conditions: string[];
 	confidence: number;
 	source: {
+		sourceId?: string;
+		contentHash?: string;
 		title: string;
 		authors: string[];
 		chapterId: string;
 		sectionId: string;
+		sectionText?: string;
 	};
+	provenance?: AtomProvenance;
 	domain: string[];
 	examples: string[];
 	flags: string[];

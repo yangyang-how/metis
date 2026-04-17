@@ -13,7 +13,8 @@ export class ParseError extends Error {
 			| "MISSING_OPF"
 			| "DRM_PROTECTED"
 			| "CORRUPT_CONTENT"
-			| "NO_CHAPTERS",
+			| "NO_CHAPTERS"
+			| "UNSUPPORTED_FORMAT",
 		public readonly filePath?: string,
 	) {
 		super(message);

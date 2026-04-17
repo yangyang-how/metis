@@ -11,7 +11,7 @@ describe("createKimiProvider", () => {
 		});
 
 		expect(provider.capabilities.vision).toBe(false);
-		expect(provider.capabilities.structuredOutput).toBe(false);
+		expect(provider.capabilities.structuredOutput).toBe(true);
 		expect(provider.capabilities.maxContextTokens).toBe(128_000);
 	});
 

@@ -54,7 +54,10 @@ describe("exportToKX", () => {
     const pkg = makePackage();
     const doc = exportToKX(pkg, graphIndex);
     expect(doc.version).toBe("kx/1.0");
-    expect(doc.meta.generatedBy).toBe("metis/0.1");
+    expect(doc.profile).toBe("casual");
+    expect(doc.contentId).toMatch(/^sha256:/);
+    expect(doc.docId).toMatch(/^sha256:/);
+    expect(doc.meta.generatedBy).toBe("metis/0.2");
     expect(doc.meta.generatedAt).toBeDefined();
     expect(doc.meta.domains).toContain("distributed-systems");
   });

@@ -14,10 +14,12 @@ import type { LLMProvider } from "../llm/types";
 import type { ContentBlock } from "../parse/types";
 import type { DocumentMetadata } from "../parse/types";
 import { buildExtractionPrompt, getExtractionResponseSchema } from "./prompts";
+import { verifySpan, normalizeForSpanMatch } from "./span-verifier";
 import type {
 	CandidateAtom,
 	FrameTypeRegistry,
 	ProposedFrameType,
+	SourceSpan,
 } from "./types";
 import { bookSlug } from "./types";
 
@@ -235,6 +237,7 @@ interface RawAtom {
 	confidence?: number;
 	domain?: string[];
 	examples?: string[];
+	quotedSpans?: string[];
 }
 
 interface ParsedResponse {
@@ -273,6 +276,47 @@ function parseResponse(content: string): ParsedResponse | null {
 	}
 }
 
+function getSectionPlainText(section: NormalizedSection): string {
+	return section.content
+		.filter((b): b is ContentBlock & { text: string } => "text" in b)
+		.map((b) => (b as { text: string }).text)
+		.join("\n");
+}
+
+function buildVerifiedSpans(
+	rawSpans: string[] | undefined,
+	sectionText: string,
+): { spans: SourceSpan[]; verified: number; failed: number } {
+	if (!rawSpans || rawSpans.length === 0) {
+		return { spans: [], verified: 0, failed: 0 };
+	}
+
+	const spans: SourceSpan[] = [];
+	let verified = 0;
+	let failed = 0;
+
+	for (const text of rawSpans) {
+		if (!text || text.trim().length === 0) continue;
+		const result = verifySpan({ text }, sectionText);
+		if (result.found) {
+			spans.push({
+				text,
+				start: result.computedStart,
+				end:
+					result.computedStart !== undefined
+						? result.computedStart + normalizeForSpanMatch(text).length
+						: undefined,
+			});
+			verified++;
+		} else {
+			spans.push({ text });
+			failed++;
+		}
+	}
+
+	return { spans, verified, failed };
+}
+
 function toCandidate(
 	raw: RawAtom,
 	slug: string,
@@ -280,7 +324,10 @@ function toCandidate(
 	bookMetadata: DocumentMetadata,
 	index: number,
 ): CandidateAtom {
-	return {
+	const sectionText = getSectionPlainText(section);
+	const { spans } = buildVerifiedSpans(raw.quotedSpans, sectionText);
+
+	const atom: CandidateAtom = {
 		id: `${slug}-${section.id}-${index}`,
 		frame: raw.frame,
 		roles: raw.roles,
@@ -291,11 +338,27 @@ function toCandidate(
 			authors: bookMetadata.authors,
 			chapterId: "",
 			sectionId: section.id,
+			sectionText,
 		},
 		domain: raw.domain ?? [],
 		examples: raw.examples ?? [],
 		flags: [],
 	};
+
+	if (spans.length > 0) {
+		atom.provenance = {
+			quotedSpans: spans,
+			extraction: {
+				method: "llm" as const,
+				provider: "unknown",
+				model: "unknown",
+				promptVersion: "v1",
+				extractedAt: new Date().toISOString(),
+			},
+		};
+	}
+
+	return atom;
 }
 
 function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {

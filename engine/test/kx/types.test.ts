@@ -14,16 +14,20 @@ describe("KX types", () => {
   test("KXDocument has required structure", () => {
     const doc: KXDocument = {
       version: "kx/1.0",
+      contentId: "sha256:test",
+      docId: "sha256:test",
+      profile: "standard",
       meta: {
         domains: ["testing"],
         sources: [],
-        generatedBy: "metis/0.1",
+        generatedBy: "metis/0.2",
         generatedAt: new Date().toISOString(),
       },
       units: [],
       relations: [],
     };
     expect(doc.version).toBe("kx/1.0");
+    expect(doc.profile).toBe("standard");
   });
 
   test("KXKind covers all 12 types", () => {
