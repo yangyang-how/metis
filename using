@@ -1,0 +1,43 @@
+Script started on Fri Apr 17 20:14:39 2026
+Command: without a timeout can hang a cron job
+indefinitely. A deployment script using `curl` to poll a service
+can hang CI. A monitoring probe using `curl` without a timeout can
+hide actual outages — because the probe itself is stuck waiting.
+
+## The fix
+
+Always pass `--max-time`:
+
+```bash
+curl --max-time 10 https://example.com/api
+```
+
+`--max-time` is the *total* time cap, including connection,
+handshake, request, and response. It's the most important curl
+flag you've never used.
+
+Optionally also `--connect-timeout` for finer control:
+
+```bash
+curl --connect-timeout 5 --max-time 30 https://example.com/api
+```
+
+- `--connect-timeout 5` — give up if the TCP connect takes > 5s
+- `--max-time 30` — give up if the whole transaction takes > 30s
+
+## Make this permanent
+
+Alias curl with safe defaults in your shell config:
+
+```bash
+alias curl='curl --max-time 30 --connect-timeout 10'
+```
+
+The original is still available as `\curl` or `command curl` if you
+genuinely need no timeout.
+
+For scripts, write a wrapper function:
+script: without: No such file or directory
+
+Command exit status: 1
+Script done on Fri Apr 17 20:14:39 2026

@@ -126,28 +126,53 @@ function translateContent(content: MessageContent): Record<string, unknown> {
 	return { type: "text", text: "[Image]" };
 }
 
+// Backoff schedule for 429 rate-limit responses. Total max wait: ~7.5 min.
+// Kimi shares quota across user's projects; bursts elsewhere can pause us briefly.
+const RATE_LIMIT_BACKOFF_MS = [10_000, 30_000, 60_000, 120_000, 240_000];
+
 function createRealClient(apiKey: string | undefined): KimiClient {
 	const sdk = new Anthropic({
 		apiKey: apiKey ?? "",
 		baseURL: KIMI_BASE_URL,
 		defaultHeaders: KIMI_HEADERS,
+		maxRetries: 0, // we handle our own retries below
 	});
 
 	return {
 		async create(args) {
-			const result = (await sdk.messages.create(
-				args as unknown as Parameters<typeof sdk.messages.create>[0],
-			)) as unknown as {
-				content: Array<{ type: string; text?: string }>;
-				usage: { input_tokens: number; output_tokens: number };
-			};
-			return {
-				content: result.content,
-				usage: {
-					input_tokens: result.usage.input_tokens,
-					output_tokens: result.usage.output_tokens,
-				},
-			};
+			let lastErr: unknown;
+			for (let attempt = 0; attempt <= RATE_LIMIT_BACKOFF_MS.length; attempt++) {
+				try {
+					const result = (await sdk.messages.create(
+						args as unknown as Parameters<typeof sdk.messages.create>[0],
+					)) as unknown as {
+						content: Array<{ type: string; text?: string }>;
+						usage: { input_tokens: number; output_tokens: number };
+					};
+					return {
+						content: result.content,
+						usage: {
+							input_tokens: result.usage.input_tokens,
+							output_tokens: result.usage.output_tokens,
+						},
+					};
+				} catch (err) {
+					lastErr = err;
+					const status = (err as { status?: number }).status;
+					const message = (err as Error).message ?? "";
+					const isRateLimit =
+						status === 429 || message.includes("429") || message.includes("rate_limit");
+					if (!isRateLimit || attempt >= RATE_LIMIT_BACKOFF_MS.length) {
+						throw err;
+					}
+					const delay = RATE_LIMIT_BACKOFF_MS[attempt] ?? 240_000;
+					console.error(
+						`[kimi] 429 rate limit, backoff ${delay / 1000}s (attempt ${attempt + 1}/${RATE_LIMIT_BACKOFF_MS.length})`,
+					);
+					await new Promise((r) => setTimeout(r, delay));
+				}
+			}
+			throw lastErr;
 		},
 	};
 }
