@@ -194,7 +194,7 @@ async function extractSingleSection(
 					temperature: 0.2,
 					maxTokens: 16384,
 				}),
-				120_000,
+				600_000,
 			);
 
 			totalInput += response.usage.inputTokens;
@@ -217,7 +217,9 @@ async function extractSingleSection(
 					failed: false,
 				};
 			}
-		} catch {
+			console.error(`      [extract-fail] section "${section.title.slice(0, 30)}" attempt ${attempt + 1}: parse returned null. response head: ${response.content.slice(0, 200).replace(/\n/g, " ")}`);
+		} catch (err) {
+			console.error(`      [extract-fail] section "${section.title.slice(0, 30)}" attempt ${attempt + 1}: ${(err as Error).message}`);
 			break;
 		}
 	}
